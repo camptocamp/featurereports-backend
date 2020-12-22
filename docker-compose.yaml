@@ -1,0 +1,65 @@
+---
+
+# The project Docker compose file for development.
+
+version: '2'
+
+volumes:
+  smtp_maildir:
+
+services:
+
+  db:
+    image: ${DOCKER_BASE}-db:latest
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=drealcorse
+      - POSTGRES_PASSWORD=drealcorse
+      - POSTGRES_DB=drealcorse
+
+  app:
+    image: ${DOCKER_BASE}-app:${DOCKER_TAG}
+    user: www-data
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      - PGHOST
+      - PGHOST_SLAVE
+      - PGPORT
+      - PGUSER
+      - PGPASSWORD
+      - PGDATABASE
+      - PGOPTIONS
+      - INI_FILE
+      - PROXY_PREFIX
+    command: 'pserve c2c://${INI_FILE}'
+    ports:
+      - ${DOCKER_PORT}:8080
+
+  db_tests:
+    image: ${DOCKER_BASE}-db:latest
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=drealcorse
+      - POSTGRES_PASSWORD=drealcorse
+      - POSTGRES_DB=drealcorse_tests
+
+  test:
+    image: ${DOCKER_BASE}-app-tools:${DOCKER_TAG}
+    user: www-data
+    restart: unless-stopped
+    depends_on:
+      - db_tests
+    volumes:
+      - ${PWD}/app/drealcorsereports:/app/drealcorsereports
+      - ${PWD}/app/tests:/app/tests
+    environment:
+      - PGHOST=db_tests
+      - PGHOST_SLAVE=db_tests
+      - PGPORT
+      - PGUSER
+      - PGPASSWORD
+      - PGDATABASE=drealcorse_tests
+      - INI_FILE
+    command: 'pytest /app/tests'

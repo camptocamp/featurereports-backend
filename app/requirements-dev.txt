@@ -1,0 +1,9 @@
+black
+ipdb
+ipython
+mock
+prospector
+pydevd
+pyramid_ipython
+pytest
+webtest

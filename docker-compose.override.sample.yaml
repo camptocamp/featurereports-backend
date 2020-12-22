@@ -1,0 +1,14 @@
+---
+
+# The project Docker compose file for development.
+
+version: '2'
+
+services:
+
+  app:
+    image: ${DOCKER_BASE}-app-tools:${DOCKER_TAG}
+    volumes:
+      - ${PWD}/app/drealcorsereports:/app/drealcorsereports
+      - ${PWD}/app/tests:/app/tests
+    command: pserve --reload c2c://development.ini

@@ -1,0 +1,7 @@
+alembic
+cornice
+geoalchemy2
+psycopg2-binary
+SQLAlchemy
+waitress
+zope.sqlalchemy
