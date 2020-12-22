@@ -1,4 +1,4 @@
 Documentation
 =============
 
-Put a brief description of 'DREAL Corse Reports'.
+Create GIS features linked reports.
