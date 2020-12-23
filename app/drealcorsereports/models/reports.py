@@ -7,12 +7,12 @@ from sqlalchemy import (
 )
 from drealcorsereports.models.meta import Base
 
-schema = "reports"
+SCHEMA = "reports"
 
 
 class Report(Base):
     __tablename__ = "report"
-    __table_args__ = {"schema": schema}
+    __table_args__ = {"schema": SCHEMA}
 
     id = Column(Integer, primary_key=True)
     feature_id = Column(String, nullable=False)
