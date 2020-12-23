@@ -6,7 +6,10 @@ from plaster_pastedeploy import Loader as BaseLoader
 
 class Loader(BaseLoader):  # type: ignore
     def _get_defaults(
-        self, defaults: Optional[Dict[str, str]] = None
+        self,
+        # Temporary fix for https://github.com/PyCQA/pylint/issues/3882
+        # pylint: disable=unsubscriptable-object
+        defaults: Optional[Dict[str, str]] = None,
     ) -> Dict[str, str]:
         d: Dict[str, str] = {}
         d.update(os.environ)
