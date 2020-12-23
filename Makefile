@@ -68,7 +68,7 @@ build: \
 
 .PHONY: docker-compose-env
 docker-compose-env: ## Build docker-compose environment file
-	envsubst < ".env.tmpl" > ".env"
+	cat ".env.tmpl" | sed "/^#/d" | envsubst > ".env"
 
 .PHONY: initdb
 initdb:
