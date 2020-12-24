@@ -4,9 +4,6 @@
 
 version: '2'
 
-volumes:
-  smtp_maildir:
-
 services:
 
   db:
