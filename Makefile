@@ -71,28 +71,25 @@ initdb:
 black:
 black: ## Format Python code with black
 	docker-compose up -d app-tools
-	docker-compose exec --user=$(shell id -u) app-tools black /app/drealcorsereports setup.py
+	docker-compose exec -T --user=$(shell id -u) app-tools black /app/
 
 .PHONY: check
 check: ## Check the code with black and prospector
 check:
 	docker-compose up -d app-tools
-	docker-compose exec --user=$(shell id -u) app-tools black --check /app/drealcorsereports setup.py || ( \
-		echo 'Please run "make black" to format your Python code' && \
-		false \
-	)
-	docker-compose exec --user=$(shell id -u) app-tools prospector /app/drealcorsereports
+	docker-compose exec -T --user=$(shell id -u) app-tools black --check /app/
+	docker-compose exec -T --user=$(shell id -u) app-tools prospector /app/
 
 .PHONY: test
 test: ## Run tests
 test:
 	docker-compose up -d db_tests app-tools
-	docker-compose exec --user=$(shell id -u) app-tools pytest /app/tests
+	docker-compose exec -T --user=$(shell id -u) app-tools pytest /app/tests
 
 .PHONY: docs
 docs: ## Build documentation
 	docker-compose up -d app-tools
-	docker-compose exec --user=$(shell id -u) app-tools make -C docs html
+	docker-compose exec -T --user=$(shell id -u) app-tools make -C docs html
 
 .PHONY: cleanall
 cleanall: ## Clean everything including docker containers and images
