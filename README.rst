@@ -30,12 +30,12 @@ Before the first release we will overwrite the first migration:
 
 .. code-block:: bash
 
-    docker-compose run --rm --user `id -u` test \
+    docker-compose run --rm --user `id -u` app-tools \
         alembic -c /app/alembic.ini revision --autogenerate -m 'First revision'
 
 Now you can try it:
 
 .. code-block:: bash
 
-    docker-compose run --rm --user `id -u ` test \
+    docker-compose run --rm --user `id -u ` app-tools \
         alembic -c /app/alembic.ini upgrade head

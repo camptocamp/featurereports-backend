@@ -45,7 +45,7 @@ services:
       - POSTGRES_PASSWORD=drealcorse
       - POSTGRES_DB=drealcorse_tests
 
-  test:
+  app-tools:
     image: ${DOCKER_BASE}-app-tools:${DOCKER_TAG}
     user: www-data
     restart: unless-stopped
@@ -62,4 +62,4 @@ services:
       - PGPASSWORD
       - PGDATABASE=drealcorse_tests
       - INI_FILE
-    command: 'pytest /app/tests'
+    command: 'tail -f /dev/null'

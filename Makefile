@@ -29,14 +29,6 @@ export PROXY_PREFIX
 
 # End of customisable environment variables
 
-COMMON_DOCKER_RUN_OPTIONS ?= \
-	--name="drealcorse-reports-tools" \
-	--volume="${PWD}/app:/app" \
-	--user=$(shell id -u) \
-	${DOCKER_BASE}-app-tools:${DOCKER_TAG}
-
-# DOCKER_MAKE_CMD = docker run --rm ${COMMON_DOCKER_RUN_OPTIONS} make -f $(firstword $(MAKEFILE_LIST))
-
 default: help
 
 .PHONY: help
@@ -78,26 +70,29 @@ initdb:
 .PHONY: black
 black:
 black: ## Format Python code with black
-	docker run --rm ${COMMON_DOCKER_RUN_OPTIONS} black /app/drealcorsereports setup.py
+	docker-compose up -d app-tools
+	docker-compose exec --user=$(shell id -u) app-tools black /app/drealcorsereports setup.py
 
 .PHONY: check
-check: ## Check the code with black and flake8
+check: ## Check the code with black and prospector
 check:
-	docker run --rm ${COMMON_DOCKER_RUN_OPTIONS} black --check /app/drealcorsereports setup.py || ( \
+	docker-compose up -d app-tools
+	docker-compose exec --user=$(shell id -u) app-tools black --check /app/drealcorsereports setup.py || ( \
 		echo 'Please run "make black" to format your Python code' && \
 		false \
 	)
-	docker run --rm ${COMMON_DOCKER_RUN_OPTIONS} prospector /app/drealcorsereports
+	docker-compose exec --user=$(shell id -u) app-tools prospector /app/drealcorsereports
 
 .PHONY: test
 test: ## Run tests
 test:
-	docker-compose up -d db_tests
-	docker-compose run --rm test
+	docker-compose up -d db_tests app-tools
+	docker-compose exec --user=$(shell id -u) app-tools pytest /app/tests
 
 .PHONY: docs
 docs: ## Build documentation
-	docker run --rm ${COMMON_DOCKER_RUN_OPTIONS} make -C docs html
+	docker-compose up -d app-tools
+	docker-compose exec --user=$(shell id -u) app-tools make -C docs html
 
 .PHONY: cleanall
 cleanall: ## Clean everything including docker containers and images
@@ -112,24 +107,21 @@ cleanall: clean
 # Development tools
 
 .PHONY: bash
-bash: ## Open bash in build container
-bash: docker-build-build
-	docker run --rm -ti ${COMMON_DOCKER_RUN_OPTIONS} bash
+bash: ## Open bash in app-tools container
+bash:
+	docker-compose up -d app-tools
+	docker-compose exec --user=$(shell id -u) app-tools bash
 
 .PHONY: psql
-psql: ## Launch psql in postgres image
+psql: ## Launch psql in db container
 psql:
-	docker-compose exec -u postgres db psql -U drealcorse -d drealcorse
-
-.PHONY: psqldocs
-psqldocs: ## Launch psql in postgres image
-psqldocs:
-	docker-compose exec -u postgres db postgresql-autodoc reports
+	docker-compose up -d db
+	docker-compose exec db psql -U drealcorse -d drealcorse
 
 .PHONY: pshell
-pshell: ## Launch getitfixed pshell
+pshell: ## Launch pshell in app container
 pshell:
-	docker-compose run --rm app pshell c2c://development.ini
+	docker-compose run --rm app pshell c2c://drealcorsereports.ini
 
 
 # Docker images
