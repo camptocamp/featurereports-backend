@@ -11,4 +11,4 @@ services:
     volumes:
       - ${PWD}/app/drealcorsereports:/app/drealcorsereports
       - ${PWD}/app/tests:/app/tests
-    command: pserve --reload c2c://development.ini
+    command: pserve --reload c2c://drealcorsereports.ini
