@@ -22,4 +22,3 @@ jobs:
         if: ${{ always() }}
         run: |
           docker-compose logs
-          docker-compose down -v --remove-orphans
