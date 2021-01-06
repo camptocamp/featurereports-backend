@@ -8,4 +8,5 @@ def main(global_config, **settings):
     config = Configurator(settings=settings)
     config.include("cornice")
     config.scan("drealcorsereports.views")
+    config.add_static_view("static", "adminfront")
     return config.make_wsgi_app()

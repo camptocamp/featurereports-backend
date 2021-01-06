@@ -1,3 +1,15 @@
+########################
+# Build frontend #
+########################
+FROM node:12-slim as front-builder
+
+COPY drealcorsereports/static/adminfront/package-lock.json drealcorsereports/static/adminfront/package.json /app/
+WORKDIR /app
+RUN npm install
+RUN npm install react-scripts@3.4.1 -g
+COPY drealcorsereports/static/adminfront/ /app/
+RUN npm run build
+
 ##########################################
 # Common base for build/test and runtime #
 ##########################################
@@ -28,6 +40,7 @@ RUN pip3 install --disable-pip-version-check --no-cache-dir -r /tmp/requirements
 
 WORKDIR /app
 COPY . /app/
+COPY --from=front-builder /app/build /app/drealcorsereports/adminfront
 RUN pip3 install --no-deps -e .
 
 CMD ["make"]
