@@ -7,6 +7,8 @@ COPY drealcorsereports/static/admin/package-lock.json drealcorsereports/static/a
 WORKDIR /app
 RUN npm install
 RUN npm install react-scripts@3.4.1 -g
+# Save /app/node_modules from being masked by another volume
+VOLUME /app/node_modules
 COPY drealcorsereports/static/admin/ /app/
 EXPOSE 3000
 CMD npm start
