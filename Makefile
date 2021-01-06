@@ -54,6 +54,7 @@ up: build
 build: ## Build runtime files and docker images
 build: \
 		docker-build-db \
+		docker-build-front-server \
 		docker-build-app-tools \
 		docker-build-app \
 		docker-compose-env
@@ -126,6 +127,10 @@ pshell:
 .PHONY: docker-build-db
 docker-build-db:
 	docker build -t ${DOCKER_BASE}-db:${DOCKER_TAG} db
+
+.PHONY: docker-build-front-server
+docker-build-front-server:
+	docker build --target=front-server -t ${DOCKER_BASE}-front-server:${DOCKER_TAG} app
 
 .PHONY: docker-build-app-tools
 docker-build-app-tools:
