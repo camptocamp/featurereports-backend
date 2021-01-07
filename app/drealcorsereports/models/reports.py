@@ -1,5 +1,5 @@
 # coding=utf-8
-from sqlalchemy import Column, DateTime, Integer, String, ForeignKey
+from sqlalchemy import Column, DateTime, String, ForeignKey
 from drealcorsereports.models.meta import Base
 from sqlalchemy.dialects.postgresql import UUID, JSON
 from uuid import uuid4
@@ -27,8 +27,10 @@ class Report(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     feature_id = Column(String, nullable=False)
-    template_id = Column(UUID(as_uuid=True), ForeignKey("template.id"), nullable=False)
-    template = relationship("Template")
+    template_id = Column(
+        UUID(as_uuid=True), ForeignKey(f"{SCHEMA}.template.id"), nullable=False
+    )
+    template = relationship("Template", backref="report")
     # response of the form. based on the template json schema
     response = Column(JSON, nullable=False)
     updated_at = Column(DateTime(timezone=True), nullable=False)
