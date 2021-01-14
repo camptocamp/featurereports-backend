@@ -18,4 +18,4 @@ class Loader(BaseLoader):  # type: ignore
         return cast(Dict[str, str], settings)
 
     def __repr__(self) -> str:
-        return 'getitfixed.loader.Loader(uri="{0}")'.format(self.uri)
+        return 'drealcorsereports.loader.Loader(uri="{0}")'.format(self.uri)
