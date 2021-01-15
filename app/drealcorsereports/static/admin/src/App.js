@@ -3,8 +3,8 @@ import './App.css';
 
 function App() {
   fetch('/api')
-    .then(response => response.json())
-    .then(data => console.log(data));
+    .then((response) => response.json())
+    .then((data) => console.log(data));
 
   return (
     <div className="App">
