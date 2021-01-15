@@ -92,6 +92,18 @@ docs: ## Build documentation
 	docker-compose up -d app-tools
 	docker-compose exec -T --user=$(shell id -u) app-tools make -C docs html
 
+.PHONY: front-test
+front-test: ## Run front tests
+front-test:
+	docker-compose up -d front-server
+	docker-compose exec -T --user=$(shell id -u) front-server npm run test
+
+.PHONY: front-format
+front-format: ## Run front formating
+front-format:
+	docker-compose up -d front-server
+	docker-compose exec -T --user=$(shell id -u) front-server npm run format
+
 .PHONY: cleanall
 cleanall: ## Clean everything including docker containers and images
 cleanall: clean
