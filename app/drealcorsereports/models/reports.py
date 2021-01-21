@@ -39,6 +39,8 @@ class Report(Base):
     report_model = relationship("ReportModel", backref="report")
     # response of the form. based on the template json schema
     custome_field_values = Column(JSON, nullable=False)
+    created_by = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=datetime.now, nullable=False)
     updated_at = Column(DateTime(timezone=True), nullable=False)
     # Since user comes from HTTP header (handled by georchestra security-proxy)
     # we don't have any User class in this app.

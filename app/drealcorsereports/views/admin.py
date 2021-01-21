@@ -46,8 +46,12 @@ class AdminReportModelView:
     def collection_post(self):
         try:
             report_model = self.request.validated
+            #TODO need to extract user from header properly
+            report_model.created_by = self.request.headers.get('sec-username', "toto")
             self.request.dbsession.add(report_model)
             self.request.response.status_code = 201
+            self.request.response.location = f"/admin/reports/{report_model.id}"
+            return {"id": report_model.id}
         except:
             raise HTTPBadRequest("Cannot register your report model.")
 

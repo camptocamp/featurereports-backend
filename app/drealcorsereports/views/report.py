@@ -40,7 +40,13 @@ class ReportView:
 
     @view(schema=ReportSchema, validators=(marshmallow_validator,))
     def collection_post(self):
-        x = self.request.validated
+        report = self.request.validated
+        # TODO need to extract user from header properly
+        report.created_by = self.request.headers.get('sec-username', "toto")
+        self.request.dbsession.add(report)
+        self.request.response.status_code = 201
+        self.request.response.location = f"/admin/reports/{report.id}"
+        return {"id": report.id}
 
     def get(self) -> str:
         session = self.request.dbsession
