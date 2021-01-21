@@ -18,12 +18,10 @@ class TestAdminReportModelView:
         payload = {
             "id": str(r_id),
             "name": "test",
-            "custom_field_schema": {
-                "test": "test"
-            },
+            "custom_field_schema": {"test": "test"},
             "layer_id": "test_layer",
             "created_by": "toto",
-            "created_at": str(datetime.now())
+            "created_at": str(datetime.now()),
         }
         r = test_app.post_json("/admin/report_models", payload)
         assert r.status_code == 201
@@ -33,12 +31,10 @@ class TestAdminReportModelView:
         payload = {
             "id": str(r_id),
             "name": "test",
-            "custom_field_schema": {
-                "test": "test"
-            },
+            "custom_field_schema": {"test": "test"},
             "layer_id": "test_layer",
             "created_by": "toto",
-            "created_at": str(datetime.now())
+            "created_at": str(datetime.now()),
         }
         r = test_app.post_json("/admin/report_models", payload)
         assert r.status_code == 201
@@ -48,8 +44,14 @@ class TestAdminReportModelView:
 
     @pytest.mark.usefixtures("transact")
     def test_delete(self, test_app, dbsession):
-        rm_id= uuid4()
-        rm = ReportModel(id=rm_id, name="test", custom_field_schema={"test": "test"}, layer_id="test_layer", created_by="toto")
+        rm_id = uuid4()
+        rm = ReportModel(
+            id=rm_id,
+            name="test",
+            custom_field_schema={"test": "test"},
+            layer_id="test_layer",
+            created_by="toto",
+        )
         dbsession.add(rm)
         dbsession.commit()
         result = test_app.delete(f"/admin/report_models/{rm_id}")
