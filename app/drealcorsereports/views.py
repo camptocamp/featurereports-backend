@@ -32,10 +32,30 @@ class MockApi:
             }
         ]
 
-    @view_config(route_name="get_report_model_by_id", renderer="json")
+    @view_config(route_name="get_report_model_by_id1", renderer="json")
     def getOne(self):
         return {
                 "id": "1",
                 "title": "TestTitle",
-                "layer": "TestLayer"
+                "layer": "TestLayer",
+                "properties":
+                    [
+                        {"type": "string", "name": "Name", "required": True},
+                        {"type": "string", "name": "Description", "required": False},
+                        {"type": "number", "name": "Nr", "required": False}
+                    ]
+            }
+
+    @view_config(route_name="get_report_model_by_id2", renderer="json")
+    def getTwo(self):
+        return {
+                "id": "2",
+                "title": "TestTitle2",
+                "layer": "TestLayer2",
+                "properties":
+                    [
+                        {"type": "string", "name": "Title", "required": True},
+                        {"type": "number", "name": "Length", "required": True},
+                        {"type": "string", "name": "Summary", "required": True}
+                    ]
             }
