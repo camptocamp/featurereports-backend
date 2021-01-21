@@ -9,6 +9,7 @@ export default class ReportModelList extends Component {
     this.retrieveReportModels = this.retrieveReportModels.bind(this);
     this.refreshList = this.refreshList.bind(this);
     this.setActiveReportModel = this.setActiveReportModel.bind(this);
+    this.onUpdateReportModel = this.onUpdateReportModel.bind(this);
     // this.searchTitle = this.searchTitle.bind(this);
 
     this.state = {
@@ -58,6 +59,19 @@ export default class ReportModelList extends Component {
     });
   }
 
+  onUpdateReportModel(updatedReportModel) {
+    this.setState(prevState => ({
+      reportModels: prevState.reportModels.map((reportModel) => {
+        if (reportModel.id === updatedReportModel.id) {
+          return updatedReportModel;
+        } else {
+          return reportModel
+        }
+      })
+    }))
+  }
+
+  // TODO: add client side filtering
   // searchTitle() {
   //   ReportModelApiService.findByTitle(this.state.searchTitle)
   //     .then(response => {
@@ -116,29 +130,18 @@ export default class ReportModelList extends Component {
           </ul>
         </div>
         <div className="col-md-6">
+          {/* TODO: add a button to add a model via edit component or add component */}
+          {/* <button
+            onClick={() => this.setActiveReportModel({
+              id: null,
+              title: "",
+              layer: ""
+            }, -1)}
+            className="badge badge-warning m-1">
+              Add Report Model
+          </button> */}
           {currentReportModel ? (
-            <div>
-              <h4>Report Model</h4>
-              <div>
-                <label>
-                  <strong>Title:</strong>
-                </label>{" "}
-                {currentReportModel.title}
-              </div>
-              <div>
-                <label>
-                  <strong>Layer:</strong>
-                </label>{" "}
-                {currentReportModel.layer}
-              </div>
-
-              <Link
-                to={"/reportModels/" + currentReportModel.id}
-                className="badge badge-warning"
-              >
-                Edit
-              </Link>
-            </div>
+            <ReportModel currentReportModel={currentReportModel} onUpdateReportModel={this.onUpdateReportModel}/>
           ) : (
             <div>
               <br />

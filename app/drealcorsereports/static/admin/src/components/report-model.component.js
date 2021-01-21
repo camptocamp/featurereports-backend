@@ -123,6 +123,7 @@ export default class ReportModel extends Component {
   }
 
   updateReportModel() {
+    this.props.onUpdateReportModel(this.state.currentReportModel);
     ReportModelApiService.update(
       this.state.currentReportModel.id,
       this.state.currentReportModel
