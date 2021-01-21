@@ -6,6 +6,7 @@ export default class ReportModel extends Component {
     super(props);
     this.onChangeTitle = this.onChangeTitle.bind(this);
     this.onChangeLayer = this.onChangeLayer.bind(this);
+    this.onChangeProperty = this.onChangeProperty.bind(this);
     this.getReportModel = this.getReportModel.bind(this);
     this.updateReportModel = this.updateReportModel.bind(this);
     this.deleteReportModel = this.deleteReportModel.bind(this);
@@ -14,14 +15,21 @@ export default class ReportModel extends Component {
       currentReportModel: {
         id: null,
         title: "",
-        layer: ""
+        layer: "",
+        properties: []
       },
       message: ""
     };
   }
 
   componentDidMount() {
-    this.getReportModel(this.props.match.params.id);
+    this.getReportModel(this.props.currentReportModel.id);
+  }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.currentReportModel.id!==this.props.currentReportModel.id){
+      this.getReportModel(this.props.currentReportModel.id);
+    }
   }
 
   onChangeTitle(e) {
@@ -46,6 +54,59 @@ export default class ReportModel extends Component {
         layer: layer
       }
     }));
+  }
+
+  onChangeProperty(edit, index, e) {
+    this.setState(prevState => ({
+      currentReportModel: {
+        ...prevState.currentReportModel,
+        properties: prevState.currentReportModel.properties.map((property, id) => {
+          const returnProperty = {...property}
+          if (id === index) {
+            switch (edit){
+              case 'name':
+                returnProperty.name = e.target.value
+                break
+              case 'type':
+                returnProperty.type = e.target.value
+                break
+              case 'required':
+                returnProperty.required = e.target.checked
+                break
+              default:
+            }
+          }
+          return returnProperty
+        })
+      }
+    }));
+  }
+
+  addProperty() {
+    const properties = this.state.currentReportModel.properties;
+    properties.push({
+      name: "",
+      type: "",
+      required: false
+    })
+    this.setState(prevState => ({
+      currentReportModel: {
+        ...prevState.currentReportModel,
+        properties
+      }
+    }))
+  }
+
+  deleteProperty(index, e) {
+    e.preventDefault()
+    this.setState(prevState => ({
+      currentReportModel: {
+        ...prevState.currentReportModel,
+        properties: prevState.currentReportModel.properties.filter((property, id) => {
+          return id !== index
+        })
+      }
+    }))
   }
 
   getReportModel(id) {
@@ -117,10 +178,52 @@ export default class ReportModel extends Component {
                   onChange={this.onChangeLayer}
                 />
               </div>
+
+              <label htmlFor="properties">Form properties</label>
+              <div id="properties" className="form-group">
+                {currentReportModel.properties &&
+                  currentReportModel.properties.map((property, index) => (
+                  <div key={index} className="row">
+                    <div className="col-4">
+                      <label>Property name</label>
+                      <input
+                        type="text"
+                        className="form-control mb-2"
+                        value={property.name}
+                        onChange={(e) => this.onChangeProperty('name', index, e)}
+                      />
+                    </div>
+                    <div className="col-4">
+                      <label>Property type</label>
+                      <select 
+                        className="form-control mb-2" value={property.type} onChange={(e) => this.onChangeProperty('type', index, e)}>
+                        <option value=""></option>
+                        <option value="string">string</option>
+                        <option value="number">number</option>
+                      </select>
+                    </div>
+                    <div className="col-2">
+                      <label>Required</label>
+                      <input
+                        className="form-check"
+                        type="checkbox" checked={property.required} onChange={(e) => this.onChangeProperty('required', index, e)}/>
+                    </div>
+                    <div className="col-1">
+                      <button
+                        className="btn btn-danger mt-4"
+                        onClick={(e) => this.deleteProperty(index, e)}
+                      >
+                        -
+                      </button>
+                    </div>
+                  </div>
+                  ))}
+              </div>
+
             </form>
 
             <button
-              className="badge badge-danger mr-2"
+              className="btn btn-danger mr-2"
               onClick={this.deleteReportModel}
             >
               Delete
@@ -128,10 +231,18 @@ export default class ReportModel extends Component {
 
             <button
               type="submit"
-              className="badge badge-success"
+              className="btn btn-success mr-2"
               onClick={this.updateReportModel}
             >
               Update
+            </button>
+
+            <button
+              type="submit"
+              className="btn btn-warning"
+              onClick={(e) => this.addProperty()}
+            >
+              Add Property
             </button>
             <p>{this.state.message}</p>
           </div>
