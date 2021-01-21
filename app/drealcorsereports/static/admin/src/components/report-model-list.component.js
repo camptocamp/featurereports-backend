@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ReportModelApiService from "../services/report-model.service";
-import { Link } from "react-router-dom";
+import ReportModel from "./report-model.component";
 
 export default class ReportModelList extends Component {
   constructor(props) {
