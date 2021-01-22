@@ -51,7 +51,7 @@ There are make targets for formatting and tests. Other npm tasks (like installin
 
 .. code-block:: bash
 
-    docker exec -it drealcorse-reports_front-server_1 /bin/bash
+    docker-compose exec front-server bash
 
 Run formatting:
 
