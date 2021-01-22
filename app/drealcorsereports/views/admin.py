@@ -43,8 +43,8 @@ class AdminReportModelView:
     def collection_post(self) -> dict:
         report_model = self.request.validated
         # TODO need to extract user from header properly
-        report_model.created_by = self.request.headers["sec-username"]
-        report_model.updated_by = self.request.headers["sec-username"]
+        report_model.created_by = self.request.authenticated_userid
+        report_model.updated_by = self.request.authenticated_userid
         self.request.dbsession.add(report_model)
         self.request.dbsession.flush()
         self.request.response.status_code = 201
@@ -64,7 +64,7 @@ class AdminReportModelView:
     def put(self) -> dict:
         self._get_object()
         report_model = self.request.validated
-        report_model.updated_by = self.request.headers["sec-username"]
+        report_model.updated_by = self.request.authenticated_userid
         report_model.updated_at = datetime.now(timezone.utc)
         return ReportModelSchema().dump(report_model)
 
