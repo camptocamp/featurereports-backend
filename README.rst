@@ -39,3 +39,39 @@ Now you can try it:
 
     docker-compose run --rm --user `id -u ` app-tools \
         alembic -c /app/alembic.ini upgrade head
+
+Frontend
+-----------------------------
+
+Once the composition has started a production build is available at http://localhost:8080/admin/
+
+A development instance can be started at http://localhost:3000 by adding `front-server` service from `docker-compose.override.sample.yaml <docker-compose.override.sample.yaml>`_.
+
+There are make targets for formatting and tests. Other npm tasks (like installing new dependencies) can be executed within the container that is mapped to the host:
+
+.. code-block:: bash
+
+    docker-compose exec front-server bash
+
+Run formatting:
+
+.. code-block:: bash
+
+    make front-format
+
+Run tests:
+
+.. code-block:: bash
+
+    make front-test
+
+Sources can be found in `app/drealcorsereports/static/admin <app/drealcorsereports/static/admin>`_
+
+This project was bootstrapped with `Create React App <https://github.com/facebook/create-react-app>`_
+
+The React CLI allows to indicate the apps origin and a dev proxy to the API via the `package.json <app/drealcorsereports/static/admin/package.json>`_
+
+.. code-block:: json
+
+  "homepage": ".",
+  "proxy": "http://app:8080",

@@ -1,3 +1,21 @@
+########################
+# Build frontend #
+########################
+FROM node:12-slim as front-server
+
+COPY drealcorsereports/static/admin/package-lock.json drealcorsereports/static/admin/package.json /app/
+WORKDIR /app
+RUN npm install
+RUN npm install react-scripts@4.0.1 -g
+# Save /app/node_modules from being masked by another volume
+VOLUME /app/node_modules
+COPY drealcorsereports/static/admin/ /app/
+EXPOSE 3000
+CMD npm start
+
+FROM front-server as front-builder
+RUN npm run build
+
 ##########################################
 # Common base for build/test and runtime #
 ##########################################
@@ -29,6 +47,7 @@ RUN pip3 install --disable-pip-version-check --no-cache-dir -r /tmp/requirements
 WORKDIR /app
 COPY . /app/
 RUN pip3 install --no-deps -e .
+COPY --from=front-builder /app/build /opt/drealcorsereports/static/admin/build
 
 CMD ["make"]
 
@@ -42,5 +61,6 @@ LABEL maintainer Camptocamp "info@camptocamp.com"
 WORKDIR /app
 COPY --from=tools /app/ /app/
 RUN pip install --no-deps -e .
+COPY --from=front-builder /app/build /opt/drealcorsereports/static/admin/build
 
 ENV PROXY_PREFIX=

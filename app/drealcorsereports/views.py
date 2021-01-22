@@ -3,7 +3,7 @@
 from cornice import Service
 
 
-hello = Service(name="hello", path="/", description="Simplest app")
+hello = Service(name="hello", path="/api", description="Simplest app")
 
 
 @hello.get()

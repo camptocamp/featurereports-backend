@@ -54,6 +54,7 @@ up: build
 build: ## Build runtime files and docker images
 build: \
 		docker-build-db \
+		docker-build-front-server \
 		docker-build-app-tools \
 		docker-build-app \
 		docker-compose-env
@@ -91,6 +92,18 @@ docs: ## Build documentation
 	docker-compose up -d app-tools
 	docker-compose exec -T --user=$(shell id -u) app-tools make -C docs html
 
+.PHONY: front-test
+front-test: ## Run front tests
+front-test:
+	docker-compose up -d front-server
+	docker-compose exec -T --user=$(shell id -u) front-server npm run test
+
+.PHONY: front-format
+front-format: ## Run front formating
+front-format:
+	docker-compose up -d front-server
+	docker-compose exec -T --user=$(shell id -u) front-server npm run format
+
 .PHONY: cleanall
 cleanall: ## Clean everything including docker containers and images
 cleanall: clean
@@ -126,6 +139,10 @@ pshell:
 .PHONY: docker-build-db
 docker-build-db:
 	docker build -t ${DOCKER_BASE}-db:${DOCKER_TAG} db
+
+.PHONY: docker-build-front-server
+docker-build-front-server:
+	docker build --target=front-server -t ${DOCKER_BASE}-front-server:${DOCKER_TAG} app
 
 .PHONY: docker-build-app-tools
 docker-build-app-tools:
