@@ -6,4 +6,4 @@ tjs = Service(path="/reports/export.csv", name="tjs", renderer="json")
 
 @tjs.get()
 def tjs_export(request: Request) -> None:
-    pass
+    del request

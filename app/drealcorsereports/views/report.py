@@ -1,34 +1,32 @@
-from pyramid.request import Request
+from datetime import datetime, timezone
+from uuid import UUID
+
 from cornice.resource import resource, view
+from cornice.validators import marshmallow_body_validator
+from pyramid.request import Request
+from pyramid.exceptions import HTTPNotFound
+
 from drealcorsereports.models.reports import Report
 from drealcorsereports.schemas.reports import ReportSchema
-from uuid import UUID
-from pyramid.exceptions import HTTPNotFound
-from cornice.validators import marshmallow_body_validator
 
 
 def marshmallow_validator(request: Request, **kwargs):
     return marshmallow_body_validator(
         request,
-        schema_kwargs={"session": request.dbsession},
         schema=kwargs.get("schema"),
+        schema_kwargs={"session": request.dbsession},
     )
-
-
-def marshmallow_errors(request: Request) -> list:
-    return request.errors
 
 
 @resource(
     collection_path="/reports",
     path="/reports/{id}",
-    renderer="json",
     cors_origins=("*",),
-    error_handler=marshmallow_errors,
 )
 class ReportView:
     def __init__(self, request: Request, context=None) -> None:
         self.request = request
+        del context
         if self.request.matchdict.get("id"):
             self.report_id = UUID(self.request.matchdict.get("id"))
 
@@ -42,24 +40,28 @@ class ReportView:
     def collection_post(self):
         report = self.request.validated
         # TODO need to extract user from header properly
-        report.created_by = self.request.headers.get('sec-username', "toto")
+        report.created_by = self.request.headers.get("sec-username", "toto")
         self.request.dbsession.add(report)
         self.request.response.status_code = 201
         self.request.response.location = f"/admin/reports/{report.id}"
         return {"id": report.id}
 
-    def get(self) -> str:
+    def _get_object(self) -> Report:
         session = self.request.dbsession
-        r = session.query(Report).filter(Report.id == self.report_id).one_or_none()
-        if r:
-            return ReportSchema().dumps(r)
-        else:
+        rm = session.query(Report).get(self.report_id)
+        if rm is None:
             raise HTTPNotFound()
+        return rm
 
-    def patch(self) -> None:
-        pass
+    def get(self) -> str:
+        return ReportSchema().dump(self._get_object())
+
+    def put(self) -> None:
+        report = self.request.validated
+        report.updated_by = self.request.headers["sec-username"]
+        report.updated_at = datetime.now(timezone.utc)
+        return ReportSchema().dump(report)
 
     def delete(self) -> None:
-        session = self.request.dbsession
-        session.query(Report).filter(Report.id == self.report_id).delete()
+        self.request.dbsession.delete(self._get_object())
         self.request.response.status_code = 204
