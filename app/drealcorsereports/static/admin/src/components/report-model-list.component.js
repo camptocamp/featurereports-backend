@@ -139,10 +139,10 @@ export default class ReportModelList extends Component {
               Add Report Model
           </button>
           {currentReportModel ? (
-            <ReportModel key="edit" actionLabel="Update model" currentReportModel={currentReportModel} onReportModelChange={this.refreshList}/>
+            <ReportModel key="edit" currentReportModel={currentReportModel} onReportModelChange={this.refreshList}/>
           ) : (
             newReportModel ? (
-              <ReportModel key="add" actionLabel="Add model" currentReportModel={newReportModel} onReportModelChange={this.refreshList}/>
+              <ReportModel key="add" currentReportModel={newReportModel} onReportModelChange={this.refreshList}/>
             ) : (
             <div>
               <br />

@@ -258,19 +258,21 @@ export default class ReportModel extends Component {
 
             </form>
 
-            <button
-              className="btn btn-danger mr-2"
-              onClick={this.deleteReportModel}
-            >
-              Delete
-            </button>
+            {currentReportModel.id && 
+              <button
+                className="btn btn-danger mr-2"
+                onClick={this.deleteReportModel}
+              >
+                Delete
+              </button>
+            }
 
             <button
               type="submit"
               className="btn btn-success mr-2"
               onClick={this.submitReportModel}
             >
-              {this.props.actionLabel}
+              Save
             </button>
 
             <button
