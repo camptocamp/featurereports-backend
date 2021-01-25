@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import ReportModelApiService from "../services/report-model.service";
+import React, { Component } from 'react';
+import ReportModelApiService from '../services/report-model.service';
 
 export default class ReportModel extends Component {
   constructor(props) {
@@ -16,11 +16,11 @@ export default class ReportModel extends Component {
     this.state = {
       currentReportModel: {
         id: null,
-        title: "",
-        layer: "",
-        properties: []
+        title: '',
+        layer: '',
+        properties: [],
       },
-      message: ""
+      message: '',
     };
   }
 
@@ -31,7 +31,7 @@ export default class ReportModel extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if(prevProps.currentReportModel.id!==this.props.currentReportModel.id){
+    if (prevProps.currentReportModel.id !== this.props.currentReportModel.id) {
       this.getReportModel(this.props.currentReportModel.id);
     }
   }
@@ -39,89 +39,93 @@ export default class ReportModel extends Component {
   onChangeTitle(e) {
     const title = e.target.value;
 
-    this.setState(function(prevState) {
+    this.setState(function (prevState) {
       return {
         currentReportModel: {
           ...prevState.currentReportModel,
-          title: title
-        }
+          title: title,
+        },
       };
     });
   }
 
   onChangeLayer(e) {
     const layer = e.target.value;
-    
-    this.setState(prevState => ({
+
+    this.setState((prevState) => ({
       currentReportModel: {
         ...prevState.currentReportModel,
-        layer: layer
-      }
+        layer: layer,
+      },
     }));
   }
 
   onChangeProperty(edit, index, e) {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       currentReportModel: {
         ...prevState.currentReportModel,
-        properties: prevState.currentReportModel.properties.map((property, id) => {
-          const returnProperty = {...property}
-          if (id === index) {
-            switch (edit){
-              case 'name':
-                returnProperty.name = e.target.value
-                break
-              case 'type':
-                returnProperty.type = e.target.value
-                break
-              case 'required':
-                returnProperty.required = e.target.checked
-                break
-              default:
+        properties: prevState.currentReportModel.properties.map(
+          (property, id) => {
+            const returnProperty = { ...property };
+            if (id === index) {
+              switch (edit) {
+                case 'name':
+                  returnProperty.name = e.target.value;
+                  break;
+                case 'type':
+                  returnProperty.type = e.target.value;
+                  break;
+                case 'required':
+                  returnProperty.required = e.target.checked;
+                  break;
+                default:
+              }
             }
+            return returnProperty;
           }
-          return returnProperty
-        })
-      }
+        ),
+      },
     }));
   }
 
   addProperty() {
     const properties = this.state.currentReportModel.properties;
     properties.push({
-      name: "",
-      type: "",
-      required: false
-    })
-    this.setState(prevState => ({
+      name: '',
+      type: '',
+      required: false,
+    });
+    this.setState((prevState) => ({
       currentReportModel: {
         ...prevState.currentReportModel,
-        properties
-      }
-    }))
+        properties,
+      },
+    }));
   }
 
   deleteProperty(index, e) {
-    e.preventDefault()
-    this.setState(prevState => ({
+    e.preventDefault();
+    this.setState((prevState) => ({
       currentReportModel: {
         ...prevState.currentReportModel,
-        properties: prevState.currentReportModel.properties.filter((property, id) => {
-          return id !== index
-        })
-      }
-    }))
+        properties: prevState.currentReportModel.properties.filter(
+          (property, id) => {
+            return id !== index;
+          }
+        ),
+      },
+    }));
   }
 
   getReportModel(id) {
     ReportModelApiService.get(id)
-      .then(response => {
+      .then((response) => {
         this.setState({
-          currentReportModel: response.data
+          currentReportModel: response.data,
         });
         console.log(response.data);
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   }
@@ -142,7 +146,7 @@ export default class ReportModel extends Component {
     };
 
     ReportModelApiService.create(data)
-      .then(response => {
+      .then((response) => {
         this.setState({
           id: response.data.id,
           title: response.data.title,
@@ -152,7 +156,7 @@ export default class ReportModel extends Component {
         console.log(response.data);
         this.props.onReportModelChange();
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   }
@@ -162,25 +166,25 @@ export default class ReportModel extends Component {
       this.state.currentReportModel.id,
       this.state.currentReportModel
     )
-      .then(response => {
+      .then((response) => {
         console.log(response.data);
         this.setState({
-          message: "The Report Model was updated successfully!"
+          message: 'The Report Model was updated successfully!',
         });
         this.props.onReportModelChange();
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   }
 
-  deleteReportModel() {    
+  deleteReportModel() {
     ReportModelApiService.delete(this.state.currentReportModel.id)
-      .then(response => {
+      .then((response) => {
         console.log(response.data);
         this.props.onReportModelChange();
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   }
@@ -219,58 +223,79 @@ export default class ReportModel extends Component {
               <div id="properties" className="form-group">
                 {currentReportModel.properties &&
                   currentReportModel.properties.map((property, index) => (
-                  <div key={index} className="row">
-                    <div className="col-4">
-                      <label>Property name</label>
-                      <input
-                        type="text"
-                        className="form-control mb-2"
-                        value={property.name}
-                        onChange={(e) => this.onChangeProperty('name', index, e)}
-                      />
+                    <div key={index} className="row">
+                      <div className="col-4">
+                        <label>Property name</label>
+                        <input
+                          type="text"
+                          className="form-control mb-2"
+                          value={property.name}
+                          onChange={(e) =>
+                            this.onChangeProperty('name', index, e)
+                          }
+                        />
+                      </div>
+                      <div className="col-4">
+                        <label>Property type</label>
+                        <select
+                          className="form-control mb-2"
+                          value={property.type}
+                          onChange={(e) =>
+                            this.onChangeProperty('type', index, e)
+                          }
+                        >
+                          <option value=""></option>
+                          <option value="string">string</option>
+                          <option value="number">number</option>
+                        </select>
+                      </div>
+                      <div className="col-2">
+                        <label>Required</label>
+                        <input
+                          className="form-check"
+                          type="checkbox"
+                          checked={property.required}
+                          onChange={(e) =>
+                            this.onChangeProperty('required', index, e)
+                          }
+                        />
+                      </div>
+                      <div className="col-1">
+                        <button
+                          className="btn btn-danger mt-4"
+                          onClick={(e) => this.deleteProperty(index, e)}
+                        >
+                          -
+                        </button>
+                      </div>
                     </div>
-                    <div className="col-4">
-                      <label>Property type</label>
-                      <select 
-                        className="form-control mb-2" value={property.type} onChange={(e) => this.onChangeProperty('type', index, e)}>
-                        <option value=""></option>
-                        <option value="string">string</option>
-                        <option value="number">number</option>
-                      </select>
-                    </div>
-                    <div className="col-2">
-                      <label>Required</label>
-                      <input
-                        className="form-check"
-                        type="checkbox" checked={property.required} onChange={(e) => this.onChangeProperty('required', index, e)}/>
-                    </div>
-                    <div className="col-1">
-                      <button
-                        className="btn btn-danger mt-4"
-                        onClick={(e) => this.deleteProperty(index, e)}
-                      >
-                        -
-                      </button>
-                    </div>
-                  </div>
                   ))}
               </div>
-
             </form>
 
-            {currentReportModel.id && 
+            {currentReportModel.id && (
               <button
                 className="btn btn-danger mr-2"
-                onClick={() => { if (window.confirm('Are you sure you wish to delete the report model?')) this.deleteReportModel() } }
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      'Are you sure you wish to delete the report model?'
+                    )
+                  )
+                    this.deleteReportModel();
+                }}
               >
                 Delete
               </button>
-            }
+            )}
 
             <button
               type="submit"
               className="btn btn-success mr-2"
-              onClick={() => { if (window.confirm('Please confirm to save your changes')) this.submitReportModel() } }
+              onClick={() => {
+                if (window.confirm('Please confirm to save your changes'))
+                  this.submitReportModel();
+              }}
             >
               Save
             </button>

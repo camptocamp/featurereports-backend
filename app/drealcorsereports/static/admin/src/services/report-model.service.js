@@ -1,8 +1,8 @@
-import http from "../http-common";
+import http from '../http-common';
 
 class ReportModelApiService {
   getAll() {
-    return http.get("/report_models");
+    return http.get('/report_models');
   }
 
   get(id) {
@@ -10,7 +10,7 @@ class ReportModelApiService {
   }
 
   create(data) {
-    return http.post("/report_models", data);
+    return http.post('/report_models', data);
   }
 
   update(id, data) {

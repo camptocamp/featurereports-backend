@@ -1,22 +1,20 @@
-import React, { Component } from "react";
-import ReportModelApiService from "../services/report-model.service";
-import ReportModel from "./report-model.component";
+import React, { Component } from 'react';
+import ReportModelApiService from '../services/report-model.service';
+import ReportModel from './report-model.component';
 
 export default class ReportModelList extends Component {
   constructor(props) {
     super(props);
-    this.onChangeSearchTitle = this.onChangeSearchTitle.bind(this);
     this.retrieveReportModels = this.retrieveReportModels.bind(this);
     this.refreshList = this.refreshList.bind(this);
     this.setActiveReportModel = this.setActiveReportModel.bind(this);
-    // this.searchTitle = this.searchTitle.bind(this);
 
     this.state = {
       reportModels: [],
       newReportModel: null,
       currentReportModel: null,
       currentIndex: -1,
-      searchTitle: ""
+      searchTitle: '',
     };
   }
 
@@ -24,22 +22,14 @@ export default class ReportModelList extends Component {
     this.retrieveReportModels();
   }
 
-  onChangeSearchTitle(e) {
-    const searchTitle = e.target.value;
-
-    this.setState({
-      searchTitle: searchTitle
-    });
-  }
-
   retrieveReportModels() {
     ReportModelApiService.getAll()
-      .then(response => {
+      .then((response) => {
         this.setState({
-          reportModels: response.data
+          reportModels: response.data,
         });
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   }
@@ -49,14 +39,14 @@ export default class ReportModelList extends Component {
     this.setState({
       newReportModel: null,
       currentReportModel: null,
-      currentIndex: -1
+      currentIndex: -1,
     });
   }
 
   setActiveReportModel(reportModel, index) {
     this.setState({
       currentReportModel: reportModel,
-      currentIndex: index
+      currentIndex: index,
     });
   }
 
@@ -64,54 +54,25 @@ export default class ReportModelList extends Component {
     this.setState({
       newReportModel: {
         id: null,
-        title: "",
-        layer: "",
-        properties: []
+        title: '',
+        layer: '',
+        properties: [],
       },
       currentReportModel: null,
-      currentIndex: -1
+      currentIndex: -1,
     });
   }
 
-  // TODO: add client side filtering
-  // searchTitle() {
-  //   ReportModelApiService.findByTitle(this.state.searchTitle)
-  //     .then(response => {
-  //       this.setState({
-  //         reportModels: response.data
-  //       });
-  //       console.log(response.data);
-  //     })
-  //     .catch(e => {
-  //       console.log(e);
-  //     });
-  // }
-
   render() {
-    const { searchTitle, reportModels, newReportModel, currentReportModel, currentIndex } = this.state;
+    const {
+      reportModels,
+      newReportModel,
+      currentReportModel,
+      currentIndex,
+    } = this.state;
 
     return (
       <div className="list row">
-        {/* <div className="col-md-8">
-          <div className="input-group mb-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search by title"
-              value={searchTitle}
-              onChange={this.onChangeSearchTitle}
-            />
-            <div className="input-group-append">
-              <button
-                className="btn btn-outline-secondary"
-                type="button"
-                onClick={this.searchTitle}
-              >
-                Search
-              </button>
-            </div>
-          </div>
-        </div> */}
         <div className="col-md-6">
           <h4>Report Model List</h4>
 
@@ -120,8 +81,8 @@ export default class ReportModelList extends Component {
               reportModels.map((reportModel, index) => (
                 <li
                   className={
-                    "list-group-item " +
-                    (index === currentIndex ? "active" : "")
+                    'list-group-item ' +
+                    (index === currentIndex ? 'active' : '')
                   }
                   onClick={() => this.setActiveReportModel(reportModel, index)}
                   key={index}
@@ -135,20 +96,28 @@ export default class ReportModelList extends Component {
           <button
             onClick={() => this.addReportModel()}
             className="btn btn-warning m-1 position-absolute"
-            style={{right: 0}}>
-              Add Report Model
+            style={{ right: 0 }}
+          >
+            Add Report Model
           </button>
           {currentReportModel ? (
-            <ReportModel key="edit" currentReportModel={currentReportModel} onReportModelChange={this.refreshList}/>
+            <ReportModel
+              key="edit"
+              currentReportModel={currentReportModel}
+              onReportModelChange={this.refreshList}
+            />
+          ) : newReportModel ? (
+            <ReportModel
+              key="add"
+              currentReportModel={newReportModel}
+              onReportModelChange={this.refreshList}
+            />
           ) : (
-            newReportModel ? (
-              <ReportModel key="add" currentReportModel={newReportModel} onReportModelChange={this.refreshList}/>
-            ) : (
             <div>
               <br />
               <p>Select a Report Model to edit...</p>
             </div>
-          ))}
+          )}
         </div>
       </div>
     );

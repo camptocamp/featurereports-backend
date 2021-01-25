@@ -1,8 +1,8 @@
-import axios from "axios";
+import axios from 'axios';
 
 export default axios.create({
-  baseURL: "/admin",
+  baseURL: '/admin',
   headers: {
-    "Content-type": "application/json"
-  }
+    'Content-type': 'application/json',
+  },
 });
