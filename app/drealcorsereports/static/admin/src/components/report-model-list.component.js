@@ -9,7 +9,6 @@ export default class ReportModelList extends Component {
     this.retrieveReportModels = this.retrieveReportModels.bind(this);
     this.refreshList = this.refreshList.bind(this);
     this.setActiveReportModel = this.setActiveReportModel.bind(this);
-    this.onUpdateReportModel = this.onUpdateReportModel.bind(this);
     // this.searchTitle = this.searchTitle.bind(this);
 
     this.state = {
@@ -72,18 +71,6 @@ export default class ReportModelList extends Component {
       currentReportModel: null,
       currentIndex: -1
     });
-  }
-
-  onUpdateReportModel(updatedReportModel) {
-    this.setState(prevState => ({
-      reportModels: prevState.reportModels.map((reportModel) => {
-        if (reportModel.id === updatedReportModel.id) {
-          return updatedReportModel;
-        } else {
-          return reportModel
-        }
-      })
-    }))
   }
 
   // TODO: add client side filtering
@@ -152,10 +139,10 @@ export default class ReportModelList extends Component {
               Add Report Model
           </button>
           {currentReportModel ? (
-            <ReportModel key="edit" actionLabel="Update model" currentReportModel={currentReportModel} onUpdateReportModel={this.onUpdateReportModel}/>
+            <ReportModel key="edit" actionLabel="Update model" currentReportModel={currentReportModel} onReportModelChange={this.refreshList}/>
           ) : (
             newReportModel ? (
-              <ReportModel key="add" actionLabel="Add model" currentReportModel={newReportModel}/>
+              <ReportModel key="add" actionLabel="Add model" currentReportModel={newReportModel} onReportModelChange={this.refreshList}/>
             ) : (
             <div>
               <br />

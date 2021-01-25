@@ -150,6 +150,7 @@ export default class ReportModel extends Component {
           properties: response.data.properties,
         });
         console.log(response.data);
+        this.props.onReportModelChange();
       })
       .catch(e => {
         console.log(e);
@@ -157,7 +158,6 @@ export default class ReportModel extends Component {
   }
 
   updateReportModel() {
-    this.props.onUpdateReportModel(this.state.currentReportModel);
     ReportModelApiService.update(
       this.state.currentReportModel.id,
       this.state.currentReportModel
@@ -167,6 +167,7 @@ export default class ReportModel extends Component {
         this.setState({
           message: "The Report Model was updated successfully!"
         });
+        this.props.onReportModelChange();
       })
       .catch(e => {
         console.log(e);
@@ -177,7 +178,7 @@ export default class ReportModel extends Component {
     ReportModelApiService.delete(this.state.currentReportModel.id)
       .then(response => {
         console.log(response.data);
-        this.props.history.push('/reportmodels')
+        this.props.onReportModelChange();
       })
       .catch(e => {
         console.log(e);
