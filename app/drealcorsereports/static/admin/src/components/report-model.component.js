@@ -261,7 +261,7 @@ export default class ReportModel extends Component {
             {currentReportModel.id && 
               <button
                 className="btn btn-danger mr-2"
-                onClick={this.deleteReportModel}
+                onClick={() => { if (window.confirm('Are you sure you wish to delete the report model?')) this.deleteReportModel() } }
               >
                 Delete
               </button>
@@ -270,7 +270,7 @@ export default class ReportModel extends Component {
             <button
               type="submit"
               className="btn btn-success mr-2"
-              onClick={this.submitReportModel}
+              onClick={() => { if (window.confirm('Please confirm to save your changes')) this.submitReportModel() } }
             >
               Save
             </button>
