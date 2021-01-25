@@ -8,6 +8,8 @@ export default class ReportModel extends Component {
     this.onChangeLayer = this.onChangeLayer.bind(this);
     this.onChangeProperty = this.onChangeProperty.bind(this);
     this.getReportModel = this.getReportModel.bind(this);
+    this.submitReportModel = this.submitReportModel.bind(this);
+    this.createReportModel = this.createReportModel.bind(this);
     this.updateReportModel = this.updateReportModel.bind(this);
     this.deleteReportModel = this.deleteReportModel.bind(this);
 
@@ -23,7 +25,9 @@ export default class ReportModel extends Component {
   }
 
   componentDidMount() {
-    this.getReportModel(this.props.currentReportModel.id);
+    if (this.props.currentReportModel.id !== null) {
+      this.getReportModel(this.props.currentReportModel.id);
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -114,6 +118,36 @@ export default class ReportModel extends Component {
       .then(response => {
         this.setState({
           currentReportModel: response.data
+        });
+        console.log(response.data);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }
+
+  submitReportModel() {
+    if (this.props.currentReportModel.id !== null) {
+      this.updateReportModel();
+    } else {
+      this.createReportModel();
+    }
+  }
+
+  createReportModel() {
+    var data = {
+      title: this.state.title,
+      layer: this.state.layer,
+      properties: this.state.properties,
+    };
+
+    ReportModelApiService.create(data)
+      .then(response => {
+        this.setState({
+          id: response.data.id,
+          title: response.data.title,
+          layer: response.data.layer,
+          properties: response.data.properties,
         });
         console.log(response.data);
       })
@@ -233,9 +267,9 @@ export default class ReportModel extends Component {
             <button
               type="submit"
               className="btn btn-success mr-2"
-              onClick={this.updateReportModel}
+              onClick={this.submitReportModel}
             >
-              Update
+              {this.props.actionLabel}
             </button>
 
             <button

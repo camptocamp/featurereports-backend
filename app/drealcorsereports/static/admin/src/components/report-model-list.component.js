@@ -14,6 +14,7 @@ export default class ReportModelList extends Component {
 
     this.state = {
       reportModels: [],
+      newReportModel: null,
       currentReportModel: null,
       currentIndex: -1,
       searchTitle: ""
@@ -47,6 +48,7 @@ export default class ReportModelList extends Component {
   refreshList() {
     this.retrieveReportModels();
     this.setState({
+      newReportModel: null,
       currentReportModel: null,
       currentIndex: -1
     });
@@ -56,6 +58,19 @@ export default class ReportModelList extends Component {
     this.setState({
       currentReportModel: reportModel,
       currentIndex: index
+    });
+  }
+
+  addReportModel() {
+    this.setState({
+      newReportModel: {
+        id: null,
+        title: "",
+        layer: "",
+        properties: []
+      },
+      currentReportModel: null,
+      currentIndex: -1
     });
   }
 
@@ -86,7 +101,7 @@ export default class ReportModelList extends Component {
   // }
 
   render() {
-    const { searchTitle, reportModels, currentReportModel, currentIndex } = this.state;
+    const { searchTitle, reportModels, newReportModel, currentReportModel, currentIndex } = this.state;
 
     return (
       <div className="list row">
@@ -130,24 +145,23 @@ export default class ReportModelList extends Component {
           </ul>
         </div>
         <div className="col-md-6">
-          {/* TODO: add a button to add a model via edit component or add component */}
-          {/* <button
-            onClick={() => this.setActiveReportModel({
-              id: null,
-              title: "",
-              layer: ""
-            }, -1)}
-            className="badge badge-warning m-1">
+          <button
+            onClick={() => this.addReportModel()}
+            className="btn btn-warning m-1 position-absolute"
+            style={{right: 0}}>
               Add Report Model
-          </button> */}
+          </button>
           {currentReportModel ? (
-            <ReportModel currentReportModel={currentReportModel} onUpdateReportModel={this.onUpdateReportModel}/>
+            <ReportModel key="edit" actionLabel="Update model" currentReportModel={currentReportModel} onUpdateReportModel={this.onUpdateReportModel}/>
           ) : (
+            newReportModel ? (
+              <ReportModel key="add" actionLabel="Add model" currentReportModel={newReportModel}/>
+            ) : (
             <div>
               <br />
-              <p>Please click on a Report Model...</p>
+              <p>Select a Report Model to edit...</p>
             </div>
-          )}
+          ))}
         </div>
       </div>
     );
