@@ -6,7 +6,7 @@ FROM node:12-slim as front-server
 COPY drealcorsereports/static/admin/package-lock.json drealcorsereports/static/admin/package.json /app/
 WORKDIR /app
 RUN npm install
-RUN npm install react-scripts@4.0.1 -g
+ENV PATH="$PATH:/app/node_modules/.bin"
 # Save /app/node_modules from being masked by another volume
 VOLUME /app/node_modules
 COPY drealcorsereports/static/admin/ /app/
