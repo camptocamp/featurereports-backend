@@ -14,9 +14,13 @@ jobs:
       - uses: actions/checkout@v1
       - name: Build
         run: make build
-      - name: Lint
+      - name: Frontend lint
+        run: docker run -e CI=TRUE camptocamp/drealcorse-reports-front-server:latest npm run check
+      - name: Backend lint
         run: make check
-      - name: Tests
+      - name: Frontend tests
+        run: docker run -e CI=TRUE camptocamp/drealcorse-reports-front-server:latest npm run test
+      - name: Backend tests
         run: make test
       - name: Docker compose logs
         if: ${{ always() }}
