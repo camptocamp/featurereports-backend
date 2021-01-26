@@ -85,7 +85,7 @@ check:
 test: ## Run tests
 test:
 	docker-compose up -d db_tests app-tools
-	docker-compose exec -T --user=$(shell id -u) app-tools pytest /app/tests
+	docker-compose exec -T --user=$(shell id -u) app-tools pytest -vv --color=yes /app/tests
 
 .PHONY: docs
 docs: ## Build documentation
