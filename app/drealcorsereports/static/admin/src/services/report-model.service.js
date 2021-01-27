@@ -14,7 +14,8 @@ class ReportModelApiService {
   }
 
   update(id, data) {
-    return http.patch(`/${id}`, data);
+    const { created_at, created_by, updated_at, updated_by, ...putData } = data;
+    return http.put(`/${id}`, putData);
   }
 
   delete(id) {

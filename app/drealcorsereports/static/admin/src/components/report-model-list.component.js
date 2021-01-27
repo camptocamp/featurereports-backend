@@ -54,9 +54,9 @@ export default class ReportModelList extends Component {
     this.setState({
       newReportModel: {
         id: null,
-        title: '',
-        layer: '',
-        properties: [],
+        name: '',
+        layer_id: '',
+        custom_field_schema: [],
       },
       currentReportModel: null,
       currentIndex: -1,
@@ -87,7 +87,7 @@ export default class ReportModelList extends Component {
                   onClick={() => this.setActiveReportModel(reportModel, index)}
                   key={index}
                 >
-                  {reportModel.title}
+                  {reportModel.name}
                 </li>
               ))}
           </ul>

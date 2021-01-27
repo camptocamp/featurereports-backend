@@ -4,9 +4,9 @@ import ReportModelApiService from '../services/report-model.service';
 export default class ReportModel extends Component {
   constructor(props) {
     super(props);
-    this.onChangeTitle = this.onChangeTitle.bind(this);
+    this.onChangeName = this.onChangeName.bind(this);
     this.onChangeLayer = this.onChangeLayer.bind(this);
-    this.onChangeProperty = this.onChangeProperty.bind(this);
+    this.onChangeField = this.onChangeField.bind(this);
     this.getReportModel = this.getReportModel.bind(this);
     this.submitReportModel = this.submitReportModel.bind(this);
     this.createReportModel = this.createReportModel.bind(this);
@@ -16,9 +16,13 @@ export default class ReportModel extends Component {
     this.state = {
       currentReportModel: {
         id: null,
-        title: '',
-        layer: '',
-        properties: [],
+        name: '',
+        layer_id: '',
+        custom_field_schema: [],
+        created_at: '',
+        created_by: '',
+        updated_at: '',
+        updated_by: '',
       },
       message: '',
     };
@@ -36,61 +40,61 @@ export default class ReportModel extends Component {
     }
   }
 
-  onChangeTitle(e) {
-    const title = e.target.value;
+  onChangeName(e) {
+    const name = e.target.value;
 
     this.setState(function (prevState) {
       return {
         currentReportModel: {
           ...prevState.currentReportModel,
-          title: title,
+          name: name,
         },
       };
     });
   }
 
   onChangeLayer(e) {
-    const layer = e.target.value;
+    const layer_id = e.target.value;
 
     this.setState((prevState) => ({
       currentReportModel: {
         ...prevState.currentReportModel,
-        layer: layer,
+        layer_id: layer_id,
       },
     }));
   }
 
-  onChangeProperty(edit, index, e) {
+  onChangeField(edit, index, e) {
     this.setState((prevState) => ({
       currentReportModel: {
         ...prevState.currentReportModel,
-        properties: prevState.currentReportModel.properties.map(
-          (property, id) => {
-            const returnProperty = { ...property };
+        custom_field_schema: prevState.currentReportModel.custom_field_schema.map(
+          (field, id) => {
+            const returnField = { ...field };
             if (id === index) {
               switch (edit) {
                 case 'name':
-                  returnProperty.name = e.target.value;
+                  returnField.name = e.target.value;
                   break;
                 case 'type':
-                  returnProperty.type = e.target.value;
+                  returnField.type = e.target.value;
                   break;
                 case 'required':
-                  returnProperty.required = e.target.checked;
+                  returnField.required = e.target.checked;
                   break;
                 default:
               }
             }
-            return returnProperty;
+            return returnField;
           }
         ),
       },
     }));
   }
 
-  addProperty() {
-    const properties = this.state.currentReportModel.properties;
-    properties.push({
+  addField() {
+    const custom_field_schema = this.state.currentReportModel.custom_field_schema;
+    custom_field_schema.push({
       name: '',
       type: '',
       required: false,
@@ -98,18 +102,18 @@ export default class ReportModel extends Component {
     this.setState((prevState) => ({
       currentReportModel: {
         ...prevState.currentReportModel,
-        properties,
+        custom_field_schema,
       },
     }));
   }
 
-  deleteProperty(index, e) {
+  deleteField(index, e) {
     e.preventDefault();
     this.setState((prevState) => ({
       currentReportModel: {
         ...prevState.currentReportModel,
-        properties: prevState.currentReportModel.properties.filter(
-          (property, id) => {
+        custom_field_schema: prevState.currentReportModel.custom_field_schema.filter(
+          (field, id) => {
             return id !== index;
           }
         ),
@@ -140,18 +144,18 @@ export default class ReportModel extends Component {
 
   createReportModel() {
     var data = {
-      title: this.state.title,
-      layer: this.state.layer,
-      properties: this.state.properties,
+      name: this.state.currentReportModel.name,
+      layer_id: this.state.currentReportModel.layer_id,
+      custom_field_schema: this.state.currentReportModel.custom_field_schema,
     };
 
     ReportModelApiService.create(data)
       .then((response) => {
         this.setState({
           id: response.data.id,
-          title: response.data.title,
-          layer: response.data.layer,
-          properties: response.data.properties,
+          name: response.data.name,
+          layer_id: response.data.layer_id,
+          custom_field_schema: response.data.custom_field_schema,
         });
         console.log(response.data);
         this.props.onReportModelChange();
@@ -199,49 +203,49 @@ export default class ReportModel extends Component {
             <h4>Report Model</h4>
             <form>
               <div className="form-group">
-                <label htmlFor="title">Title</label>
+                <label htmlFor="name">Name</label>
                 <input
                   type="text"
                   className="form-control"
-                  id="title"
-                  value={currentReportModel.title}
-                  onChange={this.onChangeTitle}
+                  id="name"
+                  value={currentReportModel.name}
+                  onChange={this.onChangeName}
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="layer">Layer</label>
+                <label htmlFor="layer_id">Layer</label>
                 <input
                   type="text"
                   className="form-control"
-                  id="layer"
-                  value={currentReportModel.layer}
+                  id="layer_id"
+                  value={currentReportModel.layer_id}
                   onChange={this.onChangeLayer}
                 />
               </div>
 
-              <label htmlFor="properties">Form properties</label>
-              <div id="properties" className="form-group">
-                {currentReportModel.properties &&
-                  currentReportModel.properties.map((property, index) => (
+              <label htmlFor="custom_field_schema">Form fields</label>
+              <div id="custom_field_schema" className="form-group">
+                {currentReportModel.custom_field_schema &&
+                  currentReportModel.custom_field_schema.map((field, index) => (
                     <div key={index} className="row">
                       <div className="col-4">
-                        <label>Property name</label>
+                        <label>Field name</label>
                         <input
                           type="text"
                           className="form-control mb-2"
-                          value={property.name}
+                          value={field.name}
                           onChange={(e) =>
-                            this.onChangeProperty('name', index, e)
+                            this.onChangeField('name', index, e)
                           }
                         />
                       </div>
                       <div className="col-4">
-                        <label>Property type</label>
+                        <label>Field type</label>
                         <select
                           className="form-control mb-2"
-                          value={property.type}
+                          value={field.type}
                           onChange={(e) =>
-                            this.onChangeProperty('type', index, e)
+                            this.onChangeField('type', index, e)
                           }
                         >
                           <option value=""></option>
@@ -254,16 +258,16 @@ export default class ReportModel extends Component {
                         <input
                           className="form-check"
                           type="checkbox"
-                          checked={property.required}
+                          checked={field.required}
                           onChange={(e) =>
-                            this.onChangeProperty('required', index, e)
+                            this.onChangeField('required', index, e)
                           }
                         />
                       </div>
                       <div className="col-1">
                         <button
                           className="btn btn-danger mt-4"
-                          onClick={(e) => this.deleteProperty(index, e)}
+                          onClick={(e) => this.deleteField(index, e)}
                         >
                           -
                         </button>
@@ -303,9 +307,9 @@ export default class ReportModel extends Component {
             <button
               type="submit"
               className="btn btn-warning"
-              onClick={(e) => this.addProperty()}
+              onClick={(e) => this.addField()}
             >
-              Add Property
+              Add Field
             </button>
             <p>{this.state.message}</p>
           </div>
