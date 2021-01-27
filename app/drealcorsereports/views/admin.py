@@ -22,8 +22,8 @@ def marshmallow_validator(request: Request, **kwargs):
 
 
 @resource(
-    collection_path="/admin/report_models",
-    path="/admin/report_models/{id}",
+    collection_path="/report_models",
+    path="/report_models/{id}",
     cors_origins=("*",),
 )
 class AdminReportModelView:

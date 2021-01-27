@@ -33,7 +33,7 @@ def test_data(dbsession, transact):
 class TestAdminReportModelView:
     def test_collection_get(self, test_app, test_data):
         rm = test_data["report_models"][0]
-        r = test_app.get("/admin/report_models", status=200)
+        r = test_app.get("/report_models", status=200)
         assert r.json == [
             {
                 "id": str(rm.id),
@@ -48,7 +48,7 @@ class TestAdminReportModelView:
         ]
 
     def test_collection_get_empty(self, test_app):
-        r = test_app.get("/admin/report_models", status=200)
+        r = test_app.get("/report_models", status=200)
         assert r.json == []
 
     def test_collection_post(self, test_app, dbsession):
@@ -58,7 +58,7 @@ class TestAdminReportModelView:
             "layer_id": "test_layer",
         }
         r = test_app.post_json(
-            "/admin/report_models",
+            "/report_models",
             payload,
             headers={
                 "sec-username": "toto",
@@ -83,7 +83,7 @@ class TestAdminReportModelView:
             "layer_id": "test_layer",
         }
         r = test_app.post_json(
-            "/admin/report_models",
+            "/report_models",
             payload,
             headers={
                 "sec-username": "toto",
@@ -94,7 +94,7 @@ class TestAdminReportModelView:
         assert report_model.name == "new"
 
         r = test_app.post_json(
-            "/admin/report_models",
+            "/report_models",
             payload,
             headers={
                 "sec-username": "toto",
@@ -114,7 +114,7 @@ class TestAdminReportModelView:
 
     def test_get(self, test_app, test_data):
         rm = test_data["report_models"][0]
-        r = test_app.get(f"/admin/report_models/{rm.id}", status=200)
+        r = test_app.get(f"/report_models/{rm.id}", status=200)
         assert r.json == {
             "id": str(rm.id),
             "name": "existing",
@@ -127,13 +127,13 @@ class TestAdminReportModelView:
         }
 
     def test_get_not_found(self, test_app):
-        test_app.get(f"/admin/report_models/{uuid4()}", status=404)
+        test_app.get(f"/report_models/{uuid4()}", status=404)
 
     def test_put(self, test_app, test_data):
         rm = test_data["report_models"][0]
         updated_at = rm.updated_at
         r = test_app.put_json(
-            f"/admin/report_models/{rm.id}",
+            f"/report_models/{rm.id}",
             {
                 "id": str(rm.id),
                 "name": "updated",
@@ -155,7 +155,7 @@ class TestAdminReportModelView:
     def test_put_not_found(self, test_app):
         id = uuid4()
         test_app.put_json(
-            f"/admin/report_models/{id}",
+            f"/report_models/{id}",
             {
                 "id": str(id),
                 "name": "updated",
@@ -170,8 +170,8 @@ class TestAdminReportModelView:
 
     def test_delete(self, test_app, dbsession, test_data):
         rm = test_data["report_models"][0]
-        test_app.delete(f"/admin/report_models/{rm.id}", status=204)
+        test_app.delete(f"/report_models/{rm.id}", status=204)
         assert len(dbsession.query(ReportModel).all()) == 0
 
     def test_delete_not_found(self, test_app):
-        test_app.delete(f"/admin/report_models/{uuid4()}", status=404)
+        test_app.delete(f"/report_models/{uuid4()}", status=404)

@@ -2,23 +2,23 @@ import http from '../http-common';
 
 class ReportModelApiService {
   getAll() {
-    return http.get('/report_models');
+    return http.get('');
   }
 
   get(id) {
-    return http.get(`/report_models/${id}`);
+    return http.get(`/${id}`);
   }
 
   create(data) {
-    return http.post('/report_models', data);
+    return http.post('', data);
   }
 
   update(id, data) {
-    return http.patch(`/report_models/${id}`, data);
+    return http.patch(`/${id}`, data);
   }
 
   delete(id) {
-    return http.delete(`/report_models/${id}`);
+    return http.delete(`/${id}`);
   }
 }
 
