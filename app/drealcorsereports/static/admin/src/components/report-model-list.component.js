@@ -95,7 +95,7 @@ export default class ReportModelList extends Component {
         <div className="col-md-6">
           <button
             onClick={() => this.addReportModel()}
-            className="btn btn-warning m-1 position-absolute"
+            className="btn btn-warning position-absolute"
             style={{ right: 0 }}
           >
             Add Report Model

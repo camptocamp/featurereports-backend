@@ -12,6 +12,7 @@ export default class ReportModel extends Component {
     this.createReportModel = this.createReportModel.bind(this);
     this.updateReportModel = this.updateReportModel.bind(this);
     this.deleteReportModel = this.deleteReportModel.bind(this);
+    this.validateReportModel = this.validateReportModel.bind(this);
 
     this.state = {
       currentReportModel: {
@@ -24,7 +25,14 @@ export default class ReportModel extends Component {
         updated_at: '',
         updated_by: '',
       },
-      message: '',
+      formWarnings: {
+        name: '',
+        layer: '',
+        fields: '',
+        fieldName: {},
+        fieldType: {},
+      },
+      errorMessage: '',
     };
   }
 
@@ -49,6 +57,10 @@ export default class ReportModel extends Component {
           ...prevState.currentReportModel,
           name: name,
         },
+        formWarnings: {
+          ...prevState.formWarnings,
+          name: name ? '' : prevState.formWarnings.name,
+        },
       };
     });
   }
@@ -60,6 +72,10 @@ export default class ReportModel extends Component {
       currentReportModel: {
         ...prevState.currentReportModel,
         layer_id: layer_id,
+      },
+      formWarnings: {
+        ...prevState.formWarnings,
+        layer: layer_id ? '' : prevState.formWarnings.layer,
       },
     }));
   }
@@ -89,11 +105,29 @@ export default class ReportModel extends Component {
           }
         ),
       },
+      formWarnings: {
+        ...prevState.formWarnings,
+        fieldName: Object.values(prevState.formWarnings.fieldName).map(
+          (value, id) => {
+            return edit === 'name' && e.target.value && id === index
+              ? ''
+              : value;
+          }
+        ),
+        fieldType: Object.values(prevState.formWarnings.fieldType).map(
+          (value, id) => {
+            return edit === 'type' && e.target.value && id === index
+              ? ''
+              : value;
+          }
+        ),
+      },
     }));
   }
 
   addField() {
-    const custom_field_schema = this.state.currentReportModel.custom_field_schema;
+    const custom_field_schema = this.state.currentReportModel
+      .custom_field_schema;
     custom_field_schema.push({
       name: '',
       type: '',
@@ -103,6 +137,13 @@ export default class ReportModel extends Component {
       currentReportModel: {
         ...prevState.currentReportModel,
         custom_field_schema,
+      },
+      formWarnings: {
+        ...prevState.formWarnings,
+        fields:
+          prevState.currentReportModel.custom_field_schema.length > 0
+            ? ''
+            : prevState.formWarnings.fields,
       },
     }));
   }
@@ -127,7 +168,6 @@ export default class ReportModel extends Component {
         this.setState({
           currentReportModel: response.data,
         });
-        console.log(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -135,10 +175,12 @@ export default class ReportModel extends Component {
   }
 
   submitReportModel() {
-    if (this.props.currentReportModel.id !== null) {
-      this.updateReportModel();
-    } else {
-      this.createReportModel();
+    if (this.validateReportModel()) {
+      if (this.props.currentReportModel.id !== null) {
+        this.updateReportModel();
+      } else {
+        this.createReportModel();
+      }
     }
   }
 
@@ -157,11 +199,12 @@ export default class ReportModel extends Component {
           layer_id: response.data.layer_id,
           custom_field_schema: response.data.custom_field_schema,
         });
-        console.log(response.data);
         this.props.onReportModelChange();
       })
       .catch((e) => {
-        console.log(e);
+        this.setState({
+          errorMessage: e.response.data.errors[0].description[0],
+        });
       });
   }
 
@@ -170,22 +213,19 @@ export default class ReportModel extends Component {
       this.state.currentReportModel.id,
       this.state.currentReportModel
     )
-      .then((response) => {
-        console.log(response.data);
-        this.setState({
-          message: 'The Report Model was updated successfully!',
-        });
+      .then(() => {
         this.props.onReportModelChange();
       })
       .catch((e) => {
-        console.log(e);
+        this.setState({
+          errorMessage: e.response.data.errors[0].description[0],
+        });
       });
   }
 
   deleteReportModel() {
     ReportModelApiService.delete(this.state.currentReportModel.id)
-      .then((response) => {
-        console.log(response.data);
+      .then(() => {
         this.props.onReportModelChange();
       })
       .catch((e) => {
@@ -193,8 +233,45 @@ export default class ReportModel extends Component {
       });
   }
 
+  validateReportModel() {
+    let formWarnings = {
+      name: '',
+      type: '',
+      fields: '',
+      fieldName: {},
+      fieldType: {},
+    };
+    let valid = true;
+    if (this.state.currentReportModel.name === '') {
+      formWarnings.name = 'Please indicate a name';
+      valid = false;
+    }
+    if (this.state.currentReportModel.layer_id === '') {
+      formWarnings.layer = 'Please indicate a layer';
+      valid = false;
+    }
+    if (this.state.currentReportModel.custom_field_schema.length === 0) {
+      formWarnings.fields = 'Please add at least one field';
+      valid = false;
+    }
+    for (const f in this.state.currentReportModel.custom_field_schema) {
+      if (this.state.currentReportModel.custom_field_schema[f].name === '') {
+        formWarnings.fieldName[f] = 'required';
+        valid = false;
+      }
+      if (this.state.currentReportModel.custom_field_schema[f].type === '') {
+        formWarnings.fieldType[f] = 'required';
+        valid = false;
+      }
+    }
+    this.setState({
+      formWarnings,
+    });
+    return valid;
+  }
+
   render() {
-    const { currentReportModel } = this.state;
+    const { currentReportModel, formWarnings } = this.state;
 
     return (
       <div>
@@ -203,8 +280,12 @@ export default class ReportModel extends Component {
             <h4>Report Model</h4>
             <form>
               <div className="form-group">
-                <label htmlFor="name">Name</label>
+                <label htmlFor="name">Name*</label>
+                <span style={{ color: 'red', float: 'right' }}>
+                  {formWarnings['name']}
+                </span>
                 <input
+                  required
                   type="text"
                   className="form-control"
                   id="name"
@@ -213,7 +294,10 @@ export default class ReportModel extends Component {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="layer_id">Layer</label>
+                <label htmlFor="layer_id">Layer*</label>
+                <span style={{ color: 'red', float: 'right' }}>
+                  {formWarnings['layer']}
+                </span>
                 <input
                   type="text"
                   className="form-control"
@@ -224,34 +308,43 @@ export default class ReportModel extends Component {
               </div>
 
               <label htmlFor="custom_field_schema">Form fields</label>
+              <span style={{ color: 'red', float: 'right' }}>
+                {formWarnings['fields']}
+              </span>
               <div id="custom_field_schema" className="form-group">
                 {currentReportModel.custom_field_schema &&
                   currentReportModel.custom_field_schema.map((field, index) => (
                     <div key={index} className="row">
                       <div className="col-4">
-                        <label>Field name</label>
+                        <label>Field name*</label>
                         <input
                           type="text"
                           className="form-control mb-2"
                           value={field.name}
-                          onChange={(e) =>
-                            this.onChangeField('name', index, e)
-                          }
+                          onChange={(e) => this.onChangeField('name', index, e)}
                         />
+                        {formWarnings['fieldName'] && (
+                          <span style={{ color: 'red' }}>
+                            {formWarnings['fieldName'][index]}
+                          </span>
+                        )}
                       </div>
                       <div className="col-4">
-                        <label>Field type</label>
+                        <label>Field type*</label>
                         <select
                           className="form-control mb-2"
                           value={field.type}
-                          onChange={(e) =>
-                            this.onChangeField('type', index, e)
-                          }
+                          onChange={(e) => this.onChangeField('type', index, e)}
                         >
                           <option value=""></option>
                           <option value="string">string</option>
                           <option value="number">number</option>
                         </select>
+                        {formWarnings['fieldType'] && (
+                          <span style={{ color: 'red' }}>
+                            {formWarnings['fieldType'][index]}
+                          </span>
+                        )}
                       </div>
                       <div className="col-2">
                         <label>Required</label>
@@ -311,7 +404,7 @@ export default class ReportModel extends Component {
             >
               Add Field
             </button>
-            <p>{this.state.message}</p>
+            <p className="mt-2 text-danger">{this.state.errorMessage}</p>
           </div>
         ) : (
           <div>
