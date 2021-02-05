@@ -288,12 +288,12 @@ export default class ReportModel extends Component {
 
     return (
       <div>
-        {currentReportModel ? (
+        {currentReportModel && (
           <div className="edit-form">
-            <h4>Report Model</h4>
+            <h4>Modèle de rapport</h4>
             <form>
               <div className="form-group">
-                <label htmlFor="name">Name*</label>
+                <label htmlFor="name">Titre*</label>
                 <span style={{ color: 'red', float: 'right' }}>
                   {formWarnings['name']}
                 </span>
@@ -307,7 +307,7 @@ export default class ReportModel extends Component {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="layer_id">Layer*</label>
+                <label htmlFor="layer_id">Couche associée*</label>
                 <span style={{ color: 'red', float: 'right' }}>
                   {formWarnings['layer']}
                 </span>
@@ -320,7 +320,7 @@ export default class ReportModel extends Component {
                 />
               </div>
 
-              <label htmlFor="custom_field_schema">Form fields</label>
+              <label htmlFor="custom_field_schema">Champs de formulaire</label>
               <span style={{ color: 'red', float: 'right' }}>
                 {formWarnings['fields']}
               </span>
@@ -329,7 +329,7 @@ export default class ReportModel extends Component {
                   currentReportModel.custom_field_schema.map((field, index) => (
                     <div key={index} className="row">
                       <div className="col-4">
-                        <label htmlFor="field_name">Field name*</label>
+                        <label htmlFor="field_name">Libellé*</label>
                         <input
                           type="text"
                           className="form-control mb-2"
@@ -344,7 +344,7 @@ export default class ReportModel extends Component {
                         )}
                       </div>
                       <div className="col-4">
-                        <label htmlFor="field_type">Field type*</label>
+                        <label htmlFor="field_type">Type*</label>
                         <select
                           className="form-control mb-2"
                           value={field.type}
@@ -362,7 +362,7 @@ export default class ReportModel extends Component {
                         )}
                       </div>
                       <div className="col-2">
-                        <label htmlFor="field_required">Required</label>
+                        <label htmlFor="field_required">Réquis</label>
                         <input
                           className="form-check"
                           type="checkbox"
@@ -398,7 +398,7 @@ export default class ReportModel extends Component {
                     this.deleteReportModel();
                 }}
               >
-                Delete
+                Supprimer
               </button>
             )}
 
@@ -410,7 +410,7 @@ export default class ReportModel extends Component {
                   this.submitReportModel();
               }}
             >
-              Save
+              Sauvegarder
             </button>
 
             <button
@@ -418,14 +418,9 @@ export default class ReportModel extends Component {
               className="btn btn-warning"
               onClick={(e) => this.addField()}
             >
-              Add Field
+              Ajouter un champ
             </button>
             <p className="mt-2 text-danger">{this.state.errorMessage}</p>
-          </div>
-        ) : (
-          <div>
-            <br />
-            <p>Please click on a Report Model...</p>
           </div>
         )}
       </div>

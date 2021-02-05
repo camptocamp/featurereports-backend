@@ -83,7 +83,7 @@ export default class ReportModelList extends Component {
     return (
       <div className="list row">
         <div className="col-md-6">
-          <h4>Report Model List</h4>
+          <h4>Liste des modèles de rapport</h4>
 
           <ul className="list-group">
             {reportModels &&
@@ -107,7 +107,7 @@ export default class ReportModelList extends Component {
             className="btn btn-warning position-absolute"
             style={{ right: 0 }}
           >
-            Add Report Model
+            Ajouter un modèle
           </button>
           {currentReportModel ? (
             <ReportModel
@@ -115,17 +115,12 @@ export default class ReportModelList extends Component {
               currentReportModel={currentReportModel}
               onReportModelChange={this.refreshList}
             />
-          ) : newReportModel ? (
+          ) : newReportModel && (
             <ReportModel
               key="add"
               currentReportModel={newReportModel}
               onReportModelChange={this.refreshList}
             />
-          ) : (
-            <div>
-              <br />
-              <p>Select a Report Model to edit...</p>
-            </div>
           )}
         </div>
       </div>

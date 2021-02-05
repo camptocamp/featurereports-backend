@@ -41,19 +41,19 @@ describe('Test Report Model Component', () => {
       />
     );
     //fill form with valid data
-    fireEvent.click(screen.getByText('Add Field'), {
+    fireEvent.click(screen.getByText(/Ajouter un champ/), {
       target: { type: 'submit' },
     });
-    userEvent.type(screen.getByLabelText(/Name/), 'Model Name');
-    userEvent.type(screen.getByLabelText(/Layer/), 'Layer Name');
-    userEvent.type(screen.getByLabelText(/Field name/), 'Field Name');
-    userEvent.selectOptions(screen.getByLabelText(/Field type/), ['string']);
+    userEvent.type(screen.getByLabelText(/Titre/), 'Model Name');
+    userEvent.type(screen.getByLabelText(/Couche/), 'Layer Name');
+    userEvent.type(screen.getByLabelText(/Libellé/), 'Field Name');
+    userEvent.selectOptions(screen.getByLabelText(/Type/), ['string']);
     //workaround to wait for user events
     setTimeout(async () => {
       //confirm window alert
       window.confirm = jest.fn(() => true);
       //trigger add
-      fireEvent.click(screen.getByText('Save'), {
+      fireEvent.click(screen.getByText(/Sauvegarder/), {
         target: { type: 'submit' },
       });
       //wait for component callback to be called
@@ -95,7 +95,7 @@ describe('Test Report Model Component', () => {
     //confirm window alert
     window.confirm = jest.fn(() => true);
     //trigger update
-    fireEvent.click(screen.getByText('Save'), {
+    fireEvent.click(screen.getByText(/Sauvegarder/), {
       target: { type: 'submit' },
     });
     //wait for component callback to be called
@@ -118,7 +118,7 @@ describe('Test Report Model Component', () => {
     //confirm window alert
     window.confirm = jest.fn(() => true);
     //trigger delete
-    fireEvent.click(screen.getByText('Delete'), {
+    fireEvent.click(screen.getByText(/Supprimer/), {
       target: { type: 'submit' },
     });
     //wait for component callback to be called
