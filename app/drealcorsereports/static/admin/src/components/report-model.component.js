@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReportModelApiService from '../services/report-model.service';
+import axios from 'axios';
 
 export default class ReportModel extends Component {
   constructor(props) {
@@ -34,6 +35,8 @@ export default class ReportModel extends Component {
       },
       errorMessage: '',
     };
+
+    this.source = axios.CancelToken.source();
   }
 
   componentDidMount() {
@@ -45,6 +48,12 @@ export default class ReportModel extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.currentReportModel.id !== this.props.currentReportModel.id) {
       this.getReportModel(this.props.currentReportModel.id);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.source) {
+      this.source.cancel('Component got unmounted');
     }
   }
 
@@ -163,7 +172,7 @@ export default class ReportModel extends Component {
   }
 
   getReportModel(id) {
-    ReportModelApiService.get(id)
+    ReportModelApiService.get(id, this.source.token)
       .then((response) => {
         this.setState({
           currentReportModel: response.data,
@@ -191,7 +200,7 @@ export default class ReportModel extends Component {
       custom_field_schema: this.state.currentReportModel.custom_field_schema,
     };
 
-    ReportModelApiService.create(data)
+    ReportModelApiService.create(data, this.source.token)
       .then((response) => {
         this.setState({
           id: response.data.id,
@@ -211,7 +220,8 @@ export default class ReportModel extends Component {
   updateReportModel() {
     ReportModelApiService.update(
       this.state.currentReportModel.id,
-      this.state.currentReportModel
+      this.state.currentReportModel,
+      this.source.token
     )
       .then(() => {
         this.props.onReportModelChange();
@@ -224,7 +234,10 @@ export default class ReportModel extends Component {
   }
 
   deleteReportModel() {
-    ReportModelApiService.delete(this.state.currentReportModel.id)
+    ReportModelApiService.delete(
+      this.state.currentReportModel.id,
+      this.source.token
+    )
       .then(() => {
         this.props.onReportModelChange();
       })

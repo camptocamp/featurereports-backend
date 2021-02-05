@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReportModelApiService from '../services/report-model.service';
 import ReportModel from './report-model.component';
+import axios from 'axios';
 
 export default class ReportModelList extends Component {
   constructor(props) {
@@ -16,14 +17,22 @@ export default class ReportModelList extends Component {
       currentIndex: -1,
       searchTitle: '',
     };
+
+    this.source = axios.CancelToken.source();
   }
 
   componentDidMount() {
     this.retrieveReportModels();
   }
 
+  componentWillUnmount() {
+    if (this.source) {
+      this.source.cancel('Component got unmounted');
+    }
+  }
+
   retrieveReportModels() {
-    ReportModelApiService.getAll()
+    ReportModelApiService.getAll(this.source.token)
       .then((response) => {
         this.setState({
           reportModels: response.data,
