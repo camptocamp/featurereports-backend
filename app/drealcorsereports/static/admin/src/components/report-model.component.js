@@ -352,8 +352,14 @@ export default class ReportModel extends Component {
                           onChange={(e) => this.onChangeField('type', index, e)}
                         >
                           <option value=""></option>
-                          <option value="string">string</option>
-                          <option value="number">number</option>
+                          <option value="string">texte (simple)</option>
+                          <option value="array-string">
+                            texte (valeurs multiples)
+                          </option>
+                          <option value="number">numérique</option>
+                          <option value="boolean">boolean</option>
+                          <option value="date">date</option>
+                          <option value="file">photo</option>
                         </select>
                         {formWarnings['fieldType'] && (
                           <span style={{ color: 'red' }}>

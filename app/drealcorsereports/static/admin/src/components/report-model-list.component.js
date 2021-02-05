@@ -115,12 +115,14 @@ export default class ReportModelList extends Component {
               currentReportModel={currentReportModel}
               onReportModelChange={this.refreshList}
             />
-          ) : newReportModel && (
-            <ReportModel
-              key="add"
-              currentReportModel={newReportModel}
-              onReportModelChange={this.refreshList}
-            />
+          ) : (
+            newReportModel && (
+              <ReportModel
+                key="add"
+                currentReportModel={newReportModel}
+                onReportModelChange={this.refreshList}
+              />
+            )
           )}
         </div>
       </div>
