@@ -316,11 +316,12 @@ export default class ReportModel extends Component {
                   currentReportModel.custom_field_schema.map((field, index) => (
                     <div key={index} className="row">
                       <div className="col-4">
-                        <label>Field name*</label>
+                        <label htmlFor="field_name">Field name*</label>
                         <input
                           type="text"
                           className="form-control mb-2"
                           value={field.name}
+                          id="field_name"
                           onChange={(e) => this.onChangeField('name', index, e)}
                         />
                         {formWarnings['fieldName'] && (
@@ -330,10 +331,11 @@ export default class ReportModel extends Component {
                         )}
                       </div>
                       <div className="col-4">
-                        <label>Field type*</label>
+                        <label htmlFor="field_type">Field type*</label>
                         <select
                           className="form-control mb-2"
                           value={field.type}
+                          id="field_type"
                           onChange={(e) => this.onChangeField('type', index, e)}
                         >
                           <option value=""></option>
@@ -347,11 +349,12 @@ export default class ReportModel extends Component {
                         )}
                       </div>
                       <div className="col-2">
-                        <label>Required</label>
+                        <label htmlFor="field_required">Required</label>
                         <input
                           className="form-check"
                           type="checkbox"
                           checked={field.required}
+                          id="field_required"
                           onChange={(e) =>
                             this.onChangeField('required', index, e)
                           }
