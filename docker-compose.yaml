@@ -30,7 +30,6 @@ services:
       - PGOPTIONS
       - INI_FILE
       - PROXY_PREFIX
-    command: 'pserve c2c://${INI_FILE}'
     ports:
       - ${DOCKER_PORT}:8080
 

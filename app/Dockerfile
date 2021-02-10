@@ -62,5 +62,6 @@ WORKDIR /app
 COPY --from=tools /app/ /app/
 RUN pip install --no-deps -e .
 COPY --from=front-builder /app/build /opt/drealcorsereports/static/admin/build
-
 ENV PROXY_PREFIX=
+EXPOSE 8080
+CMD pserve c2c://${INI_FILE}
