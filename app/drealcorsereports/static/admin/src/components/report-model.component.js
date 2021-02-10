@@ -256,24 +256,24 @@ export default class ReportModel extends Component {
     };
     let valid = true;
     if (this.state.currentReportModel.name === '') {
-      formWarnings.name = 'Please indicate a name';
+      formWarnings.name = 'Veuillez indiquer un titre';
       valid = false;
     }
     if (this.state.currentReportModel.layer_id === '') {
-      formWarnings.layer = 'Please indicate a layer';
+      formWarnings.layer = 'Veuillez indiquer une couche';
       valid = false;
     }
     if (this.state.currentReportModel.custom_field_schema.length === 0) {
-      formWarnings.fields = 'Please add at least one field';
+      formWarnings.fields = 'Veuillez ajouter au moins un champ';
       valid = false;
     }
     for (const f in this.state.currentReportModel.custom_field_schema) {
       if (this.state.currentReportModel.custom_field_schema[f].name === '') {
-        formWarnings.fieldName[f] = 'required';
+        formWarnings.fieldName[f] = 'obligatoire';
         valid = false;
       }
       if (this.state.currentReportModel.custom_field_schema[f].type === '') {
-        formWarnings.fieldType[f] = 'required';
+        formWarnings.fieldType[f] = 'obligatoire';
         valid = false;
       }
     }
@@ -398,7 +398,7 @@ export default class ReportModel extends Component {
                 onClick={() => {
                   if (
                     window.confirm(
-                      'Are you sure you wish to delete the report model?'
+                      'Veuillez confirmer la suppression du modèle de rapport'
                     )
                   )
                     this.deleteReportModel();
@@ -412,7 +412,7 @@ export default class ReportModel extends Component {
               type="submit"
               className="btn btn-success mr-2"
               onClick={() => {
-                if (window.confirm('Please confirm to save your changes'))
+                if (window.confirm('Veuillez confirmer vos modifications'))
                   this.submitReportModel();
               }}
             >
