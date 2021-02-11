@@ -417,6 +417,16 @@ export default class ReportModel extends Component {
 
             <button
               type="submit"
+              className="btn btn-secondary mr-2"
+              onClick={() => {
+                this.props.onCancel();
+              }}
+            >
+              Annuler
+            </button>
+
+            <button
+              type="submit"
               className="btn btn-warning"
               onClick={(e) => this.addField()}
             >
