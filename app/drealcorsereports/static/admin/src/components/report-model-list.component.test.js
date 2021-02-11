@@ -32,12 +32,6 @@ describe('Test Report Model List Component', () => {
     );
     expect(screen.queryByText('TestModel')).toBeInTheDocument();
     expect(screen.queryByText('TestLayer')).toBeInTheDocument();
-    expect(
-      screen.queryByText('2021-02-03T10:05:28.014020+00:00')
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByText('2021-02-03T10:05:28.014034+00:00')
-    ).toBeInTheDocument();
     expect(screen.queryAllByText('testuserid')).toHaveLength(2);
   });
 
