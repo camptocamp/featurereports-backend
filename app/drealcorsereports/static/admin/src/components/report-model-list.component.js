@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
+import { FaPen } from 'react-icons/fa';
 
 export default class ReportModelList extends Component {
   render() {
@@ -40,28 +41,38 @@ export default class ReportModelList extends Component {
         dataField: 'edit_button',
         text: '',
         isDummyField: true,
+        align: 'center',
         formatter: (cell, row) => (
           <button
             onClick={() => this.props.editReportModel(row)}
-            className="btn btn-warning"
+            className="btn btn-secondary"
           >
-            Modifier
+            <FaPen />
           </button>
         ),
       },
     ];
 
     return (
-      <div className="list row">
-        <div className="col-md-12">
-          <BootstrapTable
-            keyField="id"
-            bootstrap4={true}
-            hover={true}
-            data={reportModels}
-            columns={columns}
-          />
-        </div>
+      <div className="col-md-12">
+        <h4>
+          Liste des modèles de rapport
+          <button
+            onClick={() => this.props.addReportModel()}
+            className="btn btn-warning float-right mb-3"
+          >
+            Ajouter un modèle
+          </button>
+        </h4>
+
+        <BootstrapTable
+          keyField="id"
+          bootstrap4={true}
+          hover={true}
+          bordered={false}
+          data={reportModels}
+          columns={columns}
+        />
       </div>
     );
   }

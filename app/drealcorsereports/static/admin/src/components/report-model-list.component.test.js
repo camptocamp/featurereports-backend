@@ -48,7 +48,7 @@ describe('Test Report Model List Component', () => {
         editReportModel={editReportModelMock}
       />
     );
-    fireEvent.click(screen.getByText(/Modifier/), {
+    fireEvent.click(screen.getAllByRole('button')[1], {
       target: { type: 'submit' },
     });
     await waitFor(() => {

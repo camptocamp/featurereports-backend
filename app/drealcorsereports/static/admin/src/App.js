@@ -84,15 +84,7 @@ class App extends Component {
       <div>
         <nav className="navbar navbar-expand navbar-dark bg-dark">
           <div className="navbar-brand">drealcorse-reports</div>
-          <button
-            onClick={() => this.addReportModel()}
-            className="btn btn-warning position-absolute"
-            style={{ right: 10 }}
-          >
-            Ajouter un modèle
-          </button>
         </nav>
-
         <div className="container mt-3">
           {currentReportModel ? (
             <ReportModel
@@ -113,6 +105,7 @@ class App extends Component {
               <ReportModelList
                 reportModels={reportModels}
                 editReportModel={(e) => this.editReportModel(e)}
+                addReportModel={(e) => this.addReportModel(e)}
               />
               <p className="mt-2 text-danger">{this.state.errorMessage}</p>
             </div>
