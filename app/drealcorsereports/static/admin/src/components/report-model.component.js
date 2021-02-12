@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReportModelApiService from '../services/report-model.service';
 import axios from 'axios';
+import { getErrorMessage } from '../http-common';
 
 export default class ReportModel extends Component {
   constructor(props) {
@@ -179,7 +180,9 @@ export default class ReportModel extends Component {
         });
       })
       .catch((e) => {
-        console.log(e);
+        this.setState({
+          errorMessage: getErrorMessage(e),
+        });
       });
   }
 
@@ -212,7 +215,7 @@ export default class ReportModel extends Component {
       })
       .catch((e) => {
         this.setState({
-          errorMessage: e.response.data.errors[0].description[0],
+          errorMessage: getErrorMessage(e),
         });
       });
   }
@@ -228,7 +231,7 @@ export default class ReportModel extends Component {
       })
       .catch((e) => {
         this.setState({
-          errorMessage: e.response.data.errors[0].description[0],
+          errorMessage: getErrorMessage(e),
         });
       });
   }
@@ -242,7 +245,9 @@ export default class ReportModel extends Component {
         this.props.onReportModelChange();
       })
       .catch((e) => {
-        console.log(e);
+        this.setState({
+          errorMessage: getErrorMessage(e),
+        });
       });
   }
 

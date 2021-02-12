@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReportModelApiService from '../services/report-model.service';
 import ReportModel from './report-model.component';
 import axios from 'axios';
+import { getErrorMessage } from '../http-common';
 
 export default class ReportModelList extends Component {
   constructor(props) {
@@ -16,6 +17,7 @@ export default class ReportModelList extends Component {
       currentReportModel: null,
       currentIndex: -1,
       searchTitle: '',
+      errorMessage: '',
     };
 
     this.source = axios.CancelToken.source();
@@ -39,7 +41,9 @@ export default class ReportModelList extends Component {
         });
       })
       .catch((e) => {
-        console.log(e);
+        this.setState({
+          errorMessage: getErrorMessage(e),
+        });
       });
   }
 
@@ -100,6 +104,7 @@ export default class ReportModelList extends Component {
                 </li>
               ))}
           </ul>
+          <p className="mt-2 text-danger">{this.state.errorMessage}</p>
         </div>
         <div className="col-md-6">
           <button
