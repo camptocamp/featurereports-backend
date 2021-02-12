@@ -10,6 +10,7 @@ def main(global_config, **settings):
     config.include("drealcorsereports.models.includeme")
     config.include("drealcorsereports.security")
     config.include("cornice")
+    config.add_static_view("admin", "/opt/drealcorsereports/static/admin/build")
 
     config.scan("drealcorsereports.views")
 
