@@ -3,37 +3,38 @@ import ReportModelApiService from '../services/report-model.service';
 import axios from 'axios';
 import { getErrorMessage } from '../http-common';
 
+const defaultReportModel = {
+  id: null,
+  name: '',
+  layer_id: '',
+  custom_field_schema: [],
+  created_at: '',
+  created_by: '',
+  updated_at: '',
+  updated_by: '',
+};
+
+const defaultFormWarnings = {
+  name: '',
+  layer: '',
+  fields: '',
+  fieldName: {},
+  fieldType: {},
+};
+
+const defaultCustomField = {
+  name: '',
+  type: '',
+  required: false,
+};
+
 export default class ReportModel extends Component {
   constructor(props) {
     super(props);
-    this.onChangeName = this.onChangeName.bind(this);
-    this.onChangeLayer = this.onChangeLayer.bind(this);
-    this.onChangeField = this.onChangeField.bind(this);
-    this.getReportModel = this.getReportModel.bind(this);
-    this.submitReportModel = this.submitReportModel.bind(this);
-    this.createReportModel = this.createReportModel.bind(this);
-    this.updateReportModel = this.updateReportModel.bind(this);
-    this.deleteReportModel = this.deleteReportModel.bind(this);
-    this.validateReportModel = this.validateReportModel.bind(this);
 
     this.state = {
-      currentReportModel: {
-        id: null,
-        name: '',
-        layer_id: '',
-        custom_field_schema: [],
-        created_at: '',
-        created_by: '',
-        updated_at: '',
-        updated_by: '',
-      },
-      formWarnings: {
-        name: '',
-        layer: '',
-        fields: '',
-        fieldName: {},
-        fieldType: {},
-      },
+      currentReportModel: defaultReportModel,
+      formWarnings: defaultFormWarnings,
       errorMessage: '',
     };
 
@@ -61,7 +62,7 @@ export default class ReportModel extends Component {
   onChangeName(e) {
     const name = e.target.value;
 
-    this.setState(function (prevState) {
+    this.setState((prevState) => {
       return {
         currentReportModel: {
           ...prevState.currentReportModel,
@@ -138,11 +139,7 @@ export default class ReportModel extends Component {
   addField() {
     const custom_field_schema = this.state.currentReportModel
       .custom_field_schema;
-    custom_field_schema.push({
-      name: '',
-      type: '',
-      required: false,
-    });
+    custom_field_schema.push(defaultCustomField);
     this.setState((prevState) => ({
       currentReportModel: {
         ...prevState.currentReportModel,
@@ -252,13 +249,7 @@ export default class ReportModel extends Component {
   }
 
   validateReportModel() {
-    let formWarnings = {
-      name: '',
-      type: '',
-      fields: '',
-      fieldName: {},
-      fieldType: {},
-    };
+    let formWarnings = defaultFormWarnings;
     let valid = true;
     if (this.state.currentReportModel.name === '') {
       formWarnings.name = 'Veuillez indiquer un titre';
@@ -308,7 +299,7 @@ export default class ReportModel extends Component {
                   className="form-control"
                   id="name"
                   value={currentReportModel.name}
-                  onChange={this.onChangeName}
+                  onChange={(e) => this.onChangeName(e)}
                 />
               </div>
               <div className="form-group">
@@ -321,7 +312,7 @@ export default class ReportModel extends Component {
                   className="form-control"
                   id="layer_id"
                   value={currentReportModel.layer_id}
-                  onChange={this.onChangeLayer}
+                  onChange={(e) => this.onChangeLayer(e)}
                 />
               </div>
 

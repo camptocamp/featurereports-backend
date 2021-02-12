@@ -7,9 +7,6 @@ import { getErrorMessage } from '../http-common';
 export default class ReportModelList extends Component {
   constructor(props) {
     super(props);
-    this.retrieveReportModels = this.retrieveReportModels.bind(this);
-    this.refreshList = this.refreshList.bind(this);
-    this.setActiveReportModel = this.setActiveReportModel.bind(this);
 
     this.state = {
       reportModels: [],
@@ -118,14 +115,14 @@ export default class ReportModelList extends Component {
             <ReportModel
               key="edit"
               currentReportModel={currentReportModel}
-              onReportModelChange={this.refreshList}
+              onReportModelChange={() => this.refreshList()}
             />
           ) : (
             newReportModel && (
               <ReportModel
                 key="add"
                 currentReportModel={newReportModel}
-                onReportModelChange={this.refreshList}
+                onReportModelChange={() => this.refreshList()}
               />
             )
           )}
