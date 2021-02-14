@@ -8,9 +8,11 @@ from cornice.resource import resource, view
 from cornice.validators import marshmallow_body_validator
 from pyramid.exceptions import HTTPNotFound
 from pyramid.request import Request
+from pyramid.security import Allow
 
 from drealcorsereports.models.reports import ReportModel
 from drealcorsereports.schemas.reports import ReportModelSchema
+from drealcorsereports.security import is_user_admin_on_layer
 
 
 def marshmallow_validator(request: Request, **kwargs):
@@ -32,14 +34,36 @@ class AdminReportModelView:
         self.context = context
         if self.request.matchdict.get("id"):
             self.report_models_id = UUID(self.request.matchdict.get("id"))
+        else:
+            self.report_models_id = None
 
+    def __acl__(self):
+        acl = [
+            (Allow, "ROLE_REPORTS_ADMIN", ("list", "add", "view")),
+        ]
+        if (
+            self.report_models_id
+            and "ROLE_REPORTS_ADMIN" in self.request.effective_principals
+        ):
+            user_id = self.request.authenticated_userid
+            if is_user_admin_on_layer(user_id, self._get_object().layer_id):
+                acl.extend(
+                    [
+                        (Allow, user_id, ("edit", "delete")),
+                    ]
+                )
+        return acl
+
+    @view(permission="list")
     def collection_get(self) -> list:
         session = self.request.dbsession
         rms = session.query(ReportModel)
         report_model_schema = ReportModelSchema()
         return [report_model_schema.dump(rm) for rm in rms]
 
-    @view(schema=ReportModelSchema, validators=(marshmallow_validator,))
+    @view(
+        permission="add", schema=ReportModelSchema, validators=(marshmallow_validator,)
+    )
     def collection_post(self) -> dict:
         report_model = self.request.validated
         # TODO need to extract user from header properly
@@ -57,10 +81,13 @@ class AdminReportModelView:
             raise HTTPNotFound()
         return rm
 
+    @view(permission="view")
     def get(self) -> dict:
         return ReportModelSchema().dump(self._get_object())
 
-    @view(schema=ReportModelSchema, validators=(marshmallow_validator,))
+    @view(
+        permission="edit", schema=ReportModelSchema, validators=(marshmallow_validator,)
+    )
     def put(self) -> dict:
         self._get_object()
         report_model = self.request.validated
@@ -68,6 +95,7 @@ class AdminReportModelView:
         report_model.updated_at = datetime.now(timezone.utc)
         return ReportModelSchema().dump(report_model)
 
+    @view(permission="delete")
     def delete(self) -> None:
         self.request.dbsession.delete(self._get_object())
         self.request.response.status_code = 204

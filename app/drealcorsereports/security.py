@@ -4,6 +4,14 @@ from pyramid.security import Authenticated, Everyone
 from zope.interface import implementer
 
 
+def is_user_admin_on_layer(user_id: str, layer_id: str):
+    "Return True if user is admin on considered layer"
+    # TODO: request GeoServer
+    del user_id
+    del layer_id
+    return True
+
+
 @implementer(IAuthenticationPolicy)
 class HeaderAuthentication:
     def unauthenticated_userid(self, request):
