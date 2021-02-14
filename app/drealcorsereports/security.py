@@ -14,8 +14,15 @@ class HeaderAuthentication:
 
     def effective_principals(self, request):
         effective_principals = [Everyone]
-        if self.authenticated_userid(request) is not None:
-            effective_principals.append(Authenticated)
+
+        userid = self.authenticated_userid(request)
+        if userid is not None:
+            effective_principals += [Authenticated, str(userid)]
+
+        roles = request.headers.get("sec-roles", "")
+        if roles != "":
+            effective_principals += [r.strip() for r in roles.split(",")]
+
         return effective_principals
 
     def remember(self, request, userid, **kw):  # pylint: disable=unused-argument
