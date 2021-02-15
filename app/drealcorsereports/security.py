@@ -1,13 +1,14 @@
 from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.interfaces import IAuthenticationPolicy
+from pyramid.request import Request
 from pyramid.security import Authenticated, Everyone
 from zope.interface import implementer
 
 
-def is_user_admin_on_layer(user_id: str, layer_id: str):
+def is_user_admin_on_layer(request: Request, layer_id: str):
     "Return True if user is admin on considered layer"
     # TODO: request GeoServer
-    del user_id
+    del request
     del layer_id
     return True
 

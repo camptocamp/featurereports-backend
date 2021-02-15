@@ -44,6 +44,5 @@ class ReportModelSchema(SQLAlchemyAutoSchema):
     @marshmallow.validates("layer_id")
     def validate_layer_admin(self, value):
         request = self.context["request"]
-        user_id = request.authenticated_userid
-        if not is_user_admin_on_layer(user_id, value):
+        if not is_user_admin_on_layer(request, value):
             raise marshmallow.ValidationError(f"You're not admin on layer {value}.")

@@ -45,11 +45,10 @@ class AdminReportModelView:
             self.report_models_id
             and "ROLE_REPORTS_ADMIN" in self.request.effective_principals
         ):
-            user_id = self.request.authenticated_userid
-            if is_user_admin_on_layer(user_id, self._get_object().layer_id):
+            if is_user_admin_on_layer(self.request, self._get_object().layer_id):
                 acl.extend(
                     [
-                        (Allow, user_id, ("edit", "delete")),
+                        (Allow, self.request.authenticated_userid, ("edit", "delete")),
                     ]
                 )
         return acl
