@@ -66,7 +66,7 @@ class TestAdminReportModelView:
     def _auth_headers(self, username=USER_ADMIN, roles=[ROLE_REPORTS_ADMIN]):
         return {
             "sec-username": username,
-            "sec-roles": ",".join(roles),
+            "sec-roles": ";".join(roles),
         }
 
     def test_collection_get_forbidden(self, test_app):

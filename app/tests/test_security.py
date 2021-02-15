@@ -34,7 +34,7 @@ class TestHeaderAuthentication:
             [Everyone, Authenticated, "test_user"]
         )
 
-        request.headers["sec-roles"] = "role1,role2"
+        request.headers["sec-roles"] = "role1;role2"
         assert set(auth_policy.effective_principals(request)) == set(
             [Everyone, Authenticated, "test_user", "role1", "role2"]
         )

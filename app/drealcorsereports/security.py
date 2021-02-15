@@ -29,7 +29,7 @@ class HeaderAuthentication:
 
         roles = request.headers.get("sec-roles", "")
         if roles != "":
-            effective_principals += [r.strip() for r in roles.split(",")]
+            effective_principals += [r.strip() for r in roles.split(";")]
 
         return effective_principals
 
