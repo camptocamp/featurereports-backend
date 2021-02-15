@@ -46,7 +46,7 @@ def test_data(dbsession, transact):
 
 
 @pytest.fixture(scope="class")
-def is_layer_admin_patch():
+def patch_is_user_admin_on_layer():
     def is_user_admin_on_layer(user_id, layer_id):
         del user_id
         return layer_id == ALLOWED_LAYER
@@ -61,7 +61,7 @@ def is_layer_admin_patch():
         yield view_mock, schema_mock
 
 
-@pytest.mark.usefixtures("transact", "is_layer_admin_patch")
+@pytest.mark.usefixtures("transact", "patch_is_user_admin_on_layer")
 class TestAdminReportModelView:
     def _auth_headers(self, username=USER_ADMIN, roles=[ROLE_REPORTS_ADMIN]):
         return {
