@@ -159,3 +159,14 @@ docker-push: ## Push docker images on docker hub
 .PHONY: docker-pull
 docker-pull: ## Pull docker images from docker hub
 	docker pull ${DOCKER_BASE}-app:${DOCKER_TAG}
+
+# make local valid certs
+# mkcert need to be init first !! (must done once only)
+.PHONY: cert
+.ONESHELL:
+cert:
+	cd resources/ssl
+	mkcert georchestra.mydomain.org
+	cp georchestra.mydomain.org.pem georchestra.mydomain.org.crt
+	cp georchestra.mydomain.org-key.pem georchestra.mydomain.org.key
+
