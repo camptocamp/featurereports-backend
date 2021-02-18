@@ -2,6 +2,7 @@ import marshmallow
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
 
 from drealcorsereports.models.reports import Report, ReportModel
+from drealcorsereports.security import is_user_admin_on_layer
 
 
 class ReportSchema(SQLAlchemyAutoSchema):
@@ -39,3 +40,9 @@ class ReportModelSchema(SQLAlchemyAutoSchema):
             raise marshmallow.ValidationError(
                 f"Report model named {value} already exists."
             )
+
+    @marshmallow.validates("layer_id")
+    def validate_layer_admin(self, value):
+        request = self.context["request"]
+        if not is_user_admin_on_layer(request, value):
+            raise marshmallow.ValidationError(f"You're not admin on layer {value}.")
