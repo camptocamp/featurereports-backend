@@ -1,4 +1,5 @@
 import marshmallow
+from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
 
 from drealcorsereports.models.reports import Report, ReportModel
@@ -9,8 +10,9 @@ class ReportSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Report
         load_instance = True
-        include_relationships = True
-
+        #include_relationships = True
+    
+    report_model_id = fields.String()
     created_at = auto_field(dump_only=True)
     created_by = auto_field(dump_only=True)
     updated_by = auto_field(dump_only=True)

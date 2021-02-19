@@ -4,7 +4,7 @@ from uuid import UUID
 from cornice.resource import resource, view
 from cornice.validators import marshmallow_body_validator
 from pyramid.request import Request
-from pyramid.exceptions import HTTPNotFound
+from pyramid.httpexceptions import HTTPNotFound, HTTPUnprocessableEntity
 
 from drealcorsereports.models.reports import Report
 from drealcorsereports.schemas.reports import ReportSchema
@@ -18,6 +18,7 @@ def marshmallow_validator(request: Request, **kwargs):
     )
 
 
+
 @resource(
     collection_path="/reports",
     path="/reports/{id}",
@@ -28,7 +29,12 @@ class ReportView:
         self.request = request
         del context
         if self.request.matchdict.get("id"):
-            self.report_id = UUID(self.request.matchdict.get("id"))
+            try:
+                self.report_id = UUID(self.request.matchdict.get("id"))
+            except ValueError:
+                self.request.errors.add("body", "id", "Your id seems malformed")
+                self.request.errors.status = 422
+                return
 
     def collection_get(self) -> list:
         session = self.request.dbsession

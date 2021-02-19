@@ -4,7 +4,6 @@ from unittest.mock import patch
 
 import pytest
 from drealcorsereports.models.reports import ReportModel
-from pyramid.httpexceptions import HTTPBadRequest
 
 USER_ADMIN = "USER_ADMIN"
 ROLE_REPORTS_ADMIN = "ROLE_REPORTS_ADMIN"
