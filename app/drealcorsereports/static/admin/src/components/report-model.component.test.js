@@ -41,7 +41,7 @@ describe('Test Report Model Component', () => {
       />
     );
     //fill form with valid data
-    fireEvent.click(screen.getByText(/Ajouter un champ/), {
+    fireEvent.click(screen.getAllByRole('button')[0], {
       target: { type: 'submit' },
     });
     userEvent.type(screen.getByLabelText(/Titre/), 'Model Name');

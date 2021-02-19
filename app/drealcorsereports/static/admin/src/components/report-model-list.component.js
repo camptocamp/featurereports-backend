@@ -1,132 +1,89 @@
 import React, { Component } from 'react';
-import ReportModelApiService from '../services/report-model.service';
-import ReportModel from './report-model.component';
-import axios from 'axios';
-import { getErrorMessage } from '../http-common';
+import BootstrapTable from 'react-bootstrap-table-next';
+import { FaPen } from 'react-icons/fa';
 
 export default class ReportModelList extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      reportModels: [],
-      newReportModel: null,
-      currentReportModel: null,
-      currentIndex: -1,
-      searchTitle: '',
-      errorMessage: '',
-    };
-
-    this.source = axios.CancelToken.source();
-  }
-
-  componentDidMount() {
-    this.retrieveReportModels();
-  }
-
-  componentWillUnmount() {
-    if (this.source) {
-      this.source.cancel('Component got unmounted');
-    }
-  }
-
-  retrieveReportModels() {
-    ReportModelApiService.getAll(this.source.token)
-      .then((response) => {
-        this.setState({
-          reportModels: response.data,
-        });
-      })
-      .catch((e) => {
-        this.setState({
-          errorMessage: getErrorMessage(e),
-        });
-      });
-  }
-
-  refreshList() {
-    this.retrieveReportModels();
-    this.setState({
-      newReportModel: null,
-      currentReportModel: null,
-      currentIndex: -1,
-    });
-  }
-
-  setActiveReportModel(reportModel, index) {
-    this.setState({
-      currentReportModel: reportModel,
-      currentIndex: index,
-    });
-  }
-
-  addReportModel() {
-    this.setState({
-      newReportModel: {
-        id: null,
-        name: '',
-        layer_id: '',
-        custom_field_schema: [],
-      },
-      currentReportModel: null,
-      currentIndex: -1,
-    });
-  }
-
   render() {
-    const {
-      reportModels,
-      newReportModel,
-      currentReportModel,
-      currentIndex,
-    } = this.state;
+    const reportModels = this.props.reportModels;
+    const formatDate = (dateStringISO) => {
+      const timestamp = Date.parse(dateStringISO);
+      const date = new Date(timestamp);
+      const dateStringFR = date.toLocaleString('fr-FR');
+      return dateStringFR;
+    };
+    const columns = [
+      {
+        dataField: 'name',
+        text: 'Titre',
+        sort: true,
+      },
+      {
+        dataField: 'layer_id',
+        text: 'Couche',
+        sort: true,
+      },
+      {
+        dataField: 'created_at',
+        text: 'Créé le',
+        sort: true,
+        formatter: (cell, row) => {
+          return formatDate(cell);
+        },
+      },
+      {
+        dataField: 'created_by',
+        text: 'Créé par',
+        sort: true,
+      },
+      {
+        dataField: 'updated_at',
+        text: 'Mise à jour le',
+        sort: true,
+        formatter: (cell, row) => {
+          return formatDate(cell);
+        },
+      },
+      {
+        dataField: 'updated_by',
+        text: 'Mise à jour par',
+        sort: true,
+      },
+      {
+        dataField: 'edit_button',
+        text: '',
+        isDummyField: true,
+        align: 'center',
+        formatter: (cell, row) => (
+          <button
+            onClick={() => this.props.editReportModel(row)}
+            className="btn btn-secondary"
+          >
+            <FaPen />
+          </button>
+        ),
+      },
+    ];
 
     return (
-      <div className="list row">
-        <div className="col-md-6">
-          <h4>Liste des modèles de rapport</h4>
-
-          <ul className="list-group">
-            {reportModels &&
-              reportModels.map((reportModel, index) => (
-                <li
-                  className={
-                    'list-group-item ' +
-                    (index === currentIndex ? 'active' : '')
-                  }
-                  onClick={() => this.setActiveReportModel(reportModel, index)}
-                  key={index}
-                >
-                  {reportModel.name}
-                </li>
-              ))}
-          </ul>
-          <p className="mt-2 text-danger">{this.state.errorMessage}</p>
-        </div>
-        <div className="col-md-6">
+      <div className="col-md-12">
+        <h4>
+          Liste des modèles de rapport
           <button
-            onClick={() => this.addReportModel()}
-            className="btn btn-warning position-absolute"
-            style={{ right: 0 }}
+            onClick={() => this.props.addReportModel()}
+            className="btn btn-warning float-right mb-3"
           >
             Ajouter un modèle
           </button>
-          {currentReportModel ? (
-            <ReportModel
-              key="edit"
-              currentReportModel={currentReportModel}
-              onReportModelChange={() => this.refreshList()}
-            />
-          ) : (
-            newReportModel && (
-              <ReportModel
-                key="add"
-                currentReportModel={newReportModel}
-                onReportModelChange={() => this.refreshList()}
-              />
-            )
-          )}
-        </div>
+        </h4>
+
+        <BootstrapTable
+          keyField="id"
+          bootstrap4={true}
+          hover={true}
+          bordered={false}
+          data={reportModels}
+          columns={columns}
+        />
       </div>
     );
   }

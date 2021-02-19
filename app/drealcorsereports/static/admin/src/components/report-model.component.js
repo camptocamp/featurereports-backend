@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import ReportModelApiService from '../services/report-model.service';
 import axios from 'axios';
 import { getErrorMessage } from '../http-common';
+import { FaMinus } from 'react-icons/fa';
+import { FaPlus } from 'react-icons/fa';
 
 const defaultReportModel = {
   id: null,
@@ -136,7 +138,8 @@ export default class ReportModel extends Component {
     }));
   }
 
-  addField() {
+  addField(e) {
+    e.preventDefault();
     const custom_field_schema = this.state.currentReportModel
       .custom_field_schema;
     custom_field_schema.push(defaultCustomField);
@@ -321,7 +324,7 @@ export default class ReportModel extends Component {
                 {formWarnings['fields']}
               </span>
               <div id="custom_field_schema" className="form-group">
-                {currentReportModel.custom_field_schema &&
+                {currentReportModel.custom_field_schema.length !== 0 ? (
                   currentReportModel.custom_field_schema.map((field, index) => (
                     <div key={index} className="row">
                       <div className="col-4">
@@ -380,11 +383,30 @@ export default class ReportModel extends Component {
                           className="btn btn-danger mt-4"
                           onClick={(e) => this.deleteField(index, e)}
                         >
-                          -
+                          <FaMinus />
                         </button>
                       </div>
+                      <div className="col-1">
+                        {index ===
+                          currentReportModel.custom_field_schema.length - 1 && (
+                          <button
+                            className="btn btn-success mt-4"
+                            onClick={(e) => this.addField(e)}
+                          >
+                            <FaPlus />
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  ))}
+                  ))
+                ) : (
+                  <button
+                    className="btn btn-success"
+                    onClick={(e) => this.addField(e)}
+                  >
+                    <FaPlus />
+                  </button>
+                )}
               </div>
             </form>
 
@@ -417,11 +439,14 @@ export default class ReportModel extends Component {
 
             <button
               type="submit"
-              className="btn btn-warning"
-              onClick={(e) => this.addField()}
+              className="btn btn-secondary mr-2"
+              onClick={() => {
+                this.props.onCancel();
+              }}
             >
-              Ajouter un champ
+              Annuler
             </button>
+
             <p className="mt-2 text-danger">{this.state.errorMessage}</p>
           </div>
         )}
