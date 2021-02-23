@@ -15,6 +15,22 @@ Create a development instance
 Public interface should be available at:
 http://localhost:8080/
 
+To access the interface behind the georchestra proxy
+
+* create a new line in your `/etc/hosts` :
+
+.. code-block:: bash
+
+    127.0.1.1 georchestra.mydomain.org
+
+* launch the compo : `make meacoffee`
+* access the interface at https://georchestra.mydomain.org/mapstore-reports/
+* if you have a certificate issue :
+
+.. code-block:: bash
+
+    make cert
+
 Generate a new alembic revision
 -------------------------------
 

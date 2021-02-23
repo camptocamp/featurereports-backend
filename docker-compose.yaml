@@ -1,10 +1,18 @@
 ---
-
-# The project Docker compose file for development.
-
-version: '2'
+version: '3'
+volumes:
+  postgresql_data:
+  ldap_data:
+  ldap_config:
+  geoserver_geodata:
+  geoserver_datadir:
+  geoserver_tiles:
+  geoserver_native_libs:
 
 services:
+  database:
+    image: georchestra/database
+    restart: unless-stopped
 
   db:
     image: ${DOCKER_BASE}-db:latest
@@ -13,13 +21,12 @@ services:
       - POSTGRES_USER=drealcorse
       - POSTGRES_PASSWORD=drealcorse
       - POSTGRES_DB=drealcorse
-
   app:
     image: ${DOCKER_BASE}-app:${DOCKER_TAG}
     user: www-data
     restart: unless-stopped
     depends_on:
-      - db
+      - database
     environment:
       - PGHOST
       - PGHOST_SLAVE
@@ -59,3 +66,94 @@ services:
       - PGDATABASE=drealcorse_tests
       - INI_FILE
     command: 'tail -f /dev/null'
+
+  lb:
+    image: traefik:1.7
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./georchestra_resources/ssl/:/etc/traefik/ssl
+      - ./georchestra_resources/traefik.toml:/traefik.toml
+
+  ldap:
+    image: georchestra/ldap:latest
+    environment:
+        - SLAPD_ORGANISATION=georchestra
+        - SLAPD_DOMAIN=georchestra.org
+        - SLAPD_PASSWORD=secret
+        - SLAPD_LOG_LEVEL=32768 # See https://www.openldap.org/doc/admin24/slapdconfig.html#loglevel%20%3Clevel%3E
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap
+    restart: always
+
+  proxy:
+    image: georchestra/security-proxy:latest
+    depends_on:
+      - ldap
+      - database
+    volumes:
+      - ./georchestra_datadir:/etc/georchestra
+    environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - XMS=256M
+      - XMX=512M
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=sp"
+      - "traefik.frontend.rule=Host:georchestra.mydomain.org"
+      - "traefik.frontend.passHostHeader=true"
+
+  cas:
+    image: georchestra/cas:latest
+    depends_on:
+      - ldap
+    volumes:
+      - ./georchestra_datadir:/etc/georchestra
+    environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - XMS=256M
+      - XMX=512M
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=cas"
+      - "traefik.frontend.rule=Host:georchestra.mydomain.org;PathPrefix:/cas"
+
+  header:
+    image: georchestra/header:latest
+    volumes:
+      - ./georchestra_datadir:/etc/georchestra
+    environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - XMS=256M
+      - XMX=512M
+    restart: always
+
+  geoserver:
+    image: georchestra/geoserver:latest
+    depends_on:
+      - ldap
+    volumes:
+      - ./georchestra_datadir:/etc/georchestra
+      - geoserver_datadir:/mnt/geoserver_datadir
+      - geoserver_geodata:/mnt/geoserver_geodata
+      - geoserver_tiles:/mnt/geoserver_tiles
+      - geoserver_native_libs:/mnt/geoserver_native_libs
+    environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - XMS=256M
+      - XMX=8G
+    restart: always
+
+  mapstore:
+    image: georchestra/mapstore:latest
+    depends_on:
+      - database
+    volumes:
+      - ./georchestra_datadir:/etc/georchestra
+    environment:
+      - JAVA_OPTS=-Xms512m -Xmx512m -XX:MaxPermSize=128m -Dgeorchestra.datadir=/etc/georchestra -DPRINT_BASE_URL=pdf
