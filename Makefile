@@ -23,6 +23,7 @@ export PGPORT
 export PGDATABASE
 export PGUSER
 export PGPASSWORD
+export GEOSERVER_URL
 
 PROXY_PREFIX ?=
 export PROXY_PREFIX

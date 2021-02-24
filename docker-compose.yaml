@@ -64,6 +64,7 @@ services:
       - PGUSER
       - PGPASSWORD
       - PGDATABASE=drealcorse_tests
+      - GEOSERVER_URL=https://georchestra.mydomain.org/geoserver
       - INI_FILE
     command: 'tail -f /dev/null'
 

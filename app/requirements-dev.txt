@@ -6,3 +6,4 @@ pydevd
 pyramid_ipython
 pytest==6.2.1
 webtest==2.0.35
+responses

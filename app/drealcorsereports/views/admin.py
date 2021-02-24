@@ -40,6 +40,7 @@ class AdminReportModelView:
     def __acl__(self):
         acl = [
             (Allow, "ROLE_REPORTS_ADMIN", ("list", "add", "view")),
+            (Allow, "ROLE_SUPERUSER", ("list", "add", "view", "edit", "delete")),
         ]
         if (
             self.report_models_id
