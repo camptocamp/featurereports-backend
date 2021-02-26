@@ -46,6 +46,7 @@ class AdminReportModelView:
             self.report_models_id
             and "ROLE_REPORTS_ADMIN" in self.request.effective_principals
         ):
+            print("checking admin")
             if is_user_admin_on_layer(self.request, self._get_object().layer_id):
                 acl.extend(
                     [
