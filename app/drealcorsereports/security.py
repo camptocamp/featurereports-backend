@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Set, List, Tuple
+from typing import List, Tuple
 
 import requests
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -17,12 +17,16 @@ class RuleAccess(Enum):
 
 class Rule:
     def __init__(
-        self, workspace: str, layer: str, rule_access: RuleAccess, roles: List[str]
+        self,
+        workspace: str,
+        layer: str,
+        rule_access: RuleAccess,
+        geoserver_roles: List[str],
     ):
         self.workspace = workspace
         self.layer = layer
         self.rule_access = rule_access
-        self.roles = roles
+        self.geoserver_roles = geoserver_roles
 
     @staticmethod
     def parse(*geoserver_rule) -> "Rule":
@@ -36,7 +40,8 @@ class Rule:
         rules = (
             self.workspace == workspace or self.workspace == "*",
             self.layer == layer or self.layer == "*",
-            set(roles).intersection(self.roles),
+            set(roles).intersection(self.geoserver_roles)
+            or "*" in self.geoserver_roles,
             self.rule_access == RuleAccess.ADMIN,
         )
         if all(rules):
@@ -66,7 +71,7 @@ def is_user_admin_on_layer(request: Request, layer_id: str):
     layer_rules_json = layer_rules_response.json()
     # filter rules for this layer_id
     for kv in layer_rules_json.items():
-        rule = Rule.parse(kv)
+        rule = Rule.parse(*kv)
         if rule.match(layer_id, request.effective_principals):
             return True
     return False
