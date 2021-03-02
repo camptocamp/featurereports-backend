@@ -13,7 +13,7 @@ Create a development instance
     make meacoffee
 
 Public interface should be available at:
-http://localhost:8080/
+http://localhost:8080/admin/
 
 To access the interface behind the georchestra proxy
 
@@ -24,7 +24,7 @@ To access the interface behind the georchestra proxy
     127.0.1.1 georchestra.mydomain.org
 
 * launch the compo : `make meacoffee`
-* access the interface at https://georchestra.mydomain.org/mapstore-reports/
+* access the interface at https://georchestra.mydomain.org/mapstore-reports/admin/
 * if you have a certificate issue :
 
 .. code-block:: bash
