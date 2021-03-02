@@ -106,7 +106,7 @@ front-format:
 
 .PHONY: cleanall
 cleanall: ## Clean everything including docker containers and images
-cleanall: clean
+cleanall: 
 	docker-compose down --remove-orphans
 	rm -f .env
 	docker rmi \
