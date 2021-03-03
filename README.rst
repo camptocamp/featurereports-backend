@@ -12,8 +12,14 @@ Create a development instance
     cd drealcorse-reports
     make meacoffee
 
-Public interface should be available at:
-http://localhost:8080/
+Admin interface should be available at:
+http://localhost:8080/admin/
+
+Note that you may need to add some headers (for example using Chrome extension ModHeader)
+to be able to play with data in the admin interface:
+
+* sec-username: testadmin
+* sec-roles: ROLE_REPORTS_ADMIN
 
 To access the interface behind the georchestra proxy
 
@@ -24,7 +30,10 @@ To access the interface behind the georchestra proxy
     127.0.1.1 georchestra.mydomain.org
 
 * launch the compo : `make meacoffee`
-* access the interface at https://georchestra.mydomain.org/mapstore-reports/
+* access the interface at https://georchestra.mydomain.org/mapstore-reports/admin/?login
+* login with:
+   - identifiant: testadmin
+   - password: testadmin
 * if you have a certificate issue :
 
 .. code-block:: bash
