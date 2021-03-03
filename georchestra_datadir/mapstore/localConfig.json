@@ -328,7 +328,7 @@
             "FeedbackMask"
         ],
         "desktop": ["Header",
-          "Details",
+          "Details", "SampleExtension",
           {
             "name": "Map",
             "cfg": {
