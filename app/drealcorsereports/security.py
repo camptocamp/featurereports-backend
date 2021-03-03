@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 import requests
 from pyramid.authorization import ACLAuthorizationPolicy
@@ -59,16 +59,25 @@ class Rule:
         return splited_layer_name  # type: ignore
 
 
+def get_geoserver_layers_acl(geoserver_url: str) -> Dict:
+    layer_rules_response = requests.get(
+        f"{geoserver_url}/rest/security/acl/layers.json",
+        headers = {
+            "sec-roles": "ROLE_ADMINISTRATOR",
+            "sec-username": "geoserver_privileged_user"
+        }
+    )
+    layer_rules_response.raise_for_status()
+    return layer_rules_response.json()
+
+
 def is_user_admin_on_layer(request: Request, layer_id: str):
     """
     Return True if user is admin on considered layer
     """
-    geoserver_url = request.registry.settings.get("geoserver_url")
-    layer_rules_response = requests.get(
-        f"{geoserver_url}/rest/security/acl/layers.json"
+    layer_rules_json = get_geoserver_layers_acl(
+        request.registry.settings.get("geoserver_url")
     )
-    layer_rules_response.raise_for_status()
-    layer_rules_json = layer_rules_response.json()
     # filter rules for this layer_id
     for kv in layer_rules_json.items():
         rule = Rule.parse(*kv)

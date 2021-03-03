@@ -2,8 +2,11 @@
 Admin rest services.
 """
 from datetime import datetime, timezone
+from typing import List
 from uuid import UUID
 
+import requests
+from cornice import Service
 from cornice.resource import resource, view
 from cornice.validators import marshmallow_body_validator
 from pyramid.exceptions import HTTPNotFound
@@ -12,7 +15,11 @@ from pyramid.security import Allow
 
 from drealcorsereports.models.reports import ReportModel
 from drealcorsereports.schemas.reports import ReportModelSchema
-from drealcorsereports.security import is_user_admin_on_layer
+from drealcorsereports.security import (
+    is_user_admin_on_layer,
+    get_geoserver_layers_acl,
+    Rule,
+)
 
 
 def marshmallow_validator(request: Request, **kwargs):
@@ -46,7 +53,6 @@ class AdminReportModelView:
             self.report_models_id
             and "ROLE_REPORTS_ADMIN" in self.request.effective_principals
         ):
-            print("checking admin")
             if is_user_admin_on_layer(self.request, self._get_object().layer_id):
                 acl.extend(
                     [
@@ -100,3 +106,32 @@ class AdminReportModelView:
     def delete(self) -> None:
         self.request.dbsession.delete(self._get_object())
         self.request.response.status_code = 204
+
+
+list_layers = Service(
+    name="list_layers",
+    path="/layers",
+    description="list of layers from geoserver based on right you have.",
+)
+
+
+@list_layers.get()
+def get_layers(request: Request) -> List:
+    layers_request = requests.get(request.registry.settings.get("geoserver_url") + "/rest/layers.json",
+        headers={"Sec-Username": "geoserver_privileged_user",
+                 "Sec-Roles": "ROLE_ADMINISTRATOR"
+                 },
+    )
+    layers_request.raise_for_status()
+    layers = layers_request.json()
+    layer_rules_json = get_geoserver_layers_acl(
+        request.registry.settings.get("geoserver_url")
+    )
+    authorized_layers = list()
+    for layer in layers["layers"]['layer']:
+        for layer_rules in layer_rules_json.items():
+            rule = Rule.parse(*layer_rules)
+            if rule.match(layer["name"], request.effective_principals):
+                authorized_layers.append(layer["name"])
+
+    return authorized_layers

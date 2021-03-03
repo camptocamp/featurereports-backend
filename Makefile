@@ -17,7 +17,7 @@ PGPORT ?= 5432
 PGDATABASE ?= drealcorse
 PGUSER ?= drealcorse
 PGPASSWORD ?= drealcorse
-GEOSERVER_URL ?= http://geoserver/
+GEOSERVER_URL ?= http://geoserver:8080/geoserver
 export PGHOST
 export PGHOST_SLAVE
 export PGPORT
