@@ -16,8 +16,9 @@ class ReportSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Report
         load_instance = True
-        include_relationships = True
+        include_relationships = False
 
+    report_model_id = fields.UUID()
     created_at = auto_field(dump_only=True)
     created_by = auto_field(dump_only=True)
     updated_by = auto_field(dump_only=True)

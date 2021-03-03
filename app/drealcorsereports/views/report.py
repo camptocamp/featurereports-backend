@@ -8,6 +8,7 @@ from pyramid.exceptions import HTTPNotFound
 
 from drealcorsereports.models.reports import Report
 from drealcorsereports.schemas.reports import ReportSchema
+from pyramid.security import Allow
 
 
 def marshmallow_validator(request: Request, **kwargs):
@@ -30,21 +31,30 @@ class ReportView:
         if self.request.matchdict.get("id"):
             self.report_id = UUID(self.request.matchdict.get("id"))
 
+    def __acl__(self):
+        acl = [
+            (Allow, "ROLE_REPORTS_ADMIN", ("list", "add", "view", "delete")),
+        ]
+        return acl
+
+    @view(permission='list')
     def collection_get(self) -> list:
         session = self.request.dbsession
         reports = session.query(Report)
         report_schema = ReportSchema()
         return [report_schema.dumps(r) for r in reports]
 
-    @view(schema=ReportSchema, validators=(marshmallow_validator,))
+    @view(schema=ReportSchema, validators=(marshmallow_validator,), permission="add")
     def collection_post(self):
         report = self.request.validated
-        # TODO need to extract user from header properly
-        report.created_by = self.request.headers.get("sec-username", "toto")
+        report.created_by = self.request.headers.get("sec-username")
         self.request.dbsession.add(report)
+        self.request.dbsession.flush()
         self.request.response.status_code = 201
         self.request.response.location = f"/admin/reports/{report.id}"
-        return {"id": report.id}
+        x = ReportSchema().dump(report)
+        print(x)
+        return x
 
     def _get_object(self) -> Report:
         session = self.request.dbsession
@@ -53,15 +63,18 @@ class ReportView:
             raise HTTPNotFound()
         return rm
 
-    def get(self) -> str:
+    @view(permission="list")
+    def get(self) -> dict:
         return ReportSchema().dump(self._get_object())
 
-    def put(self) -> None:
+    @view(permission="add")
+    def put(self) -> dict:
         report = self.request.validated
         report.updated_by = self.request.headers["sec-username"]
         report.updated_at = datetime.now(timezone.utc)
         return ReportSchema().dump(report)
 
+    @view(permission="delete")
     def delete(self) -> None:
         self.request.dbsession.delete(self._get_object())
         self.request.response.status_code = 204
