@@ -8,7 +8,7 @@ from pyramid.exceptions import HTTPNotFound
 
 from drealcorsereports.models.reports import Report
 from drealcorsereports.schemas.reports import ReportSchema
-from pyramid.security import Allow
+from pyramid.security import Allow, Everyone
 
 
 def marshmallow_validator(request: Request, **kwargs):
@@ -33,11 +33,12 @@ class ReportView:
 
     def __acl__(self):
         acl = [
+            (Allow, Everyone, ("list", "add")),
             (Allow, "ROLE_REPORTS_ADMIN", ("list", "add", "view", "delete")),
         ]
         return acl
 
-    @view(permission='list')
+    @view(permission="list")
     def collection_get(self) -> list:
         session = self.request.dbsession
         reports = session.query(Report)
