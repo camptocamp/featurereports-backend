@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from functools import partial
 from uuid import uuid4
 
+import zope
 from sqlalchemy import (
     ARRAY,
     Boolean,
@@ -18,6 +19,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import UUID, JSON
 from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql.expression import text
 
 from drealcorsereports.models.meta import Base
 
@@ -48,6 +50,33 @@ class ReportModel(Base):
         order_by="ReportModelCustomField.index",
         collection_class=ordering_list("index"),
     )
+
+    def tjs_view_name(self):
+        schema_name = ReportModel.__table_args__["schema"]
+        return f"{schema_name}.v_tjs_view_{self.name}"
+
+    def create_tjs_view(self, dbsession):
+        schema_name = Report.__table_args__["schema"]
+        table_name = Report.__tablename__
+        view_columns = ",\n".join(
+            [
+                f"        custom_field_values->>'{f.name}' as {f.name}"
+                for f in self.custom_fields
+            ]
+        )
+        dbsession.execute(
+            text(
+                f"""CREATE OR REPLACE VIEW {self.tjs_view_name()} AS
+    SELECT
+        feature_id,
+{view_columns}
+    FROM {schema_name}.{table_name};
+"""
+            )
+        )
+        # mark the session as dirty, if not transaction manager will rollback the transaction.
+        # ¯\_(ツ)_/¯
+        zope.sqlalchemy.mark_changed(dbsession)
 
 
 class FieldTypeEnum(enum.Enum):

@@ -53,7 +53,7 @@ class AdminReportModelView:
             self.report_models_id
             and "ROLE_REPORTS_ADMIN" in self.request.effective_principals
         ):
-            if is_user_admin_on_layer(self.request, self._get_object().layer_id):
+            if is_user_admin_on_layer(self.request, self.get_object().layer_id):
                 acl.extend(
                     [
                         (Allow, self.request.authenticated_userid, ("edit", "delete")),
@@ -81,7 +81,7 @@ class AdminReportModelView:
         self.request.response.status_code = 201
         return ReportModelSchema().dump(report_model)
 
-    def _get_object(self) -> ReportModel:
+    def get_object(self) -> ReportModel:
         session = self.request.dbsession
         rm = session.query(ReportModel).get(self.report_models_id)
         if rm is None:
@@ -90,13 +90,13 @@ class AdminReportModelView:
 
     @view(permission="view")
     def get(self) -> dict:
-        return ReportModelSchema().dump(self._get_object())
+        return ReportModelSchema().dump(self.get_object())
 
     @view(
         permission="edit", schema=ReportModelSchema, validators=(marshmallow_validator,)
     )
     def put(self) -> dict:
-        self._get_object()
+        self.get_object()
         report_model = self.request.validated
         report_model.updated_by = self.request.authenticated_userid
         report_model.updated_at = datetime.now(timezone.utc)
@@ -104,8 +104,23 @@ class AdminReportModelView:
 
     @view(permission="delete")
     def delete(self) -> None:
-        self.request.dbsession.delete(self._get_object())
+        self.request.dbsession.delete(self.get_object())
         self.request.response.status_code = 204
+
+
+tjs_view = Service(
+    name="tjs_views",
+    path="/report_models/{id}/tjs_view",
+    renderer="json",
+    factory=AdminReportModelView,
+)
+
+
+@tjs_view.post(permission="edit")
+def post_tjs_view(request: Request) -> None:
+    report_model = request.context.get_object()
+    report_model.create_tjs_view(request.dbsession)
+    return {"view": report_model.tjs_view_name()}
 
 
 list_layers = Service(
