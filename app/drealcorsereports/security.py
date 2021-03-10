@@ -34,7 +34,12 @@ class Rule:
         roles = geoserver_rule[1].split(",")
         return Rule(workspace, layer, RuleAccess(access), roles)
 
-    def match(self, layer_id: str, roles: set, required_rule_access: RuleAccess = RuleAccess.ADMIN) -> bool:
+    def match(
+        self,
+        layer_id: str,
+        roles: set,
+        required_rule_access: RuleAccess = RuleAccess.ADMIN,
+    ) -> bool:
         # List all rules that need to be satisfied.
         workspace, layer = self._parse_layer_id(layer_id)
         rules = (
@@ -62,10 +67,10 @@ class Rule:
 def get_geoserver_layers_acl(geoserver_url: str) -> Dict:
     layer_rules_response = requests.get(
         f"{geoserver_url}/rest/security/acl/layers.json",
-        headers = {
+        headers={
             "sec-roles": "ROLE_ADMINISTRATOR",
-            "sec-username": "geoserver_privileged_user"
-        }
+            "sec-username": "geoserver_privileged_user",
+        },
     )
     layer_rules_response.raise_for_status()
     return layer_rules_response.json()

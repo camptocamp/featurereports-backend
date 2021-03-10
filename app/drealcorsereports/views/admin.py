@@ -117,10 +117,12 @@ list_layers = Service(
 
 @list_layers.get()
 def get_layers(request: Request) -> List:
-    layers_request = requests.get(request.registry.settings.get("geoserver_url") + "/rest/layers.json",
-        headers={"Sec-Username": "geoserver_privileged_user",
-                 "Sec-Roles": "ROLE_ADMINISTRATOR"
-                 },
+    layers_request = requests.get(
+        request.registry.settings.get("geoserver_url") + "/rest/layers.json",
+        headers={
+            "Sec-Username": "geoserver_privileged_user",
+            "Sec-Roles": "ROLE_ADMINISTRATOR",
+        },
     )
     layers_request.raise_for_status()
     layers = layers_request.json()
@@ -128,7 +130,7 @@ def get_layers(request: Request) -> List:
         request.registry.settings.get("geoserver_url")
     )
     authorized_layers = list()
-    for layer in layers["layers"]['layer']:
+    for layer in layers["layers"]["layer"]:
         for layer_rules in layer_rules_json.items():
             rule = Rule.parse(*layer_rules)
             if rule.match(layer["name"], request.effective_principals):
