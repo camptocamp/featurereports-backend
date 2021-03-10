@@ -34,7 +34,7 @@ class Rule:
         roles = geoserver_rule[1].split(",")
         return Rule(workspace, layer, RuleAccess(access), roles)
 
-    def match(self, layer_id: str, roles: set) -> bool:
+    def match(self, layer_id: str, roles: set, required_rule_access: RuleAccess = RuleAccess.ADMIN) -> bool:
         # List all rules that need to be satisfied.
         workspace, layer = self._parse_layer_id(layer_id)
         rules = (
@@ -42,7 +42,7 @@ class Rule:
             self.layer == layer or self.layer == "*",
             set(roles).intersection(self.geoserver_roles)
             or "*" in self.geoserver_roles,
-            self.rule_access == RuleAccess.ADMIN,
+            self.rule_access == required_rule_access,
         )
         if all(rules):
             return True
