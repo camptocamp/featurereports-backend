@@ -1,10 +1,21 @@
 # coding=utf-8
+import enum
 from datetime import datetime, timezone
 from functools import partial
 from uuid import uuid4
 
-from sqlalchemy import Column, DateTime, String, ForeignKey
+from sqlalchemy import (
+    ARRAY,
+    Column,
+    DateTime,
+    Enum,
+    Integer,
+    String,
+    ForeignKey,
+    UniqueConstraint,
+)
 from sqlalchemy.dialects.postgresql import UUID, JSON
+from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.orm import relationship
 
 from drealcorsereports.models.meta import Base
@@ -19,11 +30,6 @@ class ReportModel(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String, nullable=False, unique=True)
     layer_id = Column(String, nullable=False)
-    # postgres offer JSON and JSONB. Binary is more powerful for querying but
-    # since we always want all the JSON and not some part. JSON is more
-    # convinent (and insert is faster).
-    # Schema store the json schema that will be interpret by the frontend.
-    custom_field_schema = Column(JSON, nullable=False)
     created_by = Column(String, nullable=False)
     created_at = Column(
         DateTime(timezone=True),
@@ -36,6 +42,35 @@ class ReportModel(Base):
         default=partial(datetime.now, timezone.utc),
         nullable=False,
     )
+    custom_fields = relationship(
+        "ReportModelCustomField",
+        order_by="ReportModelCustomField.index",
+        collection_class=ordering_list("index"),
+    )
+
+
+class FieldTypeEnum(enum.Enum):
+    string = 1
+    boolean = 2
+    number = 3
+    date = 4
+    file = 6
+
+
+class ReportModelCustomField(Base):
+    __tablename__ = "report_model_custom_field"
+    __table_args__ = (
+        UniqueConstraint("report_model_id", "index", name="report_model_index_uc"),
+        UniqueConstraint("report_model_id", "name", name="report_model_name_uc"),
+        {"schema": SCHEMA},
+    )
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    report_model_id = Column(UUID(as_uuid=True), ForeignKey(ReportModel.id))
+    index = Column(Integer)
+    name = Column(String, nullable=False)
+    type = Column(Enum(FieldTypeEnum), nullable=False)
+    enum = Column(ARRAY(String))
 
 
 class Report(Base):
