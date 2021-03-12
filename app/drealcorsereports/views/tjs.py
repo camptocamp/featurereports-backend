@@ -20,7 +20,7 @@ class TjsView:
     def get(self):
         rm = (
             self.request.dbsession.query(ReportModel)
-            .filter(id == self.model_id)
+            .filter(ReportModel.id == self.model_id)
             .one_or_none()
         )
         if rm is None:
@@ -33,7 +33,11 @@ class TjsView:
         create a postgresql view
         """
         dbsession = self.request.dbsession
-        rm = dbsession.query(ReportModel).filter(id == self.model_id).one_or_none()
+        rm = (
+            dbsession.query(ReportModel)
+            .filter(ReportModel.id == self.model_id)
+            .one_or_none()
+        )
         if rm is None:
             raise HTTPNotFound()
         rows = [
@@ -43,16 +47,18 @@ class TjsView:
         rows = ", ".join(rows)
         table_name = Report.__tablename__
         schema = Report.__table_args__["schema"]
-        f"""
-        CREATE VIEW {schema}.v_report_{rm.name} AS SELECT {rows} FROM {schema}.{table_name};
-        """
+        self.request.dbsession.execute(
+            f"""
+            CREATE VIEW {schema}.v_report_{rm.name} AS SELECT {rows} FROM {schema}.{table_name};
+            """
+        )
         return {"view_name": f"{schema}.v_report_{rm.name}"}
 
     def delete(self) -> None:
         """Delete a postgresql view"""
         rm = (
             self.request.dbsession.query(ReportModel)
-            .filter(id == self.model_id)
+            .filter(ReportModel.id == self.model_id)
             .one_or_none()
         )
         if rm is None:

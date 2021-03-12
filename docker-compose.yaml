@@ -37,6 +37,7 @@ services:
       - PGOPTIONS
       - INI_FILE
       - PROXY_PREFIX
+      - GEOSERVER_URL
     ports:
       - ${DOCKER_PORT}:8080
 
@@ -65,6 +66,7 @@ services:
       - PGPASSWORD
       - PGDATABASE=drealcorse_tests
       - INI_FILE
+      - GEOSERVER_URL
     command: 'tail -f /dev/null'
 
   lb:
