@@ -78,7 +78,8 @@ services:
       - ./georchestra_resources/traefik.toml:/traefik.toml
 
   ldap:
-    image: georchestra/ldap:latest
+    build:
+      context: georchestra_resources/ldap
     environment:
         - SLAPD_ORGANISATION=georchestra
         - SLAPD_DOMAIN=georchestra.org
@@ -87,7 +88,10 @@ services:
     volumes:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap
+      - ./georchestra_resources/role_report_admin.ldif:/docker-entrypoint.d/role_report_admin.ldif
     restart: always
+    ports:
+      - "389:389"
 
   proxy:
     image: georchestra/security-proxy:latest
@@ -157,3 +161,15 @@ services:
       - ./georchestra_datadir:/etc/georchestra
     environment:
       - JAVA_OPTS=-Xms512m -Xmx512m -XX:MaxPermSize=128m -Dgeorchestra.datadir=/etc/georchestra -DPRINT_BASE_URL=pdf
+
+  console:
+    image: georchestra/console:latest
+    depends_on:
+      - database
+    volumes:
+      - ./georchestra_datadir:/etc/georchestra
+    environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - XMS=256M
+      - XMX=8G
+    restart: always
