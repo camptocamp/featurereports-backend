@@ -79,6 +79,8 @@ describe('Test Report Model Component', () => {
     expect(await screen.findByDisplayValue('TestModel')).toBeInTheDocument();
     expect(await screen.findByDisplayValue('TestLayer')).toBeInTheDocument();
     expect(await screen.findByDisplayValue('TestField')).toBeInTheDocument();
+    //check presence of dropdown element and its tags
+    expect(await screen.findByDisplayValue('TestField2')).toBeInTheDocument();
   });
 
   test('updates ReportModel and calls onReportModelChange', async () => {

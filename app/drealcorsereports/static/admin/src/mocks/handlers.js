@@ -9,6 +9,12 @@ const mockData = {
       type: 'string',
       required: false,
     },
+    {
+      name: 'TestField2',
+      type: 'array-string',
+      required: false,
+      valueList: ['firstChoice','secondChoice'],
+    },
   ],
   name: 'TestModel',
   updated_by: 'testuserid',
