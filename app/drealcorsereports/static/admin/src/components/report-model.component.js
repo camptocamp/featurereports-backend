@@ -6,6 +6,7 @@ import { FaMinus } from 'react-icons/fa';
 import { FaPlus } from 'react-icons/fa';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
+import './report-model.component.css';
 
 const defaultReportModel = {
   id: null,
@@ -349,7 +350,7 @@ export default class ReportModel extends Component {
                         )}
                       </div>
                       <div className="col-4">
-                        <label htmlFor="field_type">Type*  fgdfgd</label>
+                        <label htmlFor="field_type">Type*</label>
                         <select
                           className="form-control mb-2"
                           value={field.type}
