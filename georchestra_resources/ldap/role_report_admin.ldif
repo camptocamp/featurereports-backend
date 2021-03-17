@@ -1,0 +1,7 @@
+dn: cn=REPORTS_ADMIN,ou=roles,dc=georchestra,dc=org
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+description: This role grants full control of users, roles & organizations via
+  the console application
+cn: REPORTS_ADMIN
+objectClass: top
+objectClass: groupOfMembers
