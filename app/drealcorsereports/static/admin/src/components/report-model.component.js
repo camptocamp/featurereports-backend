@@ -338,6 +338,7 @@ export default class ReportModel extends Component {
                         <label htmlFor="field_name">Libellé*</label>
                         <input
                           type="text"
+                          aria-label='libelle'
                           className="form-control mb-2"
                           value={field.name}
                           id="field_name"
@@ -353,6 +354,7 @@ export default class ReportModel extends Component {
                         <label htmlFor="field_type">Type*</label>
                         <select
                           className="form-control mb-2"
+                          aria-label='type'
                           value={field.type}
                           id="field_type"
                           onChange={(e) => this.onChangeField('type', e.target.value, index)}
@@ -385,6 +387,7 @@ export default class ReportModel extends Component {
                         <label htmlFor="field_required">Requis</label>
                         <input
                           className="form-check"
+                          aria-label='requis'
                           type="checkbox"
                           checked={field.required}
                           id="field_required"
@@ -396,6 +399,7 @@ export default class ReportModel extends Component {
                       <div className="col-1">
                         <button
                           className="btn btn-danger mt-4"
+                          aria-label='delete field'
                           onClick={(e) => this.deleteField(index, e)}
                         >
                           <FaMinus />
@@ -405,7 +409,9 @@ export default class ReportModel extends Component {
                         {index ===
                           currentReportModel.custom_field_schema.length - 1 && (
                           <button
+                            type="submit"
                             className="btn btn-success mt-4"
+                            aria-label='add a field'
                             onClick={(e) => this.addField(e)}
                           >
                             <FaPlus />
@@ -416,7 +422,9 @@ export default class ReportModel extends Component {
                   ))
                 ) : (
                   <button
+                    type="submit"
                     className="btn btn-success"
+                    aria-label='add a field'
                     onClick={(e) => this.addField(e)}
                   >
                     <FaPlus />

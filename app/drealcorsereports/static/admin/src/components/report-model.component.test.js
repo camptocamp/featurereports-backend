@@ -80,7 +80,9 @@ describe('Test Report Model Component', () => {
     expect(await screen.findByDisplayValue('TestLayer')).toBeInTheDocument();
     expect(await screen.findByDisplayValue('TestField')).toBeInTheDocument();
     //check presence of dropdown element and its tags
-    expect(await screen.findByDisplayValue('TestField2')).toBeInTheDocument();
+    expect(await screen.findByDisplayValue('TestField-TestTags')).toBeInTheDocument();
+    expect(await screen.findByText('firstChoice')).toBeInTheDocument();
+    expect(await screen.findByText('secondChoice')).toBeInTheDocument();
   });
 
   test('updates ReportModel and calls onReportModelChange', async () => {
@@ -96,6 +98,10 @@ describe('Test Report Model Component', () => {
     expect(await screen.findByDisplayValue('TestModel')).toBeInTheDocument();
     //confirm window alert
     window.confirm = jest.fn(() => true);
+    //add a field
+    screen.getByLabelText(/add a field/).click();
+    userEvent.type(screen.getAllByLabelText('libelle')[2], 'new Field Name');
+    userEvent.selectOptions(screen.getAllByLabelText('type')[2], ['string']);
     //trigger update
     fireEvent.click(screen.getByText(/Sauvegarder/), {
       target: { type: 'submit' },
