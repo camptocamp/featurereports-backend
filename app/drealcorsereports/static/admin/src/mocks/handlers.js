@@ -12,7 +12,7 @@ const mockData = {
     {
       name: 'TestField2',
       type: 'array-string',
-      required: false,
+      required: true,
       valueList: ['firstChoice','secondChoice'],
     },
   ],
