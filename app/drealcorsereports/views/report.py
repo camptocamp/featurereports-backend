@@ -48,13 +48,12 @@ class ReportView:
     @view(schema=ReportSchema, validators=(marshmallow_validator,), permission="add")
     def collection_post(self):
         report = self.request.validated
-        report.created_by = self.request.headers.get("sec-username")
+        report.created_by = self.request.authenticated_userid
         self.request.dbsession.add(report)
         self.request.dbsession.flush()
         self.request.response.status_code = 201
-        self.request.response.location = f"/admin/reports/{report.id}"
+        self.request.response.content_location = f"/admin/reports/{report.id}"
         x = ReportSchema().dump(report)
-        print(x)
         return x
 
     def _get_object(self) -> Report:
@@ -71,7 +70,7 @@ class ReportView:
     @view(permission="add")
     def put(self) -> dict:
         report = self.request.validated
-        report.updated_by = self.request.headers["sec-username"]
+        report.updated_by = self.request.authenticated_userid
         report.updated_at = datetime.now(timezone.utc)
         return ReportSchema().dump(report)
 
