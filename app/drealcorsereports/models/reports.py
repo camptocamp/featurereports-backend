@@ -84,7 +84,7 @@ class Report(Base):
     )
     report_model = relationship("ReportModel", backref="report")
     # response of the form. based on the template json schema
-    custome_field_values = Column(JSON, nullable=False)
+    custom_field_values = Column(JSON, nullable=False)
     created_by = Column(String, nullable=False)
     created_at = Column(
         DateTime(timezone=True),

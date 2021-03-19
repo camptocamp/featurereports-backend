@@ -42,7 +42,7 @@ def upgrade():
         sa.Column("feature_id", sa.String(), nullable=False),
         sa.Column("report_model_id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column(
-            "custome_field_values",
+            "custom_field_values",
             postgresql.JSON(astext_type=sa.Text()),
             nullable=False,
         ),
