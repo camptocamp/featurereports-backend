@@ -71,7 +71,7 @@ class App extends Component {
         id: null,
         name: '',
         layer_id: '',
-        custom_field_schema: [],
+        custom_fields: [],
       },
       currentReportModel: null,
     });

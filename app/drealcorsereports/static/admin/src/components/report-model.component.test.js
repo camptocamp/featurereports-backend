@@ -6,7 +6,7 @@ const reportModelMock = {
   id: null,
   name: '',
   layer_id: '',
-  custom_field_schema: [],
+  custom_fields: [],
   created_at: '',
   created_by: '',
   updated_at: '',
