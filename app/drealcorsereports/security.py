@@ -42,14 +42,14 @@ class Rule:
     ) -> bool:
         # List all rules that need to be satisfied.
         workspace, layer = self._parse_layer_id(layer_id)
-        rules = (
+        predicates = (
             self.workspace == workspace or self.workspace == "*",
             self.layer == layer or self.layer == "*",
             set(roles).intersection(self.geoserver_roles)
             or "*" in self.geoserver_roles,
             self.rule_access == required_rule_access,
         )
-        if all(rules):
+        if all(predicates):
             return True
         return False
 
