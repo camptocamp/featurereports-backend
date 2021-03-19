@@ -6,6 +6,7 @@ from uuid import uuid4
 
 from sqlalchemy import (
     ARRAY,
+    Boolean,
     Column,
     DateTime,
     Enum,
@@ -71,6 +72,7 @@ class ReportModelCustomField(Base):
     name = Column(String, nullable=False)
     type = Column(Enum(FieldTypeEnum), nullable=False)
     enum = Column(ARRAY(String))
+    required = Column(Boolean, default=False, nullable=False)
 
 
 class Report(Base):
