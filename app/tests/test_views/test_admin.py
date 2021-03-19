@@ -108,6 +108,7 @@ class TestAdminReportModelView:
                         "index": 0,
                         "name": "commentaire",
                         "type": "string",
+                        "required": False,
                     }
                 ],
                 "created_by": "toto",
@@ -126,6 +127,7 @@ class TestAdminReportModelView:
                         "index": 0,
                         "name": "commentaire",
                         "type": "string",
+                        "required": False,
                     }
                 ],
                 "created_by": "toto",
@@ -149,9 +151,19 @@ class TestAdminReportModelView:
             "layer_id": ALLOWED_LAYER,
             "custom_fields": [
                 {
+                    "name": "category",
+                    "type": "string",
+                    "enum": [
+                        "category1",
+                        "category2",
+                    ],
+                    "required": True,
+                },
+                {
                     "name": "commentaire",
                     "type": "string",
-                }
+                    "required": False,
+                },
             ],
             **kwargs,
         }
@@ -173,11 +185,23 @@ class TestAdminReportModelView:
         )
         report_model = dbsession.query(ReportModel).get(r.json["id"])
         assert report_model.name == "new"
-        assert len(report_model.custom_fields) == 1
-        assert report_model.custom_fields[0].name == "commentaire"
+        assert len(report_model.custom_fields) == 2
+
+        assert report_model.custom_fields[0].name == "category"
         assert report_model.custom_fields[0].index == 0
         assert report_model.custom_fields[0].type == FieldTypeEnum.string
-        assert report_model.custom_fields[0].enum is None
+        assert report_model.custom_fields[0].enum == [
+            "category1",
+            "category2",
+        ]
+        assert report_model.custom_fields[0].required == True
+
+        assert report_model.custom_fields[1].name == "commentaire"
+        assert report_model.custom_fields[1].index == 1
+        assert report_model.custom_fields[1].type == FieldTypeEnum.string
+        assert report_model.custom_fields[1].enum is None
+        assert report_model.custom_fields[1].required == False
+
         assert report_model.layer_id == ALLOWED_LAYER
         assert report_model.created_by == USER_ADMIN
         assert isinstance(report_model.created_at, datetime)
@@ -257,6 +281,7 @@ class TestAdminReportModelView:
                     "index": 0,
                     "name": "commentaire",
                     "type": "string",
+                    "required": False,
                 }
             ],
             "created_by": "toto",
