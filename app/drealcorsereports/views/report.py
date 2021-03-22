@@ -8,7 +8,7 @@ from pyramid.exceptions import HTTPNotFound
 
 from drealcorsereports.models.reports import Report
 from drealcorsereports.schemas.reports import ReportSchema
-from pyramid.security import Allow, Everyone
+from pyramid.security import Allow
 
 
 def marshmallow_validator(request: Request, **kwargs):
@@ -33,7 +33,7 @@ class ReportView:
 
     def __acl__(self):
         acl = [
-            (Allow, Everyone, ("list", "add")),
+            (Allow, "ROLE_USER", ("list", "add")),
             (Allow, "ROLE_REPORTS_ADMIN", ("list", "add", "view", "delete")),
         ]
         return acl
@@ -49,26 +49,28 @@ class ReportView:
     def collection_post(self):
         report = self.request.validated
         report.created_by = self.request.authenticated_userid
+        report.updated_by = self.request.authenticated_userid
         self.request.dbsession.add(report)
         self.request.dbsession.flush()
         self.request.response.status_code = 201
-        self.request.response.content_location = f"/admin/reports/{report.id}"
-        x = ReportSchema().dump(report)
-        return x
+        self.request.response.content_location = f"reports/{report.id}"
+        return ReportSchema().dump(report)
 
     def _get_object(self) -> Report:
         session = self.request.dbsession
-        rm = session.query(Report).get(self.report_id)
-        if rm is None:
+        r = session.query(Report).get(self.report_id)
+        if r is None:
             raise HTTPNotFound()
-        return rm
+        return r
 
     @view(permission="list")
     def get(self) -> dict:
         return ReportSchema().dump(self._get_object())
 
-    @view(permission="add")
+    @view(schema=ReportSchema, validators=(marshmallow_validator,), permission="add")
     def put(self) -> dict:
+        # generate 404 if the report doesn't exists.
+        self._get_object()
         report = self.request.validated
         report.updated_by = self.request.authenticated_userid
         report.updated_at = datetime.now(timezone.utc)

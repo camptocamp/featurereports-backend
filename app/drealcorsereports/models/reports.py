@@ -92,5 +92,9 @@ class Report(Base):
     )
     # Since user comes from HTTP header (handled by georchestra security-proxy)
     # we don't have any User class in this app.
-    updated_by = Column(String)
-    updated_at = Column(DateTime(timezone=True))
+    updated_by = Column(String, nullable=False)
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=partial(datetime.now, timezone.utc),
+        nullable=False,
+    )

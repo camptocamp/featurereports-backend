@@ -1,5 +1,6 @@
 import marshmallow
 import marshmallow_sqlalchemy
+from marshmallow import fields
 from marshmallow_enum import EnumField
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
 
