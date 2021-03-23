@@ -7,7 +7,7 @@ const mockData = {
     {
       name: 'TestField',
       type: 'string',
-      // required: false,
+      required: true,
     },
   ],
   name: 'TestModel',

@@ -79,6 +79,7 @@ describe('Test Report Model Component', () => {
     expect(await screen.findByDisplayValue('TestModel')).toBeInTheDocument();
     expect(await screen.findByDisplayValue('TestLayer')).toBeInTheDocument();
     expect(await screen.findByDisplayValue('TestField')).toBeInTheDocument();
+    expect(await screen.findByLabelText('field_required').checked);
   });
 
   test('updates ReportModel and calls onReportModelChange', async () => {

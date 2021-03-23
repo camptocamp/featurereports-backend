@@ -27,7 +27,7 @@ const defaultFormWarnings = {
 const defaultCustomField = {
   name: '',
   type: '',
-  // required: false,
+  required: false,
 };
 
 export default class ReportModel extends Component {
@@ -108,9 +108,9 @@ export default class ReportModel extends Component {
                 case 'type':
                   returnField.type = e.target.value;
                   break;
-                // case 'required':
-                //   returnField.required = e.target.checked;
-                //   break;
+                case 'required':
+                  returnField.required = e.target.checked;
+                  break;
                 default:
               }
             }
@@ -366,18 +366,19 @@ export default class ReportModel extends Component {
                           </span>
                         )}
                       </div>
-                      {/* <div className="col-2">
-                        <label htmlFor="field_required">Réquis</label>
+                      <div className="col-2">
+                        <label htmlFor="field_required">Requis</label>
                         <input
                           className="form-check"
                           type="checkbox"
+                          aria-label='field_required'
                           checked={field.required}
                           id="field_required"
                           onChange={(e) =>
                             this.onChangeField('required', index, e)
                           }
                         />
-                      </div> */}
+                      </div>
                       <div className="col-1">
                         <button
                           className="btn btn-danger mt-4"
