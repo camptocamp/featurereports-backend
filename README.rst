@@ -40,6 +40,10 @@ To access the interface behind the georchestra proxy
 
     make cert
 
+* to be able to create reports on any layer, at https://georchestra.mydomain.org/geoserver add a rule access in Security -> Data (left panel, near bottom)
+  You need "Admin" access mode. 
+  
+
 Generate a new alembic revision
 -------------------------------
 
