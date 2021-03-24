@@ -40,6 +40,11 @@ To access the interface behind the georchestra proxy
 
     make cert
 
+* edit access rules : https://georchestra.mydomain.org/geoserver -> Security -> Data (left panel, near bottom)
+To display reports you need "read" access on corresponding layer.
+To create or edit reports you need "write" access on corresponding layer.
+To create or edit report models you need "admin" access on corresponding layer.  
+
 Generate a new alembic revision
 -------------------------------
 
