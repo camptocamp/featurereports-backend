@@ -1,7 +1,14 @@
 import marshmallow
+import marshmallow_sqlalchemy
+from marshmallow_enum import EnumField
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
 
-from drealcorsereports.models.reports import Report, ReportModel
+from drealcorsereports.models.reports import (
+    FieldTypeEnum,
+    Report,
+    ReportModel,
+    ReportModelCustomField,
+)
 from drealcorsereports.security import is_user_admin_on_layer
 
 
@@ -17,6 +24,15 @@ class ReportSchema(SQLAlchemyAutoSchema):
     updated_at = auto_field(dump_only=True)
 
 
+class ReportModelFieldSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ReportModelCustomField
+        load_instance = True
+        include_relationships = False
+
+    type = EnumField(FieldTypeEnum)
+
+
 class ReportModelSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = ReportModel
@@ -27,6 +43,10 @@ class ReportModelSchema(SQLAlchemyAutoSchema):
     created_at = auto_field(dump_only=True)
     updated_by = auto_field(dump_only=True)
     updated_at = auto_field(dump_only=True)
+
+    custom_fields = marshmallow.fields.List(
+        marshmallow_sqlalchemy.fields.Nested(ReportModelFieldSchema)
+    )
 
     @marshmallow.validates("name")
     def validate_name_unique(self, value):

@@ -3,17 +3,17 @@ import { rest } from 'msw';
 const mockData = {
   created_at: '2021-02-03T10:05:28.014020+00:00',
   updated_at: '2021-02-03T10:05:28.014034+00:00',
-  custom_field_schema: [
+  custom_fields: [
     {
       name: 'TestField',
       type: 'string',
-      required: false,
+      required: true,
     },
     {
       name: 'TestField-TestTags',
-      type: 'array-string',
+      type: 'enum',
       required: true,
-      valueList: ['firstChoice','secondChoice'],
+      enum: ['firstChoice','secondChoice'],
     },
   ],
   name: 'TestModel',

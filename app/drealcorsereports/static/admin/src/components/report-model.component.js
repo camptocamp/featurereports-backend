@@ -12,7 +12,7 @@ const defaultReportModel = {
   id: null,
   name: '',
   layer_id: '',
-  custom_field_schema: [],
+  custom_fields: [],
   created_at: '',
   created_by: '',
   updated_at: '',
@@ -30,7 +30,7 @@ const defaultFormWarnings = {
 const defaultCustomField = {
   name: '',
   type: '',
-  valueList: [],
+  enum: [],
   required: false,
 };
 
@@ -101,7 +101,7 @@ export default class ReportModel extends Component {
     this.setState((prevState) => ({
       currentReportModel: {
         ...prevState.currentReportModel,
-        custom_field_schema: prevState.currentReportModel.custom_field_schema.map(
+        custom_fields: prevState.currentReportModel.custom_fields.map(
           (field, id) => {
             const returnField = { ...field };
             if (id === index) {
@@ -112,8 +112,8 @@ export default class ReportModel extends Component {
                 case 'type':
                   returnField.type = value;
                   break;
-                case 'valueList' :
-                  returnField.valueList = value;
+                case 'enum' :
+                  returnField.enum = value;
                   break;
                 case 'required':
                   returnField.required = value;
@@ -147,18 +147,18 @@ export default class ReportModel extends Component {
 
   addField(e) {
     e.preventDefault();
-    const custom_field_schema = this.state.currentReportModel
-      .custom_field_schema;
-    custom_field_schema.push(defaultCustomField);
+    const custom_fields = this.state.currentReportModel
+      .custom_fields;
+    custom_fields.push(defaultCustomField);
     this.setState((prevState) => ({
       currentReportModel: {
         ...prevState.currentReportModel,
-        custom_field_schema,
+        custom_fields,
       },
       formWarnings: {
         ...prevState.formWarnings,
         fields:
-          prevState.currentReportModel.custom_field_schema.length > 0
+          prevState.currentReportModel.custom_fields.length > 0
             ? ''
             : prevState.formWarnings.fields,
       },
@@ -170,7 +170,7 @@ export default class ReportModel extends Component {
     this.setState((prevState) => ({
       currentReportModel: {
         ...prevState.currentReportModel,
-        custom_field_schema: prevState.currentReportModel.custom_field_schema.filter(
+        custom_fields: prevState.currentReportModel.custom_fields.filter(
           (field, id) => {
             return id !== index;
           }
@@ -207,7 +207,7 @@ export default class ReportModel extends Component {
     var data = {
       name: this.state.currentReportModel.name,
       layer_id: this.state.currentReportModel.layer_id,
-      custom_field_schema: this.state.currentReportModel.custom_field_schema,
+      custom_fields: this.state.currentReportModel.custom_fields,
     };
 
     ReportModelApiService.create(data, this.source.token)
@@ -216,7 +216,7 @@ export default class ReportModel extends Component {
           id: response.data.id,
           name: response.data.name,
           layer_id: response.data.layer_id,
-          custom_field_schema: response.data.custom_field_schema,
+          custom_fields: response.data.custom_fields,
         });
         this.props.onReportModelChange();
       })
@@ -269,16 +269,16 @@ export default class ReportModel extends Component {
       formWarnings.layer = 'Veuillez indiquer une couche';
       valid = false;
     }
-    if (this.state.currentReportModel.custom_field_schema.length === 0) {
+    if (this.state.currentReportModel.custom_fields.length === 0) {
       formWarnings.fields = 'Veuillez ajouter au moins un champ';
       valid = false;
     }
-    for (const f in this.state.currentReportModel.custom_field_schema) {
-      if (this.state.currentReportModel.custom_field_schema[f].name === '') {
+    for (const f in this.state.currentReportModel.custom_fields) {
+      if (this.state.currentReportModel.custom_fields[f].name === '') {
         formWarnings.fieldName[f] = 'obligatoire';
         valid = false;
       }
-      if (this.state.currentReportModel.custom_field_schema[f].type === '') {
+      if (this.state.currentReportModel.custom_fields[f].type === '') {
         formWarnings.fieldType[f] = 'obligatoire';
         valid = false;
       }
@@ -326,13 +326,13 @@ export default class ReportModel extends Component {
                 />
               </div>
 
-              <label htmlFor="custom_field_schema">Champs de formulaire</label>
+              <label htmlFor="custom_fields">Champs de formulaire</label>
               <span style={{ color: 'red', float: 'right' }}>
                 {formWarnings['fields']}
               </span>
-              <div id="custom_field_schema" className="form-group">
-                {currentReportModel.custom_field_schema.length !== 0 ? (
-                  currentReportModel.custom_field_schema.map((field, index) => (
+              <div id="custom_fields" className="form-group">
+                {currentReportModel.custom_fields.length !== 0 ? (
+                  currentReportModel.custom_fields.map((field, index) => (
                     <div key={index} className="row">
                       <div className="col-4">
                         <label htmlFor="field_name">Libellé*</label>
@@ -361,19 +361,19 @@ export default class ReportModel extends Component {
                         >
                           <option value=""></option>
                           <option value="string">texte</option>
-                          <option value="array-string">
+                          <option value="enum">
                             liste déroulante
                           </option>
-                          <option value="number">numérique</option>
-                          <option value="boolean">boolean</option>
+                          <option value="number">nombre</option>
+                          <option value="boolean">booléen</option>
                           <option value="date">date</option>
                           <option value="file">photo</option>
                         </select>
-                        {currentReportModel.custom_field_schema[index].type === "array-string" && (
+                        {currentReportModel.custom_fields[index].type === "enum" && (
                           <TagsInput 
-                            value={currentReportModel.custom_field_schema[index].valueList} 
+                            value={currentReportModel.custom_fields[index].enum} 
                             inputProps={{placeholder:'choix possibles'}}
-                            onChange={(e) => this.onChangeField('valueList', e, index)}
+                            onChange={(e) => this.onChangeField('enum', e, index)}
                           />
                         )}
                         
@@ -389,6 +389,7 @@ export default class ReportModel extends Component {
                           className="form-check"
                           aria-label='requis'
                           type="checkbox"
+                          aria-label='field_required'
                           checked={field.required}
                           id="field_required"
                           onChange={(e) =>
@@ -407,7 +408,7 @@ export default class ReportModel extends Component {
                       </div>
                       <div className="col-1">
                         {index ===
-                          currentReportModel.custom_field_schema.length - 1 && (
+                          currentReportModel.custom_fields.length - 1 && (
                           <button
                             type="submit"
                             className="btn btn-success mt-4"

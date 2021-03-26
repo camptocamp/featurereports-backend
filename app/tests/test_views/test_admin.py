@@ -3,7 +3,11 @@ from uuid import uuid4
 from unittest.mock import patch
 
 import pytest
-from drealcorsereports.models.reports import ReportModel
+from drealcorsereports.models.reports import (
+    FieldTypeEnum,
+    ReportModel,
+    ReportModelCustomField,
+)
 from pyramid.httpexceptions import HTTPBadRequest
 
 USER_ADMIN = "USER_ADMIN"
@@ -21,20 +25,30 @@ def test_data(dbsession, transact):
         ReportModel(
             name="existing_allowed",
             layer_id=ALLOWED_LAYER,
-            custom_field_schema={"test": "test"},
             created_by="toto",
             created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
             updated_by="tata",
             updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
+            custom_fields=[
+                ReportModelCustomField(
+                    name="commentaire",
+                    type=FieldTypeEnum.string,
+                )
+            ],
         ),
         ReportModel(
             name="existing_denied",
             layer_id=DENIED_LAYER,
-            custom_field_schema={"test": "test"},
             created_by="toto",
             created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
             updated_by="tata",
             updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
+            custom_fields=[
+                ReportModelCustomField(
+                    name="commentaire",
+                    type=FieldTypeEnum.string,
+                )
+            ],
         ),
     ]
     dbsession.add_all(report_models)
@@ -87,7 +101,16 @@ class TestAdminReportModelView:
                 "id": str(test_data["report_models"][0].id),
                 "name": "existing_allowed",
                 "layer_id": ALLOWED_LAYER,
-                "custom_field_schema": {"test": "test"},
+                "custom_fields": [
+                    {
+                        "enum": None,
+                        "id": str(test_data["report_models"][0].custom_fields[0].id),
+                        "index": 0,
+                        "name": "commentaire",
+                        "type": "string",
+                        "required": False,
+                    }
+                ],
                 "created_by": "toto",
                 "created_at": "2021-01-22T13:33:00+00:00",
                 "updated_by": "tata",
@@ -97,7 +120,16 @@ class TestAdminReportModelView:
                 "id": str(test_data["report_models"][1].id),
                 "name": "existing_denied",
                 "layer_id": DENIED_LAYER,
-                "custom_field_schema": {"test": "test"},
+                "custom_fields": [
+                    {
+                        "enum": None,
+                        "id": str(test_data["report_models"][1].custom_fields[0].id),
+                        "index": 0,
+                        "name": "commentaire",
+                        "type": "string",
+                        "required": False,
+                    }
+                ],
                 "created_by": "toto",
                 "created_at": "2021-01-22T13:33:00+00:00",
                 "updated_by": "tata",
@@ -116,8 +148,23 @@ class TestAdminReportModelView:
     def _post_payload(self, **kwargs):
         return {
             "name": "new",
-            "custom_field_schema": {"test": "test"},
             "layer_id": ALLOWED_LAYER,
+            "custom_fields": [
+                {
+                    "name": "category",
+                    "type": "string",
+                    "enum": [
+                        "category1",
+                        "category2",
+                    ],
+                    "required": True,
+                },
+                {
+                    "name": "commentaire",
+                    "type": "string",
+                    "required": False,
+                },
+            ],
             **kwargs,
         }
 
@@ -138,7 +185,23 @@ class TestAdminReportModelView:
         )
         report_model = dbsession.query(ReportModel).get(r.json["id"])
         assert report_model.name == "new"
-        assert report_model.custom_field_schema == {"test": "test"}
+        assert len(report_model.custom_fields) == 2
+
+        assert report_model.custom_fields[0].name == "category"
+        assert report_model.custom_fields[0].index == 0
+        assert report_model.custom_fields[0].type == FieldTypeEnum.string
+        assert report_model.custom_fields[0].enum == [
+            "category1",
+            "category2",
+        ]
+        assert report_model.custom_fields[0].required == True
+
+        assert report_model.custom_fields[1].name == "commentaire"
+        assert report_model.custom_fields[1].index == 1
+        assert report_model.custom_fields[1].type == FieldTypeEnum.string
+        assert report_model.custom_fields[1].enum is None
+        assert report_model.custom_fields[1].required == False
+
         assert report_model.layer_id == ALLOWED_LAYER
         assert report_model.created_by == USER_ADMIN
         assert isinstance(report_model.created_at, datetime)
@@ -211,7 +274,16 @@ class TestAdminReportModelView:
             "id": str(rm.id),
             "name": "existing_allowed",
             "layer_id": ALLOWED_LAYER,
-            "custom_field_schema": {"test": "test"},
+            "custom_fields": [
+                {
+                    "enum": None,
+                    "id": str(rm.custom_fields[0].id),
+                    "index": 0,
+                    "name": "commentaire",
+                    "type": "string",
+                    "required": False,
+                }
+            ],
             "created_by": "toto",
             "created_at": "2021-01-22T13:33:00+00:00",
             "updated_by": "tata",
@@ -225,12 +297,22 @@ class TestAdminReportModelView:
             status=404,
         )
 
-    def _put_payload(self, id_, **kwargs):
+    def _put_payload(self, rm, **kwargs):
         return {
-            "id": str(id_),
+            "id": str(rm.id),
             "name": "updated",
             "layer_id": ALLOWED_LAYER,
-            "custom_field_schema": {"changed": "changed"},
+            "custom_fields": [
+                {
+                    "id": str(rm.custom_fields[0].id),
+                    "name": "commentaire_renamed",
+                    "type": "string",
+                },
+                {
+                    "name": "commentaire2",
+                    "type": "string",
+                },
+            ],
             **kwargs,
         }
 
@@ -239,7 +321,7 @@ class TestAdminReportModelView:
         rm = test_data["report_models"][0]
         test_app.put_json(
             f"/report_models/{rm.id}",
-            self._put_payload(rm.id),
+            self._put_payload(rm),
             headers=self._auth_headers(roles=[]),
             status=403,
         )
@@ -248,7 +330,7 @@ class TestAdminReportModelView:
         rm = test_data["report_models"][1]
         test_app.put_json(
             f"/report_models/{rm.id}",
-            self._put_payload(rm.id),
+            self._put_payload(rm),
             headers=self._auth_headers(),
             status=403,
         )
@@ -258,14 +340,18 @@ class TestAdminReportModelView:
         updated_at = rm.updated_at
         r = test_app.put_json(
             f"/report_models/{rm.id}",
-            self._put_payload(rm.id),
+            self._put_payload(rm),
             headers=self._auth_headers(username="ANOTHER_USER"),
             status=200,
         )
         assert r.json["id"] == str(rm.id)
         assert rm.name == "updated"
         assert rm.layer_id == ALLOWED_LAYER
-        assert rm.custom_field_schema == {"changed": "changed"}
+        assert len(rm.custom_fields) == 2
+        assert rm.custom_fields[0].name == "commentaire_renamed"
+        assert rm.custom_fields[0].index == 0
+        assert rm.custom_fields[1].name == "commentaire2"
+        assert rm.custom_fields[1].index == 1
         assert rm.updated_by == "ANOTHER_USER"
         assert rm.updated_at != updated_at
 
@@ -273,7 +359,7 @@ class TestAdminReportModelView:
         rm = test_data["report_models"][0]
         r = test_app.put_json(
             f"/report_models/{rm.id}",
-            self._put_payload(rm.id, layer_id=DENIED_LAYER),
+            self._put_payload(rm, layer_id=DENIED_LAYER),
             headers=self._auth_headers(),
             status=400,
         )
@@ -289,10 +375,9 @@ class TestAdminReportModelView:
         }
 
     def test_put_not_found(self, test_app):
-        id_ = uuid4()
         test_app.put_json(
-            f"/report_models/{id_}",
-            self._put_payload(id_),
+            f"/report_models/{uuid4()}",
+            {},
             headers=self._auth_headers(),
             status=404,
         )
