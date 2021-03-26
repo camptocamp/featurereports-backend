@@ -56,6 +56,7 @@ class FieldTypeEnum(enum.Enum):
     number = 3
     date = 4
     file = 6
+    enum = 7
 
 
 class ReportModelCustomField(Base):

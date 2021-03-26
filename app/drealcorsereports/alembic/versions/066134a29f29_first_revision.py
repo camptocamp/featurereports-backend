@@ -62,7 +62,7 @@ def upgrade():
         sa.Column(
             "type",
             sa.Enum(
-                "string", "boolean", "number", "date", "file", name="fieldtypeenum"
+                "string", "boolean", "number", "date", "file", "enum", name="fieldtypeenum"
             ),
             nullable=False,
         ),

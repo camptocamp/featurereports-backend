@@ -221,6 +221,7 @@ export default class ReportModel extends Component {
         this.props.onReportModelChange();
       })
       .catch((e) => {
+        console.log(e);
         this.setState({
           errorMessage: getErrorMessage(e),
         });
@@ -237,6 +238,7 @@ export default class ReportModel extends Component {
         this.props.onReportModelChange();
       })
       .catch((e) => {
+        console.log(e);
         this.setState({
           errorMessage: getErrorMessage(e),
         });
@@ -252,6 +254,7 @@ export default class ReportModel extends Component {
         this.props.onReportModelChange();
       })
       .catch((e) => {
+        console.log(e);
         this.setState({
           errorMessage: getErrorMessage(e),
         });
@@ -364,7 +367,7 @@ export default class ReportModel extends Component {
                           <option value="enum">
                             liste déroulante
                           </option>
-                          <option value="number">nombre</option>
+                          <option value="number">numérique</option>
                           <option value="boolean">booléen</option>
                           <option value="date">date</option>
                           <option value="file">photo</option>
