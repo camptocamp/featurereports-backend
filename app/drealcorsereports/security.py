@@ -76,19 +76,33 @@ def get_geoserver_layers_acl(geoserver_url: str) -> Dict:
     return layer_rules_response.json()
 
 
-def is_user_admin_on_layer(request: Request, layer_id: str):
-    """
-    Return True if user is admin on considered layer
-    """
+def check_user_right(
+    request: Request, layer_id: str, level_required: RuleAccess
+) -> bool:
     layer_rules_json = get_geoserver_layers_acl(
         request.registry.settings.get("geoserver_url")
     )
     # filter rules for this layer_id
     for kv in layer_rules_json.items():
         rule = Rule.parse(*kv)
-        if rule.match(layer_id, request.effective_principals):
+        if rule.match(layer_id, request.effective_principals, level_required):
             return True
     return False
+
+
+def is_user_admin_on_layer(request: Request, layer_id: str) -> bool:
+    """
+    Return True if user is admin on considered layer
+    """
+    return check_user_right(request, layer_id, RuleAccess.ADMIN)
+
+
+def is_user_reader_on_layer(request: Request, layer_id: str) -> bool:
+    return check_user_right(request, layer_id, RuleAccess.READ)
+
+
+def is_user_writer_on_layer(request: Request, layer_id: str) -> bool:
+    return check_user_right(request, layer_id, RuleAccess.WRITE)
 
 
 @implementer(IAuthenticationPolicy)
