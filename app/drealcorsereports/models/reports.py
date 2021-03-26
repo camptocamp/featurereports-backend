@@ -36,10 +36,11 @@ class ReportModel(Base):
         default=partial(datetime.now, timezone.utc),
         nullable=False,
     )
-    updated_by = Column(String)
+    updated_by = Column(String, nullable=False)
     updated_at = Column(
         DateTime(timezone=True),
         default=partial(datetime.now, timezone.utc),
+        nullable=False
     )
     custom_fields = relationship(
         "ReportModelCustomField",
