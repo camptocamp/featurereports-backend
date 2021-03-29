@@ -3,17 +3,17 @@ from uuid import UUID
 
 from cornice.resource import resource, view
 from cornice.validators import marshmallow_body_validator
+from pyramid.exceptions import HTTPNotFound
+from pyramid.request import Request
+from pyramid.security import Allow, Everyone
+
+from drealcorsereports.models.reports import Report, ReportModel
+from drealcorsereports.schemas.reports import ReportSchema
 from drealcorsereports.security import (
     is_user_admin_on_layer,
     is_user_reader_on_layer,
     is_user_writer_on_layer,
 )
-from pyramid.request import Request
-from pyramid.exceptions import HTTPNotFound
-
-from drealcorsereports.models.reports import Report, ReportModel
-from drealcorsereports.schemas.reports import ReportSchema
-from pyramid.security import Allow
 
 
 def marshmallow_validator(request: Request, **kwargs):
@@ -70,7 +70,10 @@ class ReportView:
         if "layer_id" in self.request.params:
             layer_id = self.request.params["layer_id"]
             if is_user_reader_on_layer(self.request, layer_id):
-                acl.append((Allow, self.request.authenticated_userid, ("list")))
+                acl.append((Allow, self.request.authenticated_userid, "list"))
+
+        # We give everyone the add permission and returns validation error if needed
+        acl.append((Allow, Everyone, "add"))
 
         session = self.request.dbsession
         try:
@@ -140,18 +143,7 @@ class ReportView:
         report_schema = ReportSchema()
         return [report_schema.dumps(r) for r in reports]
 
-    @view(permission="list")
-    def get_report_by_layer_id(self) -> list:
-        layer_id = UUID(self.request.matchdict("layer_id"))
-        reports = (
-            self.request.dbsession.query(Report)
-            .join(ReportModel)
-            .filter(ReportModel.layer_id == layer_id)
-            .all()
-        )
-        return ReportSchema.dump(reports, many=True)
-
-    @view(schema=ReportSchema, validators=(marshmallow_validator,), permission="add")
+    @view(permission="add", schema=ReportSchema, validators=(marshmallow_validator,))
     def collection_post(self):
         report = self.request.validated
         report.created_by = self.request.authenticated_userid

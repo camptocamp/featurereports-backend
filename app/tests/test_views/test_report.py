@@ -16,25 +16,20 @@ DENIED_LAYER = "DENIED_LAYER"
 
 
 @pytest.fixture(scope="class")
-def patch_is_user_anything_on_layer():
-    def is_user_anything_on_layer(user_id, layer_id):
+def patch_check_user_right():
+    def check_user_right(user_id, layer_id, level_required):
         del user_id
+        del level_required
         return layer_id == ALLOWED_LAYER
 
     with patch(
-        "drealcorsereports.views.report.is_user_admin_on_layer",
-        side_effect=is_user_anything_on_layer,
-    ) as admin_mock, patch(
-        "drealcorsereports.views.report.is_user_writer_on_layer",
-        side_effect=is_user_anything_on_layer,
-    ) as write_mock, patch(
-        "drealcorsereports.views.report.is_user_reader_on_layer",
-        side_effect=is_user_anything_on_layer,
-    ) as read_mock:
-        yield admin_mock, write_mock, read_mock
+        "drealcorsereports.security.check_user_right",
+        side_effect=check_user_right,
+    ) as right_mock:
+        yield right_mock
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 @pytest.mark.usefixtures(
     "dbsession",
     "transact",
@@ -57,7 +52,7 @@ def test_data(dbsession, transact):
     )
     rm2 = ReportModel(
         name="existing_foo",
-        layer_id=ALLOWED_LAYER,
+        layer_id=DENIED_LAYER,
         created_by="toto",
         created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
         updated_by="tata",
@@ -113,7 +108,7 @@ def test_data(dbsession, transact):
     yield {"report_models": [rm1, rm2], "reports": [r1, r2, r3, r4]}
 
 
-@pytest.mark.usefixtures("patch_is_user_anything_on_layer")
+@pytest.mark.usefixtures("patch_check_user_right")
 class TestReportView:
     def test_collection_get_forbidden(self, test_app, test_data):
         test_app.get(
@@ -149,22 +144,6 @@ class TestReportView:
         assert isinstance(r.json, list)
         assert len(r.json) == 1
 
-    def test_collection_post_forbidden(self, test_app, test_data):
-        r = test_app.post_json(
-            "/reports",
-            {
-                "feature_id": str(uuid4()),
-                "report_model_id": str(test_data["report_models"][0].id),
-                "custom_field_values": {"commentaire": "foo"},
-            },
-            status=403,
-            headers={"Accept": "application/json"},
-        )
-        assert sorted(list(r.json.keys())) == sorted(["code", "message", "title"])
-        assert r.json["code"] == "403 Forbidden"
-        assert r.json["title"] == "Forbidden"
-        assert r.json["message"].startswith("Access was denied to this resource.")
-
     def test_collection_post_success(self, test_app, test_data):
         f_id = uuid4()
         r = test_app.post_json(
@@ -184,10 +163,38 @@ class TestReportView:
         assert r.headers["content-location"].startswith("reports")
         assert r.json["feature_id"] == str(f_id)
 
+    def test_collection_post_layer_denied(self, test_app, test_data, dbsession):
+        report_model = (
+            dbsession.query(ReportModel).filter(ReportModel.layer_id == DENIED_LAYER)
+        ).first()
+        assert report_model is not None
+
+        r = test_app.post_json(
+            "/reports",
+            {
+                "feature_id": str(uuid4()),
+                "report_model_id": str(report_model.id),
+                "custom_field_values": {"commentaire": "foo"},
+            },
+            headers={
+                "Accept": "application/json",
+                "sec-roles": "ROLE_USER",
+                "sec-username": "bob",
+            },
+            status=400,
+        )
+        assert r.json == {
+            "status": "error",
+            "errors": [
+                {
+                    "location": "body",
+                    "name": "report_model_id",
+                    "description": ["You're not writer on layer DENIED_LAYER."],
+                }
+            ],
+        }
+
     def test_collection_post_wrong_custom_fields(self, test_app, test_data):
-        """
-        FIXME This should fail.
-        """
         f_id = uuid4()
         r = test_app.post_json(
             "/reports",
@@ -201,25 +208,31 @@ class TestReportView:
                 "sec-roles": "ROLE_USER",
                 "sec-username": "bob",
             },
-            status=201,
+            status=400,
         )
-        assert sorted(list(r.json.keys())) == sorted(
-            [
-                "id",
-                "feature_id",
-                "report_model_id",
-                "custom_field_values",
-                "created_by",
-                "created_at",
-                "updated_by",
-                "updated_at",
-            ]
+        assert r.json == {
+            "errors": [
+                {
+                    "location": "body",
+                    "name": "custom_field_values",
+                    "description": ["Unexpected field this_is_a_wrong_field"],
+                }
+            ],
+            "status": "error",
+        }
+
+    def test_get_forbidden(self, test_app, test_data):
+        test_app.get(
+            f"/report_models/{test_data['reports'][0].id}",
+            headers={"sec-roles": "ROLE_USER"},
+            status=403,
         )
-        assert r.json["feature_id"] == str(f_id)
 
     def test_get_success(self, test_app, test_data):
         r = test_app.get(
-            f"/reports/{test_data['reports'][0].id}", headers={"sec-roles": "ROLE_USER"}
+            f"/reports/{test_data['reports'][0].id}",
+            headers={"sec-roles": "ROLE_USER"},
+            status=201,
         )
         assert r.json["id"] == str(test_data["reports"][0].id)
         assert r.json["report_model_id"] == str(test_data["reports"][0].report_model_id)
