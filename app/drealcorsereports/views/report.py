@@ -78,7 +78,9 @@ class ReportView:
             if is_user_reader_on_layer(self.request, layer_id):
                 acl.append((Allow, self.request.authenticated_userid, "view"))
             if is_user_writer_on_layer(self.request, layer_id):
-                acl.append((Allow, self.request.authenticated_userid, ("edit", "delete")))
+                acl.append(
+                    (Allow, self.request.authenticated_userid, ("edit", "delete"))
+                )
 
         return acl
 

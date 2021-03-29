@@ -290,7 +290,7 @@ class TestReportView:
             **kwargs,
         }
 
-    def test_put_forbidden(self,test_app, test_data, dbsession):
+    def test_put_forbidden(self, test_app, test_data, dbsession):
         report = self._denied_report(dbsession)
 
         test_app.put_json(
@@ -306,10 +306,12 @@ class TestReportView:
 
     @freeze_time("2020-01-01")
     def test_put_success(self, test_app, test_data):
-        report = test_data['reports'][0]
+        report = test_data["reports"][0]
         r = test_app.put_json(
             f"/reports/{report.id}",
-            self._put_payload(report, custom_field_values={"commentaire": "new comment"}),
+            self._put_payload(
+                report, custom_field_values={"commentaire": "new comment"}
+            ),
             headers={
                 "Accept": "application/json",
                 "sec-roles": "ROLE_USER",
@@ -343,7 +345,7 @@ class TestReportView:
         This should be discussed.
         We might add some validator to refuse changing the id.
         """
-        report = test_data['reports'][0]
+        report = test_data["reports"][0]
         new_id = uuid4()
         r = test_app.put_json(
             f"/reports/{test_data['reports'][0].id}",
