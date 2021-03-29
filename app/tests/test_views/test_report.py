@@ -71,36 +71,36 @@ def test_data(dbsession, transact):
         report_model=rm1,
         custom_field_values={"commentaire": "foo"},
         created_by="foo",
-        created_at=datetime.now(),
+        created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
         updated_by="foo",
-        updated_at=datetime.now(),
+        updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
     )
     r2 = Report(
         feature_id=str(uuid4()),
         report_model=rm2,
         custom_field_values={"commentaire": "bar"},
         created_by="bar",
-        created_at=datetime.now(),
+        created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
         updated_by="bar",
-        updated_at=datetime.now(),
+        updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
     )
     r3 = Report(
         feature_id=str(uuid4()),
         report_model=rm2,
         custom_field_values={"something": "foo"},
         created_by="foo",
-        created_at=datetime.now(),
+        created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
         updated_by="foo",
-        updated_at=datetime.now(),
+        updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
     )
     r4 = Report(
         feature_id=str(uuid4()),
         report_model=rm2,
         custom_field_values={"something": "foo"},
         created_by="bar",
-        created_at=datetime.now(),
+        created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
         updated_by="bar",
-        updated_at=datetime.now(),
+        updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
     )
     dbsession.add_all([r1, r2, r3, r4])
     dbsession.flush()
@@ -140,6 +140,7 @@ class TestReportView:
                 "sec-username": "bob",
                 "sec-roles": "ROLE_USER",
             },
+            status=200,
         )
         assert isinstance(r.json, list)
         assert len(r.json) == 1
@@ -221,38 +222,54 @@ class TestReportView:
             "status": "error",
         }
 
-    def test_get_forbidden(self, test_app, test_data):
+    def test_get_forbidden(self, test_app, test_data, dbsession):
+        report = (
+            dbsession.query(Report)
+            .join(ReportModel)
+            .filter(ReportModel.layer_id == DENIED_LAYER)
+        ).first()
+        assert report is not None
+
         test_app.get(
-            f"/report_models/{test_data['reports'][0].id}",
-            headers={"sec-roles": "ROLE_USER"},
+            f"/reports/{report.id}",
+            headers={
+                "Accept": "application/json",
+                "sec-roles": "ROLE_USER",
+                "sec-username": "bob",
+            },
             status=403,
         )
 
     def test_get_success(self, test_app, test_data):
+        report = test_data["reports"][0]
         r = test_app.get(
-            f"/reports/{test_data['reports'][0].id}",
-            headers={"sec-roles": "ROLE_USER"},
-            status=201,
+            f"/reports/{report.id}",
+            headers={
+                "Accept": "application/json",
+                "sec-roles": "ROLE_USER",
+                "sec-username": "bob",
+            },
+            status=200,
         )
-        assert r.json["id"] == str(test_data["reports"][0].id)
-        assert r.json["report_model_id"] == str(test_data["reports"][0].report_model_id)
-        assert sorted(list(r.json.keys())) == sorted(
-            [
-                "id",
-                "feature_id",
-                "report_model_id",
-                "custom_field_values",
-                "created_by",
-                "created_at",
-                "updated_by",
-                "updated_at",
-            ]
-        )
+        assert r.json == {
+            "id": str(report.id),
+            "feature_id": str(report.feature_id),
+            "report_model_id": str(report.report_model_id),
+            "created_at": "2021-01-22T13:33:00+00:00",
+            "updated_by": "foo",
+            "created_by": "foo",
+            "updated_at": "2021-01-22T13:34:00+00:00",
+            "custom_field_values": {"commentaire": "foo"},
+        }
 
     def test_get_not_found(self, test_app):
         r = test_app.get(
             f"/reports/{uuid4()}",
-            headers={"sec-roles": "ROLE_USER", "Accept": "application/json"},
+            headers={
+                "Accept": "application/json",
+                "sec-roles": "ROLE_USER",
+                "sec-username": "bob",
+            },
             status=404,
         )
         assert sorted(list(r.json.keys())) == sorted(["code", "message", "title"])
