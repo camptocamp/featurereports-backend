@@ -110,6 +110,15 @@ def test_data(dbsession, transact):
 
 @pytest.mark.usefixtures("patch_check_user_right")
 class TestReportView:
+    def _denied_report(self, dbsession):
+        report = (
+            dbsession.query(Report)
+            .join(ReportModel)
+            .filter(ReportModel.layer_id == DENIED_LAYER)
+        ).first()
+        assert report is not None
+        return report
+
     def test_collection_get_forbidden(self, test_app, test_data):
         test_app.get(
             f"/reports?layer_id={DENIED_LAYER}&feature_id={test_data['reports'][0].id}",
@@ -223,12 +232,7 @@ class TestReportView:
         }
 
     def test_get_forbidden(self, test_app, test_data, dbsession):
-        report = (
-            dbsession.query(Report)
-            .join(ReportModel)
-            .filter(ReportModel.layer_id == DENIED_LAYER)
-        ).first()
-        assert report is not None
+        report = self._denied_report(dbsession)
 
         test_app.get(
             f"/reports/{report.id}",
@@ -287,12 +291,7 @@ class TestReportView:
         }
 
     def test_put_forbidden(self,test_app, test_data, dbsession):
-        report = (
-            dbsession.query(Report)
-            .join(ReportModel)
-            .filter(ReportModel.layer_id == DENIED_LAYER)
-        ).first()
-        assert report is not None
+        report = self._denied_report(dbsession)
 
         test_app.put_json(
             f"/reports/{report.id}",
@@ -374,12 +373,7 @@ class TestReportView:
         assert r.json["message"].startswith("The resource could not be found")
 
     def test_delete_layer_denied(self, test_app, test_data, dbsession):
-        report = (
-            dbsession.query(Report)
-            .join(ReportModel)
-            .filter(ReportModel.layer_id == DENIED_LAYER)
-        ).first()
-        assert report is not None
+        report = self._denied_report(dbsession)
 
         r = test_app.delete(
             f"/reports/{report.id}",
