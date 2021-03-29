@@ -24,6 +24,24 @@ def marshmallow_validator(request: Request, **kwargs):
     )
 
 
+def layer_id_validator(request, **kwargs):
+    del kwargs
+    if "layer_id" not in request.params:
+        request.errors.add("querystring", "layer_id", "You need to provide a layer_id")
+    else:
+        request.layer_id = request.params["layer_id"]
+
+
+def feature_id_validator(request, **kwargs):
+    del kwargs
+    if "feature_id" not in request.params:
+        request.errors.add(
+            "querystring", "feature_id", "You need to provide a feature_id"
+        )
+    else:
+        request.feature_id = request.params["feature_id"]
+
+
 @resource(
     collection_path="/reports",
     path="/reports/{id}",
@@ -41,12 +59,19 @@ class ReportView:
         ROLE_REPORTS_ADMIN have the right to do anything
         For a specific user, we check in geoserver what right it has (admin, reader, writer)
         In case of POST, the id of the report is not specified, we need to sneak
-        into the playload to look for the report_model_id to knows the layer
+        into the payload to look for the report_model_id to knows the layer
         associated to this report and find which permission to look for in geosever
         """
         acl = [
             (Allow, "ROLE_REPORTS_ADMIN", ("list", "add", "view", "delete")),
         ]
+
+        # In case of list we get layer_id from request params
+        if "layer_id" in self.request.params:
+            layer_id = self.request.params["layer_id"]
+            if is_user_reader_on_layer(self.request, layer_id):
+                acl.append((Allow, self.request.authenticated_userid, ("list")))
+
         session = self.request.dbsession
         try:
             layer_id = ""
@@ -103,13 +128,17 @@ class ReportView:
 
         return acl
 
-    # FIXME listing all reports is useless. Listing reports by report model makes more senses.
-    # @view(permission="list")
-    # def collection_get(self) -> list:
-    #     session = self.request.dbsession
-    #     reports = session.query(Report)
-    #     report_schema = ReportSchema()
-    #     return [report_schema.dumps(r) for r in reports]
+    @view(permission="list", validators=[layer_id_validator, feature_id_validator])
+    def collection_get(self) -> list:
+        session = self.request.dbsession
+        reports = (
+            session.query(Report)
+            .join(ReportModel)
+            .filter(ReportModel.layer_id == self.request.layer_id)
+            .filter(Report.feature_id == self.request.feature_id)
+        )
+        report_schema = ReportSchema()
+        return [report_schema.dumps(r) for r in reports]
 
     @view(permission="list")
     def get_report_by_layer_id(self) -> list:

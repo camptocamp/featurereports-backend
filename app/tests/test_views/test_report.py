@@ -72,7 +72,7 @@ def test_data(dbsession, transact):
     dbsession.add_all([rm1, rm2])
     dbsession.flush()
     r1 = Report(
-        feature_id=uuid4(),
+        feature_id=str(uuid4()),
         report_model=rm1,
         custom_field_values={"commentaire": "foo"},
         created_by="foo",
@@ -81,7 +81,7 @@ def test_data(dbsession, transact):
         updated_at=datetime.now(),
     )
     r2 = Report(
-        feature_id=uuid4(),
+        feature_id=str(uuid4()),
         report_model=rm2,
         custom_field_values={"commentaire": "bar"},
         created_by="bar",
@@ -90,7 +90,7 @@ def test_data(dbsession, transact):
         updated_at=datetime.now(),
     )
     r3 = Report(
-        feature_id=uuid4(),
+        feature_id=str(uuid4()),
         report_model=rm2,
         custom_field_values={"something": "foo"},
         created_by="foo",
@@ -99,7 +99,7 @@ def test_data(dbsession, transact):
         updated_at=datetime.now(),
     )
     r4 = Report(
-        feature_id=uuid4(),
+        feature_id=str(uuid4()),
         report_model=rm2,
         custom_field_values={"something": "foo"},
         created_by="bar",
@@ -115,10 +115,39 @@ def test_data(dbsession, transact):
 
 @pytest.mark.usefixtures("patch_is_user_anything_on_layer")
 class TestReportView:
-    # def test_collection_get_success(self, test_app, test_data):
-    #     r = test_app.get("/reports", headers={"sec-roles": "ROLE_USER"})
-    #     assert isinstance(r.json, list)
-    #     assert len(r.json) == 4
+    def test_collection_get_forbidden(self, test_app, test_data):
+        test_app.get(
+            f"/reports?layer_id={DENIED_LAYER}&feature_id={test_data['reports'][0].id}",
+            headers={
+                "Accept": "application/json",
+                "sec-username": "bob",
+                "sec-roles": "ROLE_USER",
+            },
+            status=403,
+        )
+
+    def test_collection_get_no_feature_id(self, test_app, test_data):
+        test_app.get(
+            f"/reports?layer_id={ALLOWED_LAYER}",
+            headers={
+                "Accept": "application/json",
+                "sec-username": "bob",
+                "sec-roles": "ROLE_USER",
+            },
+            status=400,
+        )
+
+    def test_collection_get_success(self, test_app, test_data):
+        r = test_app.get(
+            f"/reports?layer_id={ALLOWED_LAYER}&feature_id={test_data['reports'][0].feature_id}",
+            headers={
+                "Accept": "application/json",
+                "sec-username": "bob",
+                "sec-roles": "ROLE_USER",
+            },
+        )
+        assert isinstance(r.json, list)
+        assert len(r.json) == 1
 
     def test_collection_post_forbidden(self, test_app, test_data):
         r = test_app.post_json(
