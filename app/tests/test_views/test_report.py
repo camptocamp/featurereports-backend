@@ -277,24 +277,51 @@ class TestReportView:
         assert r.json["title"] == "Not Found"
         assert r.json["message"].startswith("The resource could not be found")
 
-    @freeze_time("2020-01-01")
-    def test_put_success(self, test_app, test_data):
-        r = test_app.put_json(
-            f"/reports/{test_data['reports'][0].id}",
-            {
-                "feature_id": str(test_data["reports"][0].feature_id),
-                "report_model_id": str(test_data["report_models"][1].id),
-                "custom_field_values": {"commentaire": "foo"},
-            },
+    def _put_payload(self, report, **kwargs):
+        return {
+            "id": str(report.id),
+            "feature_id": str(report.feature_id),
+            "report_model_id": str(report.report_model_id),
+            "custom_field_values": report.custom_field_values,
+            **kwargs,
+        }
+
+    def test_put_forbidden(self,test_app, test_data, dbsession):
+        report = (
+            dbsession.query(Report)
+            .join(ReportModel)
+            .filter(ReportModel.layer_id == DENIED_LAYER)
+        ).first()
+        assert report is not None
+
+        test_app.put_json(
+            f"/reports/{report.id}",
+            self._put_payload(report),
             headers={
                 "Accept": "application/json",
                 "sec-roles": "ROLE_USER",
                 "sec-username": "bobby",
             },
+            status=403,
         )
+
+    @freeze_time("2020-01-01")
+    def test_put_success(self, test_app, test_data):
+        report = test_data['reports'][0]
+        r = test_app.put_json(
+            f"/reports/{report.id}",
+            self._put_payload(report, custom_field_values={"commentaire": "new comment"}),
+            headers={
+                "Accept": "application/json",
+                "sec-roles": "ROLE_USER",
+                "sec-username": "bobby",
+            },
+            status=200,
+        )
+        assert r.json["id"] == str(report.id)
         assert r.json["updated_at"] == "2020-01-01T00:00:00+00:00"
         assert r.json["updated_by"] == "bobby"
-        assert r.json["report_model_id"] == str(test_data["report_models"][1].id)
+        assert r.json["custom_field_values"] == {"commentaire": "new comment"}
 
     def test_put_non_existing_record(self, test_app):
         r = test_app.put_json(
@@ -313,16 +340,20 @@ class TestReportView:
         assert r.json["message"].startswith("The resource could not be found")
 
     def test_put_update_pk(self, test_app, test_data):
+        """
+        This should be discussed.
+        We might add some validator to refuse changing the id.
+        """
+        report = test_data['reports'][0]
         new_id = uuid4()
         r = test_app.put_json(
             f"/reports/{test_data['reports'][0].id}",
-            {
-                "id": str(new_id),
-                "feature_id": str(test_data["reports"][0].feature_id),
-                "report_model_id": str(test_data["report_models"][1].id),
-                "custom_field_values": {"commentaire": "foo"},
+            self._put_payload(report, id=str(new_id)),
+            headers={
+                "Accept": "application/json",
+                "sec-roles": "ROLE_USER",
+                "sec-username": "bobby",
             },
-            headers={"sec-roles": "ROLE_USER", "Accept": "application/json"},
             status=200,
         )
         assert r.json["id"] == str(new_id)
@@ -330,7 +361,11 @@ class TestReportView:
     def test_delete_non_existing(self, test_app):
         r = test_app.delete(
             f"/reports/{uuid4()}",
-            headers={"Accept": "application/json", "sec-roles": "ROLE_REPORTS_ADMIN"},
+            headers={
+                "Accept": "application/json",
+                "sec-roles": "ROLE_REPORTS_ADMIN",
+                "sec-username": "bobby",
+            },
             status=404,
         )
         assert sorted(list(r.json.keys())) == sorted(["code", "message", "title"])
@@ -338,10 +373,21 @@ class TestReportView:
         assert r.json["title"] == "Not Found"
         assert r.json["message"].startswith("The resource could not be found")
 
-    def test_unsufficient_permission(self, test_app):
+    def test_delete_layer_denied(self, test_app, test_data, dbsession):
+        report = (
+            dbsession.query(Report)
+            .join(ReportModel)
+            .filter(ReportModel.layer_id == DENIED_LAYER)
+        ).first()
+        assert report is not None
+
         r = test_app.delete(
-            f"/reports/{uuid4()}",
-            headers={"Accept": "application/json", "sec-roles": "ROLE_USER"},
+            f"/reports/{report.id}",
+            headers={
+                "Accept": "application/json",
+                "sec-roles": "ROLE_USER",
+                "sec-username": "bobby",
+            },
             status=403,
         )
 

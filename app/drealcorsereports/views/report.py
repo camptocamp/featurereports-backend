@@ -10,7 +10,6 @@ from pyramid.security import Allow, Everyone
 from drealcorsereports.models.reports import Report, ReportModel
 from drealcorsereports.schemas.reports import ReportSchema
 from drealcorsereports.security import (
-    is_user_admin_on_layer,
     is_user_reader_on_layer,
     is_user_writer_on_layer,
 )
@@ -69,15 +68,17 @@ class ReportView:
             if is_user_reader_on_layer(self.request, layer_id):
                 acl.append((Allow, self.request.authenticated_userid, "list"))
 
-        # We give everyone the add permission and returns validation error if needed
-        acl.append((Allow, Everyone, "add"))
+        elif self.request.method == "POST":
+            # We give everyone the add permission and returns validation error if needed
+            acl.append((Allow, Everyone, "add"))
 
-        # Other permissions are based on existing object
-        layer_id = self._get_object().report_model.layer_id
-        if is_user_reader_on_layer(self.request, layer_id):
-            acl.append((Allow, self.request.authenticated_userid, "view"))
-        if is_user_writer_on_layer(self.request, layer_id):
-            acl.append((Allow, self.request.authenticated_userid, ("edit", "delete")))
+        else:
+            # Other permissions are based on existing object
+            layer_id = self._get_object().report_model.layer_id
+            if is_user_reader_on_layer(self.request, layer_id):
+                acl.append((Allow, self.request.authenticated_userid, "view"))
+            if is_user_writer_on_layer(self.request, layer_id):
+                acl.append((Allow, self.request.authenticated_userid, ("edit", "delete")))
 
         return acl
 
