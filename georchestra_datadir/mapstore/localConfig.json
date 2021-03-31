@@ -220,7 +220,7 @@
       }
     },
     "plugins": {
-        "mobile": ["Header", {
+        "mobile": ["Header", "ReportExtension", {
                 "name": "Map",
                 "cfg": {
                     "mapOptions": {
@@ -328,7 +328,7 @@
             "FeedbackMask"
         ],
         "desktop": ["Header",
-          "Details",
+          "Details", "ReportExtension",
           {
             "name": "Map",
             "cfg": {
