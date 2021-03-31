@@ -104,3 +104,39 @@ The React CLI allows to indicate the apps origin and a dev proxy to the API via 
 
   "homepage": ".",
   "proxy": "http://app:8080",
+
+The following headers can be handy to access restricted parts of the API in dev via a browser plugin:
+
+.. code-block:: json
+
+  "sec-username": "testadmin"
+  "sec-roles": "ROLE_REPORTS_ADMIN"
+
+MapStore Extension
+-----------------------------
+
+Developement:
+
+The MapStore extension is developed on the fork: https://github.com/camptocamp/MapStoreExtension/tree/report-extension
+
+There is a debug mode available with: `http://localhost:8081/?debug=true`.
+
+Redux dev tools are useful for dev as MapStore follows redux.
+
+Note the current issues:
+
+* `npm install` needs to be run twice => https://github.com/geosolutions-it/MapStoreExtension/issues/4
+* we have encountered problems with the version of the `webpack-cli` dependency => https://github.com/geosolutions-it/MapStoreExtension/issues/7
+* mobile mode breaks a MapStore application with extension => https://github.com/geosolutions-it/MapStoreExtension/issues/6
+
+Deployment:
+
+MapStoreExtension developement has not yet been integrated into the project, since the best practices for this are still unclear.
+To deploy the extension developed in the MapStoreExtension repo into the project the following steps are necessary:  
+
+* run `npm run ext:build` in MapStoreExtension repo
+* copy `MapStoreExtension/dist/ReportExtension.zip` into `georchestra_datadir/mapstore/dist/extensions/`
+* extract `ReportExtension.zip` and remove zip (replace ReportExtension if exists) 
+
+Note: MapStore finds the extension bundle via the config in `georchestra_datadir/mapstore/extensions.json` 
+and loads it by default if indicated in `georchestra_datadir/mapstore/localConfig.json`.
