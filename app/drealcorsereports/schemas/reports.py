@@ -1,6 +1,7 @@
+import enum
+
 import marshmallow
 import marshmallow_sqlalchemy
-from marshmallow import fields
 from marshmallow_enum import EnumField
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
 
@@ -16,13 +17,65 @@ from drealcorsereports.security import (
 )
 
 
+CUSTOM_FIELD_TYPE_MAPPING = {
+    FieldTypeEnum.boolean: marshmallow.fields.Boolean,
+    FieldTypeEnum.date: marshmallow.fields.Date,
+    FieldTypeEnum.file: marshmallow.fields.String,
+    FieldTypeEnum.number: marshmallow.fields.Number,
+    FieldTypeEnum.string: marshmallow.fields.String,
+    FieldTypeEnum.enum: EnumField,
+}
+
+
+def create_custom_field_field(
+    custom_field: ReportModelCustomField,
+) -> marshmallow.fields.Field:
+    """
+    Create and return a marshmallow Field for the passed ReportModelCustomField.
+    """
+    field_class = CUSTOM_FIELD_TYPE_MAPPING[custom_field.type]
+
+    kwargs = {}
+    if custom_field.type == FieldTypeEnum.enum:
+        kwargs["enum"] = enum.Enum(
+            custom_field.name.capitalize(),
+            custom_field.enum,
+        )
+
+    field = field_class(required=custom_field.required, **kwargs)
+    return field
+
+
+def create_custom_fields_schema(report_model: ReportModel) -> marshmallow.Schema:
+    """
+    Create and return a mashmallow Schema for the custom fields of the passed ReportModel.
+    """
+    return marshmallow.Schema.from_dict(
+        {
+            custom_field.name: create_custom_field_field(custom_field)
+            for custom_field in report_model.custom_fields
+        },
+        name="CustomFieldsSchema",
+    )
+
+
 class ReportSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Report
         load_instance = True
         include_relationships = False
+        react_uischema_extra = {
+            "ui:order": [
+                "id",
+                "feature_id",
+                "report_model_id",
+                "custom_field_values",
+            ],
+        }
 
-    report_model_id = fields.UUID()
+    id = auto_field(metadata={"ui:widget": "hidden"})
+    feature_id = auto_field(metadata={"ui:widget": "hidden"})
+    report_model_id = auto_field(metadata={"ui:widget": "hidden"})
     created_at = auto_field(dump_only=True)
     created_by = auto_field(dump_only=True)
     updated_by = auto_field(dump_only=True)
@@ -50,6 +103,30 @@ class ReportSchema(SQLAlchemyAutoSchema):
                 raise marshmallow.ValidationError(
                     f"Unexpected field {name}", field_name="custom_field_values"
                 )
+
+    @classmethod
+    def from_report_model(cls, report_model):
+        """
+        Create an return an extended ReportSchema with a nested Schema for the custom fields' values.
+        Used to generate the JSONSchema.
+        """
+        return cls.from_dict(
+            {
+                "report_model_id": auto_field(
+                    default=str(report_model.id), metadata={"ui:widget": "hidden"}
+                ),
+                "custom_field_values": marshmallow.fields.Nested(
+                    create_custom_fields_schema(report_model),
+                    metadata={
+                        "ui:order": [
+                            custom_field.name
+                            for custom_field in report_model.custom_fields
+                        ],
+                    },
+                ),
+            },
+            name="ExtendedReportSchema",
+        )
 
 
 class ReportModelFieldSchema(SQLAlchemyAutoSchema):

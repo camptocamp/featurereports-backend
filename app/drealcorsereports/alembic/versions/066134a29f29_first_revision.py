@@ -2,7 +2,7 @@
 
 Revision ID: 066134a29f29
 Revises: 
-Create Date: 2021-01-26 12:19:54.933864
+Create Date: 2021-03-31 10:20:26.381545
 
 """
 from alembic import op
@@ -62,12 +62,12 @@ def upgrade():
         sa.Column(
             "type",
             sa.Enum(
-                "string",
                 "boolean",
-                "number",
                 "date",
-                "file",
                 "enum",
+                "file",
+                "number",
+                "string",
                 name="fieldtypeenum",
             ),
             nullable=False,
