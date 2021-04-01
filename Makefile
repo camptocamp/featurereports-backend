@@ -109,7 +109,7 @@ front-format:
 .PHONY: cleanall
 cleanall: ## Clean everything including docker containers and images
 cleanall: 
-	docker-compose down --remove-orphans
+	docker-compose down -v --remove-orphans
 	rm -f .env
 	docker rmi \
 		${DOCKER_BASE}-postgresql:${DOCKER_TAG} \

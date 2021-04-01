@@ -9,6 +9,12 @@ const mockData = {
       type: 'string',
       required: true,
     },
+    {
+      name: 'TestField-TestTags',
+      type: 'enum',
+      required: true,
+      enum: ['firstChoice','secondChoice'],
+    },
   ],
   name: 'TestModel',
   updated_by: 'testuserid',

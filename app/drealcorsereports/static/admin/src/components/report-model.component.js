@@ -4,6 +4,9 @@ import axios from 'axios';
 import { getErrorMessage } from '../http-common';
 import { FaMinus } from 'react-icons/fa';
 import { FaPlus } from 'react-icons/fa';
+import TagsInput from 'react-tagsinput';
+import 'react-tagsinput/react-tagsinput.css';
+import './report-model.component.css';
 
 const defaultReportModel = {
   id: null,
@@ -27,6 +30,7 @@ const defaultFormWarnings = {
 const defaultCustomField = {
   name: '',
   type: '',
+  enum: [],
   required: false,
 };
 
@@ -93,7 +97,7 @@ export default class ReportModel extends Component {
     }));
   }
 
-  onChangeField(edit, index, e) {
+  onChangeField(propertyName, value, index) {
     this.setState((prevState) => ({
       currentReportModel: {
         ...prevState.currentReportModel,
@@ -101,15 +105,18 @@ export default class ReportModel extends Component {
           (field, id) => {
             const returnField = { ...field };
             if (id === index) {
-              switch (edit) {
+              switch (propertyName) {
                 case 'name':
-                  returnField.name = e.target.value;
+                  returnField.name = value;
                   break;
                 case 'type':
-                  returnField.type = e.target.value;
+                  returnField.type = value;
+                  break;
+                case 'enum' :
+                  returnField.enum = value;
                   break;
                 case 'required':
-                  returnField.required = e.target.checked;
+                  returnField.required = value;
                   break;
                 default:
               }
@@ -122,14 +129,14 @@ export default class ReportModel extends Component {
         ...prevState.formWarnings,
         fieldName: Object.values(prevState.formWarnings.fieldName).map(
           (value, id) => {
-            return edit === 'name' && e.target.value && id === index
+            return propertyName === 'name' && value && id === index
               ? ''
               : value;
           }
         ),
         fieldType: Object.values(prevState.formWarnings.fieldType).map(
           (value, id) => {
-            return edit === 'type' && e.target.value && id === index
+            return propertyName === 'type' && value && id === index
               ? ''
               : value;
           }
@@ -214,6 +221,7 @@ export default class ReportModel extends Component {
         this.props.onReportModelChange();
       })
       .catch((e) => {
+        console.log(e);
         this.setState({
           errorMessage: getErrorMessage(e),
         });
@@ -230,6 +238,7 @@ export default class ReportModel extends Component {
         this.props.onReportModelChange();
       })
       .catch((e) => {
+        console.log(e);
         this.setState({
           errorMessage: getErrorMessage(e),
         });
@@ -245,6 +254,7 @@ export default class ReportModel extends Component {
         this.props.onReportModelChange();
       })
       .catch((e) => {
+        console.log(e);
         this.setState({
           errorMessage: getErrorMessage(e),
         });
@@ -331,10 +341,11 @@ export default class ReportModel extends Component {
                         <label htmlFor="field_name">Libellé*</label>
                         <input
                           type="text"
+                          aria-label='libelle'
                           className="form-control mb-2"
                           value={field.name}
                           id="field_name"
-                          onChange={(e) => this.onChangeField('name', index, e)}
+                          onChange={(e) => this.onChangeField('name', e.target.value, index)}
                         />
                         {formWarnings['fieldName'] && (
                           <span style={{ color: 'red' }}>
@@ -346,20 +357,29 @@ export default class ReportModel extends Component {
                         <label htmlFor="field_type">Type*</label>
                         <select
                           className="form-control mb-2"
+                          aria-label='type'
                           value={field.type}
                           id="field_type"
-                          onChange={(e) => this.onChangeField('type', index, e)}
+                          onChange={(e) => this.onChangeField('type', e.target.value, index)}
                         >
                           <option value=""></option>
-                          <option value="string">texte (simple)</option>
-                          <option value="array-string">
-                            texte (valeurs multiples)
+                          <option value="string">texte</option>
+                          <option value="enum">
+                            liste déroulante
                           </option>
                           <option value="number">numérique</option>
-                          <option value="boolean">boolean</option>
+                          <option value="boolean">booléen</option>
                           <option value="date">date</option>
                           <option value="file">photo</option>
                         </select>
+                        {currentReportModel.custom_fields[index].type === "enum" && (
+                          <TagsInput 
+                            value={currentReportModel.custom_fields[index].enum} 
+                            inputProps={{placeholder:'choix possibles'}}
+                            onChange={(e) => this.onChangeField('enum', e, index)}
+                          />
+                        )}
+                        
                         {formWarnings['fieldType'] && (
                           <span style={{ color: 'red' }}>
                             {formWarnings['fieldType'][index]}
@@ -370,18 +390,20 @@ export default class ReportModel extends Component {
                         <label htmlFor="field_required">Requis</label>
                         <input
                           className="form-check"
+                          aria-label='requis'
                           type="checkbox"
                           aria-label='field_required'
                           checked={field.required}
                           id="field_required"
                           onChange={(e) =>
-                            this.onChangeField('required', index, e)
+                            this.onChangeField('required', e.target.checked, index)
                           }
                         />
                       </div>
                       <div className="col-1">
                         <button
                           className="btn btn-danger mt-4"
+                          aria-label='delete field'
                           onClick={(e) => this.deleteField(index, e)}
                         >
                           <FaMinus />
@@ -391,7 +413,9 @@ export default class ReportModel extends Component {
                         {index ===
                           currentReportModel.custom_fields.length - 1 && (
                           <button
+                            type="submit"
                             className="btn btn-success mt-4"
+                            aria-label='add a field'
                             onClick={(e) => this.addField(e)}
                           >
                             <FaPlus />
@@ -402,7 +426,9 @@ export default class ReportModel extends Component {
                   ))
                 ) : (
                   <button
+                    type="submit"
                     className="btn btn-success"
+                    aria-label='add a field'
                     onClick={(e) => this.addField(e)}
                   >
                     <FaPlus />
