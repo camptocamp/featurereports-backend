@@ -28,9 +28,20 @@ def settings(app_env):
 @pytest.fixture(scope="session")
 @pytest.mark.usefixtures("settings")
 def dbsession(settings):
+    engine = get_engine(settings)
+
     alembic_cfg = Config("alembic.ini")
     command.upgrade(alembic_cfg, "head")
-    engine = get_engine(settings)
+
+    """
+    Can be useful for dev purpose
+    engine.execute("DROP SCHEMA IF EXISTS reports CASCADE;")
+    engine.execute("CREATE SCHEMA reports;")
+    from drealcorsereports.models.reports import Base
+
+    Base.metadata.create_all(engine)
+    """
+
     session_factory = get_session_factory(engine)
     session = get_tm_session(session_factory, transaction.manager)
     return session
