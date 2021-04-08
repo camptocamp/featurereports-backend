@@ -40,7 +40,7 @@ class ReportModel(Base):
     updated_at = Column(
         DateTime(timezone=True),
         default=partial(datetime.now, timezone.utc),
-        nullable=False
+        nullable=False,
     )
     custom_fields = relationship(
         "ReportModelCustomField",

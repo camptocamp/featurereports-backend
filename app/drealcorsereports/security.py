@@ -76,15 +76,20 @@ def get_geoserver_layers_acl(geoserver_url: str) -> Dict:
     return layer_rules_response.json()
 
 
-def check_user_right(
-    request: Request, layer_id: str, level_required: RuleAccess
-) -> bool:
+def geoserver_rules(request) -> List[Rule]:
     layer_rules_json = get_geoserver_layers_acl(
         request.registry.settings.get("geoserver_url")
     )
-    # filter rules for this layer_id
+    rules = []
     for kv in layer_rules_json.items():
-        rule = Rule.parse(*kv)
+        rules.append(Rule.parse(*kv))
+    return rules
+
+
+def check_user_right(
+    request: Request, layer_id: str, level_required: RuleAccess
+) -> bool:
+    for rule in request.geoserver_rules:
         if rule.match(layer_id, request.effective_principals, level_required):
             return True
     return False
@@ -138,3 +143,4 @@ class HeaderAuthentication:
 def includeme(config):
     config.set_authentication_policy(HeaderAuthentication())
     config.set_authorization_policy(ACLAuthorizationPolicy())
+    config.add_request_method(geoserver_rules, "geoserver_rules", reify=True)

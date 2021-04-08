@@ -3,17 +3,16 @@ from uuid import UUID
 
 from cornice.resource import resource, view
 from cornice.validators import marshmallow_body_validator
-from drealcorsereports.security import (
-    is_user_admin_on_layer,
-    is_user_reader_on_layer,
-    is_user_writer_on_layer,
-)
-from pyramid.request import Request
 from pyramid.exceptions import HTTPNotFound
+from pyramid.request import Request
+from pyramid.security import Allow, Everyone
 
 from drealcorsereports.models.reports import Report, ReportModel
 from drealcorsereports.schemas.reports import ReportSchema
-from pyramid.security import Allow
+from drealcorsereports.security import (
+    is_user_reader_on_layer,
+    is_user_writer_on_layer,
+)
 
 
 def marshmallow_validator(request: Request, **kwargs):
@@ -22,6 +21,24 @@ def marshmallow_validator(request: Request, **kwargs):
         schema=kwargs.get("schema"),
         schema_kwargs={"session": request.dbsession},
     )
+
+
+def layer_id_validator(request, **kwargs):
+    del kwargs
+    if "layer_id" not in request.params:
+        request.errors.add("querystring", "layer_id", "You need to provide a layer_id")
+    else:
+        request.layer_id = request.params["layer_id"]
+
+
+def feature_id_validator(request, **kwargs):
+    del kwargs
+    if "feature_id" not in request.params:
+        request.errors.add(
+            "querystring", "feature_id", "You need to provide a feature_id"
+        )
+    else:
+        request.feature_id = request.params["feature_id"]
 
 
 @resource(
@@ -38,91 +55,48 @@ class ReportView:
 
     def __acl__(self):
         """
-        ROLE_REPORTS_ADMIN have the right to do anything
-        For a specific user, we check in geoserver what right it has (admin, reader, writer)
-        In case of POST, the id of the report is not specified, we need to sneak
-        into the playload to look for the report_model_id to knows the layer
-        associated to this report and find which permission to look for in geosever
+        User with role ROLE_REPORTS_ADMIN have the right to do anything.
+        For a specific user, we check geoserver rules.
         """
         acl = [
             (Allow, "ROLE_REPORTS_ADMIN", ("list", "add", "view", "delete")),
         ]
-        session = self.request.dbsession
-        try:
-            layer_id = ""
-            if "report_id" in self.__dict__:
-                layer_id = (
-                    session.query(ReportModel.layer_id)
-                    .join(Report)
-                    .filter(Report.id == self.report_id)
-                    .one()
-                )[0]
-            else:
-                # search for data in payload. Even if the payload hasn't been validated by marshamllow 😱
-                report_model_id = self.request.json["report_model_id"]
-                layer_id = (
-                    session.query(ReportModel.layer_id)
-                    .filter(ReportModel.id == report_model_id)
-                    .one()
-                )[0]
 
-            # This code path could be optimized (3 calls to geoserver) to 1 call
+        # In case of list we get layer_id from request params
+        if "layer_id" in self.request.params:
+            layer_id = self.request.params["layer_id"]
             if is_user_reader_on_layer(self.request, layer_id):
-                acl.append(
-                    (
-                        Allow,
-                        self.request.authenticated_userid,
-                        ("list", "add", "view", "delete"),
-                    )
-                )
+                acl.append((Allow, self.request.authenticated_userid, "list"))
+
+        elif self.request.method == "POST":
+            # We give everyone the add permission and returns validation error if needed
+            acl.append((Allow, Everyone, "add"))
+
+        else:
+            # Other permissions are based on existing object
+            layer_id = self._get_object().report_model.layer_id
+            if is_user_reader_on_layer(self.request, layer_id):
+                acl.append((Allow, self.request.authenticated_userid, "view"))
             if is_user_writer_on_layer(self.request, layer_id):
                 acl.append(
-                    (
-                        Allow,
-                        self.request.authenticated_userid,
-                        ("list", "add", "view", "delete"),
-                    )
+                    (Allow, self.request.authenticated_userid, ("edit", "delete"))
                 )
-            if is_user_admin_on_layer(self.request, layer_id):
-                acl.append(
-                    (
-                        Allow,
-                        self.request.authenticated_userid,
-                        (
-                            "list",
-                            "add",
-                            "view",
-                        ),
-                    )
-                )
-        except Exception as e:
-            """
-            in case of failure, just don't add any permission and let the permission code deals with missing credentials
-            """
-            pass
 
         return acl
 
-    # FIXME listing all reports is useless. Listing reports by report model makes more senses.
-    # @view(permission="list")
-    # def collection_get(self) -> list:
-    #     session = self.request.dbsession
-    #     reports = session.query(Report)
-    #     report_schema = ReportSchema()
-    #     return [report_schema.dumps(r) for r in reports]
-
-    @view(permission="list")
-    def get_report_by_layer_id(self) -> list:
-        layer_id = UUID(self.request.matchdict("layer_id"))
+    @view(permission="list", validators=[layer_id_validator, feature_id_validator])
+    def collection_get(self) -> list:
+        session = self.request.dbsession
         reports = (
-            self.request.dbsession.query(Report)
+            session.query(Report)
             .join(ReportModel)
-            .filter(ReportModel.layer_id == layer_id)
-            .all()
+            .filter(ReportModel.layer_id == self.request.layer_id)
+            .filter(Report.feature_id == self.request.feature_id)
         )
-        return ReportSchema.dump(reports, many=True)
+        report_schema = ReportSchema()
+        return [report_schema.dumps(r) for r in reports]
 
-    @view(schema=ReportSchema, validators=(marshmallow_validator,), permission="add")
+    @view(permission="add", schema=ReportSchema, validators=(marshmallow_validator,))
     def collection_post(self):
         report = self.request.validated
         report.created_by = self.request.authenticated_userid
@@ -140,11 +114,11 @@ class ReportView:
             raise HTTPNotFound()
         return r
 
-    @view(permission="list")
+    @view(permission="view")
     def get(self) -> dict:
         return ReportSchema().dump(self._get_object())
 
-    @view(schema=ReportSchema, validators=(marshmallow_validator,), permission="add")
+    @view(permission="edit", schema=ReportSchema, validators=(marshmallow_validator,))
     def put(self) -> dict:
         # generate 404 if the report doesn't exists.
         self._get_object()
