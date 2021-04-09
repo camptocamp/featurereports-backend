@@ -9,6 +9,7 @@ import responses
 from drealcorsereports.security import (
     HeaderAuthentication,
     is_user_admin_on_layer,
+    geoserver_rules,
     Rule,
     RuleAccess,
 )
@@ -84,9 +85,9 @@ class TestRules:
         assert r.rule_access == RuleAccess.READ
 
 
-class TestIsUserAdminOnLayer:
+class TestGeoserverRules:
     @responses.activate
-    def test_raise_on_not_found(self):
+    def test_geoserver_rules_raise_on_not_found(self):
         request = testing.DummyRequest()
         request.registry.settings = {"geoserver_url": "https://toto/geoserver"}
         responses.add(
@@ -95,14 +96,15 @@ class TestIsUserAdminOnLayer:
             status=404,
         )
         with pytest.raises(HTTPError) as e:
-            is_user_admin_on_layer(request, "foo")
+            geoserver_rules(request)
             assert (
                 str(e.value)
                 == "Not Found for url: https://toto/geoserver/rest/security/acl/layers.json"
             )
 
-    @responses.activate
-    def test_geoserver_admin_wildcard(self):
+
+class TestIsUserAdminOnLayer:
+    def create_request(self, rules):
         with mock.patch(
             "pyramid.testing.DummyRequest.effective_principals",
             new_callable=PropertyMock,
@@ -113,41 +115,25 @@ class TestIsUserAdminOnLayer:
             responses.add(
                 responses.GET,
                 "https://toto/geoserver/rest/security/acl/layers.json",
-                json={"*.*.a": "*"},
+                json=rules,
             )
-            ret = is_user_admin_on_layer(request, "foo")
-            assert ret is True
+            request.geoserver_rules = geoserver_rules(request)
+        return request
 
     @responses.activate
-    def test_geoserver_not_admin_wildcard(self):
-        with mock.patch(
-            "pyramid.testing.DummyRequest.effective_principals",
-            new_callable=PropertyMock,
-        ) as mock_effective_principals:
-            request = testing.DummyRequest()
-            mock_effective_principals.return_value = ["ADMIN", "TOTO"]
-            request.registry.settings = {"geoserver_url": "https://toto/geoserver"}
-            responses.add(
-                responses.GET,
-                "https://toto/geoserver/rest/security/acl/layers.json",
-                json={"*.foo.r": "ADMIN"},
-            )
-            ret = is_user_admin_on_layer(request, "foo")
-            assert ret is False
+    def test_is_user_admin_on_layer_admin_wildcard(self):
+        request = self.create_request({"*.*.a": "*"})
+        ret = is_user_admin_on_layer(request, "foo")
+        assert ret is True
 
     @responses.activate
-    def test_geoserver_wrong_roles(self):
-        with mock.patch(
-            "pyramid.testing.DummyRequest.effective_principals",
-            new_callable=PropertyMock,
-        ) as mock_effective_principals:
-            request = testing.DummyRequest()
-            mock_effective_principals.return_value = ["ADMIN", "TOTO"]
-            request.registry.settings = {"geoserver_url": "https://toto/geoserver"}
-            responses.add(
-                responses.GET,
-                "https://toto/geoserver/rest/security/acl/layers.json",
-                json={"*.foo.r": "ADMIN", "bar.baz.a": "NOT_YOU"},
-            )
-            ret = is_user_admin_on_layer(request, "foo")
-            assert ret is False
+    def test_is_user_admin_on_layer_not_admin_wildcard(self):
+        request = self.create_request({"*.foo.r": "ADMIN"})
+        ret = is_user_admin_on_layer(request, "foo")
+        assert ret is False
+
+    @responses.activate
+    def test_is_user_admin_on_layer_wrong_roles(self):
+        request = self.create_request({"*.foo.r": "ADMIN", "bar.baz.a": "NOT_YOU"})
+        ret = is_user_admin_on_layer(request, "foo")
+        assert ret is False
