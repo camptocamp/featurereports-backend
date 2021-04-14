@@ -1,113 +1,73 @@
+from datetime import datetime, timezone
+from unittest.mock import patch
 from uuid import uuid4
 
-from drealcorsereports.models.reports import Report, ReportModel
+import pytest
+from drealcorsereports.models.reports import ReportModel, ReportModelCustomField, FieldTypeEnum, Report
+from sqlalchemy import text
 
+ALLOWED_LAYER = "allowed_layer"
+
+@pytest.fixture
+def patch_check_user_right():
+    def check_user_right(user_id, layer_id, level_required):
+        del user_id
+        del level_required
+        return layer_id == ALLOWED_LAYER
+
+    with patch(
+        "drealcorsereports.security.check_user_right",
+        side_effect=check_user_right,
+    ) as right_mock:
+        yield right_mock
 
 class TestTjsView:
-    def test_tjs_create(self, test_app, dbsession):
-        custom_model_field = {
-            "title": "A registration form",
-            "description": "A simple form example.",
-            "type": "object",
-            "properties": {
-                "firstName": {
-                    "type": "string",
-                    "title": "First name",
-                    "default": "Chuck",
-                },
-                "lastName": {"type": "string", "title": "Last name"},
-            },
-        }
-        rm = ReportModel(
-            name="test",
-            layer_id="test_layer",
-            custom_field_schema=custom_model_field,
-            created_by="foo",
+    def test_report_doesnt_exist(self, test_app):
+        test_app.post(f"/tjs/reports/{uuid4()}", status=404)
+
+    def test_wrong_permission(self):
+        pass
+
+    @pytest.mark.usefixtures("patch_check_user_right")
+    def test_create_view(self, test_app, dbsession):
+        rm1 = ReportModel(
+            name="existing_bar",
+            layer_id=ALLOWED_LAYER,
+            created_by="toto",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="tata",
+            updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
+            custom_fields=[
+                ReportModelCustomField(
+                    name="commentaire",
+                    type=FieldTypeEnum.string,
+                )
+            ],
         )
-        r = Report(
-            custom_field_values={"firstName": "foo", "lastName": "bar"},
-            feature_id="1234",
-            report_model=rm,
-            created_by="foo",
-        )
-        dbsession.add_all([rm, r])
+        dbsession.add(rm1)
         dbsession.flush()
-        ret = test_app.post(f"/tjs/{rm.id}")
-        assert ret.status_code == 200
-        schema = ReportModel.__table_args__["schema"]
-        assert ret.content == {"view_name": f"{schema}.v_report_test_layer"}
-
-    def test_tjs_create_already_exist(self, test_app, dbsession):
-        custom_model_field = {
-            "title": "A registration form",
-            "description": "A simple form example.",
-            "type": "object",
-            "properties": {
-                "firstName": {
-                    "type": "string",
-                    "title": "First name",
-                    "default": "Chuck",
-                },
-                "lastName": {"type": "string", "title": "Last name"},
-            },
-        }
-        rm = ReportModel(
-            name="test",
-            layer_id="test_layer",
-            custom_field_schema=custom_model_field,
+        r1 = Report(
+            feature_id=str(uuid4()),
+            report_model=rm1,
+            custom_field_values={"commentaire": "foo"},
             created_by="foo",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="foo",
+            updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
         )
-        r = Report(
-            custom_field_values={"firstName": "foo", "lastName": "bar"},
-            feature_id="1234",
-            report_model=rm,
-            created_by="foo",
+        r2 = Report(
+            feature_id=str(uuid4()),
+            report_model=rm1,
+            custom_field_values={"commentaire": "bar"},
+            created_by="bar",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="bar",
+            updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
         )
-        dbsession.add_all([rm, r])
+        dbsession.add_all([r1, r2])
         dbsession.flush()
-        test_app.post(f"/tjs/{rm.id}")
-        test_app.post(f"/tjs/{rm.id}", status=500)
 
-    def test_tjs_get(self, test_app):
-        r = test_app.get("/tjs/<a uuid that exist>")
-        assert r.status_code == 200
-        assert r.json() == {"view_name": "schema.v_report_my_report"}
-
-    def test_tjs_get_doesnt_exist(self, test_app):
-        r = test_app.get(f"/tjs/{uuid4()}", status=404)
-        assert r.status_code == 404
-
-    def test_tjs_delete(self, test_app, dbsession):
-        custom_model_field = {
-            "title": "A registration form",
-            "description": "A simple form example.",
-            "type": "object",
-            "properties": {
-                "firstName": {
-                    "type": "string",
-                    "title": "First name",
-                    "default": "Chuck",
-                },
-                "lastName": {"type": "string", "title": "Last name"},
-            },
-        }
-        rm = ReportModel(
-            name="test",
-            layer_id="test_layer",
-            custom_field_schema=custom_model_field,
-            created_by="foo",
-        )
-        r = Report(
-            custom_field_values={"firstName": "foo", "lastName": "bar"},
-            feature_id="1234",
-            report_model=rm,
-            created_by="foo",
-        )
-        dbsession.add_all([rm, r])
-        dbsession.flush()
-        ret = test_app.delete(f"/tjs/{rm.id}")
-        assert dbsession.query(ReportModel).filter(id == rm.id).one_or_none() is None
-        assert ret.status_code == 204
-
-    def test_tjs_delete_doesnt_exist(self, test_app):
-        test_app.delete(f"/tjs/{uuid4()}", status=404)  # non existant uuid
+        ret = test_app.post(f"/tjs/reports/{rm1.id}")
+        assert ret.json == {"view": f"{rm1.__table_args__['schema']}.v_tjs_view_{rm1.name}"}
+        db_res = dbsession.execute(text(f"SELECT * FROM {ret.json['view']}"))
+        assert [r.commentaire for r in db_res] == ["foo", "bar"]
