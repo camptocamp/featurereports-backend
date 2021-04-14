@@ -7,3 +7,4 @@ pyramid_ipython
 pytest==6.2.1
 responses>=0.12,<0.13
 webtest==2.0.35
+freezegun

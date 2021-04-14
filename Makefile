@@ -109,7 +109,7 @@ front-format:
 .PHONY: cleanall
 cleanall: ## Clean everything including docker containers and images
 cleanall: 
-	docker-compose down --remove-orphans
+	docker-compose down -v --remove-orphans
 	rm -f .env
 	docker rmi \
 		${DOCKER_BASE}-postgresql:${DOCKER_TAG} \
@@ -134,6 +134,17 @@ psql:
 pshell: ## Launch pshell in app container
 pshell:
 	docker-compose run --rm app pshell c2c://drealcorsereports.ini
+
+.PHONY: regenerate-first-migration
+regenerate-first-migration: ## Regenerate first alembic migration
+	rm -rf app/drealcorsereports/alembic/versions/*.py
+	docker-compose exec db psql -U drealcorse -d drealcorse -c "DROP SCHEMA reports CASCADE;"
+	docker-compose exec db psql -U drealcorse -d drealcorse -c "CREATE SCHEMA reports;"
+	docker-compose run --rm --user `id -u` \
+		-v "${PWD}/app/drealcorsereports:/app/drealcorsereports" \
+		app \
+		alembic -c /app/alembic.ini revision --rev-id "066134a29f29" --autogenerate -m 'First revision'
+	make black
 
 
 # Docker images

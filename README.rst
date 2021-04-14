@@ -52,16 +52,16 @@ Before the first release we will overwrite the first migration:
 
 .. code-block:: bash
 
-    rm -rf app/drealcorsereports/alembic/versions/*.py
-    make psql
-    DROP SCHEMA reports CASCADE;
-    CREATE SCHEMA reports;
-    \q
+   make regenerate-first-migration
+
+Generate a new alembic migration:
 
 .. code-block:: bash
 
-    docker-compose run --rm --user `id -u` app-tools \
-        alembic -c /app/alembic.ini revision --autogenerate -m 'First revision'
+    docker-compose run --rm --user `id -u` \
+      -v "${PWD}/app/drealcorsereports:/app/drealcorsereports" \
+      app \
+      alembic -c /app/alembic.ini revision --autogenerate -m 'Description'
 
 Now you can try it:
 
@@ -70,7 +70,7 @@ Now you can try it:
     make initdb
 
 Frontend
------------------------------
+--------
 
 Once the composition has started a production build is available at http://localhost:8080/admin/
 
