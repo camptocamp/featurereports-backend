@@ -1,7 +1,14 @@
 import axios from 'axios';
 
-export default axios.create({
+export const http = axios.create({
   baseURL: '../report_models',
+  headers: {
+    'Content-type': 'application/json',
+  },
+});
+
+export const httpLayers = axios.create({
+  baseURL: '../layers',
   headers: {
     'Content-type': 'application/json',
   },

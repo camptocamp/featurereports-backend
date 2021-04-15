@@ -1,4 +1,4 @@
-import http from '../http-common';
+import {http, httpLayers} from '../http-common';
 
 class ReportModelApiService {
   getAll(cancelToken) {
@@ -9,6 +9,12 @@ class ReportModelApiService {
 
   get(id, cancelToken) {
     return http.get(`/${id}`, {
+      cancelToken,
+    });
+  }
+
+  getLayers(cancelToken) {
+    return httpLayers.get('', {
       cancelToken,
     });
   }

@@ -41,8 +41,8 @@ export default class ReportModel extends Component {
 
     this.state = {
       currentReportModel: defaultReportModel,
+      layers: [],
       formWarnings: defaultFormWarnings,
-      selectedLayer: '',
       errorMessage: '',
     };
 
@@ -53,6 +53,7 @@ export default class ReportModel extends Component {
     if (this.props.currentReportModel.id !== null) {
       this.getReportModel(this.props.currentReportModel.id);
     }
+    this.getLayers();
   }
 
   componentDidUpdate(prevProps) {
@@ -84,8 +85,28 @@ export default class ReportModel extends Component {
     });
   }
 
+  getLayers() {
+    ReportModelApiService.getLayers()
+      .then((response) => {
+        this.setState({
+          layers: response.data,
+        });
+        console.log(response.data);
+      })
+      .catch((e) => {
+        this.setState({
+          errorMessage: getErrorMessage(e),
+        });
+      });
+  }
+
+  layerOption(layer_id) {
+    return {label: layer_id, value: layer_id};
+  }
+
   onChangeLayer(e) {
-    const layer_id = e.target.value;
+    // const layer_id = e.target.value;
+    const layer_id = e.value;
 
     this.setState((prevState) => ({
       currentReportModel: {
@@ -146,13 +167,6 @@ export default class ReportModel extends Component {
       },
     }));
   }
-
-  selectLayer = selectedLayer => {
-    console.log(`Option selected:`, selectedLayer);
-    this.setState({
-      selectedLayer: selectedLayer,
-    });
-  };
 
   addField(e) {
     e.preventDefault();
@@ -302,9 +316,9 @@ export default class ReportModel extends Component {
   }
 
   render() {
-    const { currentReportModel, formWarnings, selectedLayer } = this.state;
+    const { currentReportModel, layers, formWarnings } = this.state;
 
-    const options = [{label: "layer1", value: "layer1"}, {label: "layer2", value: "layer2"}];
+    const options = layers.map(layer => this.layerOption(layer));
 
     return (
       <div>
@@ -331,20 +345,21 @@ export default class ReportModel extends Component {
                 <span style={{ color: 'red', float: 'right' }}>
                   {formWarnings['layer']}
                 </span>
-                <input
+                {/* <input
                   type="text"
                   className="form-control"
                   id="layer_id"
                   value={currentReportModel.layer_id}
                   onChange={(e) => this.onChangeLayer(e)}
+                /> */}
+                <Select
+                  id="layer_id"
+                  value={this.layerOption(currentReportModel.layer_id)}
+                  onChange={(e) => this.onChangeLayer(e)}
+                  options={options}
                 />
               </div>
 
-              <Select
-                value={selectedLayer}
-                onChange={this.selectLayer}
-                options={options}
-              />
 
               <label htmlFor="custom_fields">Champs de formulaire</label>
               <span style={{ color: 'red', float: 'right' }}>
@@ -366,7 +381,7 @@ export default class ReportModel extends Component {
                         />
                         {formWarnings['fieldName'] && (
                           <span style={{ color: 'red' }}>
-                            {formWarnings['fieldName'][index]}
+                            {formWarnings['fieldName'][index]} 
                           </span>
                         )}
                       </div>
