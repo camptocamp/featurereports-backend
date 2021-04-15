@@ -105,7 +105,6 @@ export default class ReportModel extends Component {
   }
 
   onChangeLayer(e) {
-    // const layer_id = e.target.value;
     const layer_id = e.value;
 
     this.setState((prevState) => ({
@@ -345,13 +344,6 @@ export default class ReportModel extends Component {
                 <span style={{ color: 'red', float: 'right' }}>
                   {formWarnings['layer']}
                 </span>
-                {/* <input
-                  type="text"
-                  className="form-control"
-                  id="layer_id"
-                  value={currentReportModel.layer_id}
-                  onChange={(e) => this.onChangeLayer(e)}
-                /> */}
                 <Select
                   id="layer_id"
                   value={this.layerOption(currentReportModel.layer_id)}
@@ -381,7 +373,7 @@ export default class ReportModel extends Component {
                         />
                         {formWarnings['fieldName'] && (
                           <span style={{ color: 'red' }}>
-                            {formWarnings['fieldName'][index]} 
+                            {formWarnings['fieldName'][index]}
                           </span>
                         )}
                       </div>
