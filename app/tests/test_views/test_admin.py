@@ -8,7 +8,6 @@ from drealcorsereports.models.reports import (
     ReportModel,
     ReportModelCustomField,
 )
-from pyramid.httpexceptions import HTTPBadRequest
 
 USER_ADMIN = "USER_ADMIN"
 ROLE_REPORTS_ADMIN = "ROLE_REPORTS_ADMIN"
@@ -415,3 +414,59 @@ class TestAdminReportModelView:
             headers=self._auth_headers(),
             status=404,
         )
+
+    def test_post_tjs_view_forbidden(self, test_app, dbsession, test_data):
+        rm = test_data["report_models"][1]
+        test_app.post(
+            f"/report_models/{rm.id}/tjs_view",
+            {},
+            headers=self._auth_headers(),
+            status=403,
+        )
+
+    def test_post_tjs_view_success(self, test_app, dbsession, test_data):
+        rm = test_data["report_models"][0]
+        r = test_app.post(
+            f"/report_models/{rm.id}/tjs_view",
+            {},
+            headers=self._auth_headers(),
+            status=200,
+        )
+        assert r.json == {"view": "reports.v_tjs_view_existing_allowed"}
+
+        from drealcorsereports.models.reports import Report
+
+        r1 = Report(
+            feature_id=str(uuid4()),
+            report_model=test_data["report_models"][0],
+            custom_field_values={"commentaire": "foo"},
+            created_by="foo",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="foo",
+            updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
+        )
+        r2 = Report(
+            feature_id=str(uuid4()),
+            report_model=test_data["report_models"][0],
+            custom_field_values={"commentaire": "bar"},
+            created_by="bar",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="bar",
+            updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
+        )
+        dbsession.add_all([r1, r2])
+        dbsession.flush()
+
+        from sqlalchemy import text
+
+        result = dbsession.execute(text(f"SELECT * FROM {rm.tjs_view_name()}"))
+        assert [row for row in result] == [
+            (
+                r1.feature_id,
+                "foo",
+            ),
+            (
+                r2.feature_id,
+                "bar",
+            ),
+        ]
