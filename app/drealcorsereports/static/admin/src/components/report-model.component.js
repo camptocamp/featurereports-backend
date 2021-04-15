@@ -6,6 +6,7 @@ import { FaMinus } from 'react-icons/fa';
 import { FaPlus } from 'react-icons/fa';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
+import Select from 'react-select';
 import './report-model.component.css';
 
 const defaultReportModel = {
@@ -41,6 +42,7 @@ export default class ReportModel extends Component {
     this.state = {
       currentReportModel: defaultReportModel,
       formWarnings: defaultFormWarnings,
+      selectedLayer: '',
       errorMessage: '',
     };
 
@@ -144,6 +146,13 @@ export default class ReportModel extends Component {
       },
     }));
   }
+
+  selectLayer = selectedLayer => {
+    console.log(`Option selected:`, selectedLayer);
+    this.setState({
+      selectedLayer: selectedLayer,
+    });
+  };
 
   addField(e) {
     e.preventDefault();
@@ -293,7 +302,9 @@ export default class ReportModel extends Component {
   }
 
   render() {
-    const { currentReportModel, formWarnings } = this.state;
+    const { currentReportModel, formWarnings, selectedLayer } = this.state;
+
+    const options = [{label: "layer1", value: "layer1"}, {label: "layer2", value: "layer2"}];
 
     return (
       <div>
@@ -328,6 +339,12 @@ export default class ReportModel extends Component {
                   onChange={(e) => this.onChangeLayer(e)}
                 />
               </div>
+
+              <Select
+                value={selectedLayer}
+                onChange={this.selectLayer}
+                options={options}
+              />
 
               <label htmlFor="custom_fields">Champs de formulaire</label>
               <span style={{ color: 'red', float: 'right' }}>
