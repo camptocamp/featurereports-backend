@@ -138,6 +138,12 @@
                 "title": "geoserver from georchestra.ac-corse.fr",
                 "autoload": true
               },
+              "wms_rennesmetropole": {
+                "url": "https://public.sig.rennesmetropole.fr/geoserver/wms",
+                "type": "wms",
+                "title": "WMS RM",
+                "autoload": false
+              },
               "PIGMA": {
                 "url": "https://www.pigma.org/geonetwork/srv/fre/csw",
                 "type": "csw",
