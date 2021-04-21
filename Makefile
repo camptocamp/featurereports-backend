@@ -68,7 +68,10 @@ docker-compose-env: ## Build docker-compose environment file
 .PHONY: initdb
 initdb:
 	docker-compose exec app alembic upgrade head
-	# docker-compose exec app setup_test_data c2c://development.ini#app
+
+.PHONY: setup-test-data
+setup-test-data: ## Setup test dataset in database
+	docker-compose exec app setup_test_data c2c://drealcorsereports.ini
 
 .PHONY: black
 black:

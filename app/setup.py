@@ -28,6 +28,8 @@ setup(
     zip_safe=False,
     install_requires=REQUIRES,
     entry_points="""\
+        [console_scripts]
+            setup_test_data = drealcorsereports.scripts.setup_test_data:main
         [paste.app_factory]
             main=drealcorsereports:main
         [plaster.loader_factory]
