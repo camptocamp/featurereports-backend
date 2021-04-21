@@ -242,8 +242,7 @@
                           "altShiftDragRotate": false
                         }
                       }
-                    },
-                    "tools": ["locate"]
+                    }
                 }
             }, "Version", "DrawerMenu",
             {
