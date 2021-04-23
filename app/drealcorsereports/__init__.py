@@ -5,6 +5,8 @@ from pyramid.config import Configurator
 
 def main(global_config, **settings):
     del global_config
+    settings['tm.commit_veto'] = 'pyramid_tm.default_commit_veto'
+
     config = Configurator(settings=settings)
 
     config.include("drealcorsereports.models.includeme")
