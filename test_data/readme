@@ -1,0 +1,16 @@
+How to use these datas to create layers:
+
+launch your
+
+extract archive somewhere
+docker ps | grep geoserver
+docker cp /rennes/ {container_id}:mnt/geoserver_geodata/
+
+-> dans /geoserver :
+
+Security/Data => add new rule to grant admin access to any role
+Data/Stores => add store from shapefile, select your shapefiles in /mnt/geoserver_geodata/...
+Data/Layers => add layer from => publish (autocompute Bounding Boxes)
+
+
+
