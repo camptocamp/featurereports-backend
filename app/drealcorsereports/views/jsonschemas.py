@@ -1,4 +1,5 @@
 from cornice.resource import resource, view
+from marshmallow_jsonschema import JSONSchema
 from marshmallow_jsonschema.extensions import ReactJsonSchemaFormJSONSchema
 from pyramid.request import Request
 from pyramid.security import Allow, Everyone
@@ -26,10 +27,7 @@ class JsonSchemaView:
 
     @view(permission="list")
     def collection_get(self) -> list:
-        json_schema = ReactJsonSchemaFormJSONSchema()
-        # json_schema = JSONSchema()
-
-        schemas = {}
+        schemas = []
 
         report_models = self.request.dbsession.query(ReportModel)
         for report_model in report_models:
@@ -46,11 +44,14 @@ class JsonSchemaView:
                 ]
             )
 
-            schemas[str(report_model.id)] = {
-                "id": str(report_model.id),
-                "name": report_model.name,
-                "JSONSchema": json_schema.dump(schema),
-                "UISchema": json_schema.dump_uischema(schema),
-            }
+            schemas.append(
+                {
+                    "id": str(report_model.id),
+                    "name": report_model.name,
+                    "layer_id": report_model.layer_id,
+                    "JSONSchema": JSONSchema().dump(schema),
+                    "UISchema": ReactJsonSchemaFormJSONSchema().dump_uischema(schema),
+                }
+            )
 
         return schemas

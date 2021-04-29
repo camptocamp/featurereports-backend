@@ -1,5 +1,8 @@
+import json
+import os
 from datetime import datetime, timezone
 from unittest.mock import patch
+from uuid import UUID
 
 import pytest
 from drealcorsereports.models.reports import (
@@ -18,7 +21,8 @@ def test_data(dbsession, transact):
     del transact
     report_models = [
         ReportModel(
-            name="existing_allowed",
+            id=UUID("{12345678-1234-5678-1234-567812345678}"),
+            name="model1",
             layer_id=ALLOWED_LAYER,
             created_by="toto",
             created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
@@ -58,6 +62,22 @@ def test_data(dbsession, transact):
                 ),
             ],
         ),
+        ReportModel(
+            id=UUID("{12345678-1234-5678-1234-567812345679}"),
+            name="model2",
+            layer_id=ALLOWED_LAYER,
+            created_by="toto",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="tata",
+            updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
+            custom_fields=[
+                ReportModelCustomField(
+                    name="commentaire",
+                    type=FieldTypeEnum.string,
+                    required=False,
+                ),
+            ],
+        ),
     ]
     dbsession.add_all(report_models)
     dbsession.flush()
@@ -83,122 +103,13 @@ def patch_is_user_reader_on_layer():
 @pytest.mark.usefixtures("test_data", "patch_is_user_reader_on_layer")
 class TestJsonSchemasView:
     def test_get_success(self, test_app, test_data):
-        report_model = test_data["report_models"][0]
-
         r = test_app.get(
             "/jsonschemas",
             status=200,
         )
-        assert r.json == {
-            str(report_model.id): {
-                "id": str(report_model.id),
-                "name": str(report_model.name),
-                "JSONSchema": {
-                    "$ref": "#/definitions/ExtendedReportSchema",
-                    "$schema": "http://json-schema.org/draft-07/schema#",
-                    "definitions": {
-                        "CustomFieldsSchema": {
-                            "type": "object",
-                            "required": [
-                                "boolean",
-                                "category",
-                                "date",
-                                "number",
-                            ],
-                            "properties": {
-                                "category": {
-                                    "title": "category",
-                                    "type": "string",
-                                    "enum": ["category1", "category2"],
-                                },
-                                "date": {
-                                    "title": "date",
-                                    "type": "string",
-                                    "format": "date",
-                                },
-                                "number": {
-                                    "title": "number",
-                                    "type": "number",
-                                    "format": "decimal",
-                                },
-                                "boolean": {
-                                    "title": "boolean",
-                                    "type": "boolean",
-                                },
-                                "file": {
-                                    "title": "file",
-                                    "type": "string",
-                                },
-                                "commentaire": {
-                                    "title": "commentaire",
-                                    "type": "string",
-                                },
-                            },
-                            "additionalProperties": False,
-                        },
-                        "ExtendedReportSchema": {
-                            "type": "object",
-                            "required": ["feature_id", "report_model_id"],
-                            "properties": {
-                                "id": {
-                                    "title": "id",
-                                    "type": "string",
-                                    "ui:widget": "hidden",
-                                },
-                                "report_model_id": {
-                                    "title": "report_model_id",
-                                    "type": "string",
-                                    "default": str(report_model.id),
-                                    "ui:widget": "hidden",
-                                },
-                                "feature_id": {
-                                    "title": "feature_id",
-                                    "type": "string",
-                                    "ui:widget": "hidden",
-                                },
-                                "custom_field_values": {
-                                    "$ref": "#/definitions/CustomFieldsSchema",
-                                    "type": "object",
-                                    "ui:order": [
-                                        "category",
-                                        "date",
-                                        "number",
-                                        "boolean",
-                                        "file",
-                                        "commentaire",
-                                    ],
-                                },
-                            },
-                            "additionalProperties": False,
-                        },
-                    },
-                },
-                "UISchema": {
-                    "custom_field_values": {
-                        "ui:order": [
-                            "category",
-                            "date",
-                            "number",
-                            "boolean",
-                            "file",
-                            "commentaire",
-                        ],
-                    },
-                    "feature_id": {
-                        "ui:widget": "hidden",
-                    },
-                    "report_model_id": {
-                        "ui:widget": "hidden",
-                    },
-                    "id": {
-                        "ui:widget": "hidden",
-                    },
-                    "ui:order": [
-                        "id",
-                        "feature_id",
-                        "report_model_id",
-                        "custom_field_values",
-                    ],
-                },
-            },
-        }
+
+        with open(os.path.join(os.path.dirname(__file__), "jsonschema.json"), "r") as f:
+            # json.dump(r.json, f, indent=4)
+            expected = json.load(f)
+
+        assert r.json == expected

@@ -55,7 +55,7 @@ def create_custom_fields_schema(report_model: ReportModel) -> marshmallow.Schema
             custom_field.name: create_custom_field_field(custom_field)
             for custom_field in report_model.custom_fields
         },
-        name="CustomFieldsSchema",
+        name=f"{report_model.name.capitalize()}CustomFieldsSchema",
     )
 
 
@@ -125,7 +125,7 @@ class ReportSchema(SQLAlchemyAutoSchema):
                     },
                 ),
             },
-            name="ExtendedReportSchema",
+            name=f"{report_model.name.capitalize()}ReportSchema",
         )
 
 
