@@ -37,6 +37,7 @@
                             "format": "date"
                         },
                         "file": {
+                            "format": "data-url",
                             "title": "file",
                             "type": "string"
                         },

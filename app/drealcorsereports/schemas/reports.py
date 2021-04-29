@@ -42,6 +42,9 @@ def create_custom_field_field(
             custom_field.enum,
         )
 
+    if custom_field.type == FieldTypeEnum.file:
+        kwargs["metadata"] = {"format": "data-url"}
+
     field = field_class(required=custom_field.required, **kwargs)
     return field
 
