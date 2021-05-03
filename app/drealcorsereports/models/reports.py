@@ -80,12 +80,12 @@ class ReportModel(Base):
 
 
 class FieldTypeEnum(enum.Enum):
-    string = 1
-    boolean = 2
-    number = 3
-    date = 4
-    file = 6
-    enum = 7
+    boolean = "boolean"
+    date = "date"
+    enum = "enum"
+    file = "file"
+    number = "number"
+    string = "string"
 
 
 class ReportModelCustomField(Base):
