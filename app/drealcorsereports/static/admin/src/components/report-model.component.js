@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReportModelApiService from '../services/report-model.service';
+import LayerApiService from '../services/layers.service';
 import axios from 'axios';
 import { getErrorMessage } from '../http-common';
 import { FaMinus } from 'react-icons/fa';
@@ -86,7 +87,7 @@ export default class ReportModel extends Component {
   }
 
   getLayers() {
-    ReportModelApiService.getLayers()
+    LayerApiService.getLayers()
       .then((response) => {
         this.setState({
           layers: response.data,
