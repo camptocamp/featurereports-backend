@@ -156,7 +156,7 @@ services:
     restart: always
 
   mapstore:
-    image: georchestra/mapstore:latest
+    image: camptocamp/mapstore2-georchestra:1.0
     depends_on:
       - database
     volumes:

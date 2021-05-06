@@ -132,6 +132,12 @@
                 "title": "le catalogue GeoBretagne",
                 "autoload": true
               },
+              "gscorse": {
+                "url": "https://georchestra.ac-corse.fr/geoserver/ows",
+                "type": "wms",
+                "title": "geoserver from georchestra.ac-corse.fr",
+                "autoload": true
+              },
               "PIGMA": {
                 "url": "https://www.pigma.org/geonetwork/srv/fre/csw",
                 "type": "csw",
@@ -220,7 +226,7 @@
       }
     },
     "plugins": {
-        "mobile": ["Header", {
+        "mobile": ["Header", "ReportExtension", {
                 "name": "Map",
                 "cfg": {
                     "mapOptions": {
@@ -230,8 +236,7 @@
                           "altShiftDragRotate": false
                         }
                       }
-                    },
-                    "tools": ["locate"]
+                    }
                 }
             }, "Version", "DrawerMenu",
             {
@@ -328,7 +333,7 @@
             "FeedbackMask"
         ],
         "desktop": ["Header",
-          "Details",
+          "Details", "ReportExtension",
           {
             "name": "Map",
             "cfg": {
