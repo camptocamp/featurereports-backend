@@ -1,33 +1,33 @@
-import http from '../http-common';
+import {httpReportModelService} from '../http-common';
 
 class ReportModelApiService {
   getAll(cancelToken) {
-    return http.get('', {
+    return httpReportModelService.get('', {
       cancelToken,
     });
   }
 
   get(id, cancelToken) {
-    return http.get(`/${id}`, {
+    return httpReportModelService.get(`/${id}`, {
       cancelToken,
     });
   }
 
   create(data, cancelToken) {
-    return http.post('', data, {
+    return httpReportModelService.post('', data, {
       cancelToken,
     });
   }
 
   update(id, data, cancelToken) {
     const { created_at, created_by, updated_at, updated_by, ...putData } = data;
-    return http.put(`/${id}`, putData, {
+    return httpReportModelService.put(`/${id}`, putData, {
       cancelToken,
     });
   }
 
   delete(id, cancelToken) {
-    return http.delete(`/${id}`, {
+    return httpReportModelService.delete(`/${id}`, {
       cancelToken,
     });
   }

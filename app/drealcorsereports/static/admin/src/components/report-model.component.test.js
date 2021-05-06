@@ -45,7 +45,7 @@ describe('Test Report Model Component', () => {
       target: { type: 'submit' },
     });
     userEvent.type(screen.getByLabelText(/Titre/), 'Model Name');
-    userEvent.type(screen.getByLabelText(/Couche/), 'Layer Name');
+    userEvent.type(screen.getByText(/Couche/), 'Layer Name');
     userEvent.type(screen.getByLabelText(/Libellé/), 'Field Name');
     userEvent.selectOptions(screen.getByLabelText(/Type/), ['string']);
     //workaround to wait for user events
@@ -77,7 +77,7 @@ describe('Test Report Model Component', () => {
     expect(screen.queryByDisplayValue(/Test/)).toBeNull();
     //check if Test values are present after querying API
     expect(await screen.findByDisplayValue('TestModel')).toBeInTheDocument();
-    expect(await screen.findByDisplayValue('TestLayer')).toBeInTheDocument();
+    expect(await screen.findByText('TestLayer')).toBeInTheDocument();
     expect(await screen.findByDisplayValue('TestField')).toBeInTheDocument();
     expect(await screen.findByLabelText('field_required').checked);
     //check presence of dropdown element and its tags

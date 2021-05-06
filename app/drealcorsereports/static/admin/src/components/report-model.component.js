@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import ReportModelApiService from '../services/report-model.service';
+import LayerApiService from '../services/layers.service';
 import axios from 'axios';
 import { getErrorMessage } from '../http-common';
 import { FaMinus } from 'react-icons/fa';
 import { FaPlus } from 'react-icons/fa';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
+import Select from 'react-select';
 import './report-model.component.css';
 
 const defaultReportModel = {
@@ -40,6 +42,7 @@ export default class ReportModel extends Component {
 
     this.state = {
       currentReportModel: defaultReportModel,
+      layers: [],
       formWarnings: defaultFormWarnings,
       errorMessage: '',
     };
@@ -51,6 +54,7 @@ export default class ReportModel extends Component {
     if (this.props.currentReportModel.id !== null) {
       this.getReportModel(this.props.currentReportModel.id);
     }
+    this.getLayers();
   }
 
   componentDidUpdate(prevProps) {
@@ -82,8 +86,26 @@ export default class ReportModel extends Component {
     });
   }
 
+  getLayers() {
+    LayerApiService.getLayers()
+      .then((response) => {
+        this.setState({
+          layers: response.data,
+        });
+      })
+      .catch((e) => {
+        this.setState({
+          errorMessage: getErrorMessage(e),
+        });
+      });
+  }
+
+  layerOption(layer_id) {
+    return {label: layer_id, value: layer_id};
+  }
+
   onChangeLayer(e) {
-    const layer_id = e.target.value;
+    const layer_id = e.value;
 
     this.setState((prevState) => ({
       currentReportModel: {
@@ -221,7 +243,6 @@ export default class ReportModel extends Component {
         this.props.onReportModelChange();
       })
       .catch((e) => {
-        console.log(e);
         this.setState({
           errorMessage: getErrorMessage(e),
         });
@@ -238,7 +259,6 @@ export default class ReportModel extends Component {
         this.props.onReportModelChange();
       })
       .catch((e) => {
-        console.log(e);
         this.setState({
           errorMessage: getErrorMessage(e),
         });
@@ -254,7 +274,6 @@ export default class ReportModel extends Component {
         this.props.onReportModelChange();
       })
       .catch((e) => {
-        console.log(e);
         this.setState({
           errorMessage: getErrorMessage(e),
         });
@@ -293,7 +312,9 @@ export default class ReportModel extends Component {
   }
 
   render() {
-    const { currentReportModel, formWarnings } = this.state;
+    const { currentReportModel, layers, formWarnings } = this.state;
+
+    const options = layers.map(layer => this.layerOption(layer));
 
     return (
       <div>
@@ -320,14 +341,14 @@ export default class ReportModel extends Component {
                 <span style={{ color: 'red', float: 'right' }}>
                   {formWarnings['layer']}
                 </span>
-                <input
-                  type="text"
-                  className="form-control"
+                <Select
                   id="layer_id"
-                  value={currentReportModel.layer_id}
+                  value={this.layerOption(currentReportModel.layer_id)}
                   onChange={(e) => this.onChangeLayer(e)}
+                  options={options}
                 />
               </div>
+
 
               <label htmlFor="custom_fields">Champs de formulaire</label>
               <span style={{ color: 'red', float: 'right' }}>
