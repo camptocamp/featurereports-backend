@@ -1,12 +1,12 @@
 [
     {
         "id": "12345678-1234-5678-1234-567812345678",
-        "name": "model1",
+        "name": "model_one",
         "layer_id": "ALLOWED_LAYER",
         "JSONSchema": {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "definitions": {
-                "Model1CustomFieldsSchema": {
+                "ModelOneCustomFieldsSchema": {
                     "type": "object",
                     "required": [
                         "boolean",
@@ -49,7 +49,7 @@
                     },
                     "additionalProperties": false
                 },
-                "Model1ReportSchema": {
+                "ModelOneReportSchema": {
                     "type": "object",
                     "required": [
                         "feature_id",
@@ -58,7 +58,7 @@
                     "properties": {
                         "custom_field_values": {
                             "type": "object",
-                            "$ref": "#/definitions/Model1CustomFieldsSchema",
+                            "$ref": "#/definitions/ModelOneCustomFieldsSchema",
                             "ui:order": [
                                 "category",
                                 "date",
@@ -88,7 +88,7 @@
                     "additionalProperties": false
                 }
             },
-            "$ref": "#/definitions/Model1ReportSchema"
+            "$ref": "#/definitions/ModelOneReportSchema"
         },
         "UISchema": {
             "ui:order": [
@@ -120,12 +120,12 @@
     },
     {
         "id": "12345678-1234-5678-1234-567812345679",
-        "name": "model2",
+        "name": "model_two",
         "layer_id": "ALLOWED_LAYER",
         "JSONSchema": {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "definitions": {
-                "Model2CustomFieldsSchema": {
+                "ModelTwoCustomFieldsSchema": {
                     "type": "object",
                     "properties": {
                         "commentaire": {
@@ -135,7 +135,7 @@
                     },
                     "additionalProperties": false
                 },
-                "Model2ReportSchema": {
+                "ModelTwoReportSchema": {
                     "type": "object",
                     "required": [
                         "feature_id",
@@ -144,7 +144,7 @@
                     "properties": {
                         "custom_field_values": {
                             "type": "object",
-                            "$ref": "#/definitions/Model2CustomFieldsSchema",
+                            "$ref": "#/definitions/ModelTwoCustomFieldsSchema",
                             "ui:order": [
                                 "commentaire"
                             ]
@@ -169,7 +169,7 @@
                     "additionalProperties": false
                 }
             },
-            "$ref": "#/definitions/Model2ReportSchema"
+            "$ref": "#/definitions/ModelTwoReportSchema"
         },
         "UISchema": {
             "ui:order": [

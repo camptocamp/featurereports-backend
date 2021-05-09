@@ -22,7 +22,7 @@ def test_data(dbsession, transact):
     report_models = [
         ReportModel(
             id=UUID("{12345678-1234-5678-1234-567812345678}"),
-            name="model1",
+            name="model_one",
             title="Model 1",
             layer_id=ALLOWED_LAYER,
             created_by="toto",
@@ -71,7 +71,7 @@ def test_data(dbsession, transact):
         ),
         ReportModel(
             id=UUID("{12345678-1234-5678-1234-567812345679}"),
-            name="model2",
+            name="model_two",
             title="Model 2",
             layer_id=ALLOWED_LAYER,
             created_by="toto",
