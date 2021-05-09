@@ -138,6 +138,9 @@ class ReportModelFieldSchema(SQLAlchemyAutoSchema):
         load_instance = True
         include_relationships = False
 
+    name = auto_field(
+        validate=marshmallow.validate.Regexp(regex=r"[a-z_]"),
+    )
     type = EnumField(FieldTypeEnum)
 
 
@@ -147,6 +150,9 @@ class ReportModelSchema(SQLAlchemyAutoSchema):
         load_instance = True
         include_relationships = False
 
+    name = auto_field(
+        validate=marshmallow.validate.Regexp(regex=r"[a-z_]"),
+    )
     created_by = auto_field(dump_only=True)
     created_at = auto_field(dump_only=True)
     updated_by = auto_field(dump_only=True)

@@ -220,6 +220,55 @@ class TestAdminReportModelView:
         assert isinstance(report_model.updated_at, datetime)
         assert report_model.updated_at.tzinfo is not None
 
+    def test_collection_post_name_invalid(self, test_app, dbsession):
+        r = test_app.post_json(
+            "/report_models",
+            self._post_payload(name="Invalid name"),
+            headers=self._auth_headers(),
+            status=400,
+        )
+        assert r.json == {
+            "status": "error",
+            "errors": [
+                {
+                    "location": "body",
+                    "name": "name",
+                    "description": ["String does not match expected pattern."],
+                }
+            ],
+        }
+
+    def test_collection_post_custom_field_name_invalid(self, test_app, dbsession):
+        r = test_app.post_json(
+            "/report_models",
+            self._post_payload(
+                custom_fields=[
+                    {
+                        "name": "Invalid name",
+                        "title": "Invalid name",
+                        "type": "string",
+                        "required": False,
+                    },
+                ]
+            ),
+            headers=self._auth_headers(),
+            status=400,
+        )
+        assert r.json == {
+            "status": "error",
+            "errors": [
+                {
+                    "location": "body",
+                    "name": "custom_fields",
+                    "description": {
+                        "0": {
+                            "name": ["String does not match expected pattern."],
+                        },
+                    },
+                },
+            ],
+        }
+
     def test_collection_post_name_unique_validator(self, test_app, dbsession):
         r = test_app.post_json(
             "/report_models",
