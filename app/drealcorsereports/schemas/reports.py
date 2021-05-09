@@ -39,7 +39,11 @@ def create_custom_field_field(
     """
     field_class = CUSTOM_FIELD_TYPE_MAPPING[custom_field.type]
 
-    kwargs = {}
+    kwargs = {
+        "metadata": {
+            "title": custom_field.title,
+        }
+    }
     if custom_field.type == FieldTypeEnum.enum:
         kwargs["enum"] = enum.Enum(
             custom_field.name.capitalize(),
@@ -47,7 +51,7 @@ def create_custom_field_field(
         )
 
     if custom_field.type == FieldTypeEnum.file:
-        kwargs["metadata"] = {"format": "data-url"}
+        kwargs["metadata"]["format"] = "data-url"
 
     field = field_class(required=custom_field.required, **kwargs)
     return field
@@ -125,6 +129,7 @@ class ReportSchema(SQLAlchemyAutoSchema):
                 "custom_field_values": marshmallow.fields.Nested(
                     create_custom_fields_schema(report_model),
                     metadata={
+                        "title": "",
                         "ui:order": [
                             custom_field.name
                             for custom_field in report_model.custom_fields

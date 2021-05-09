@@ -16,11 +16,11 @@
                     ],
                     "properties": {
                         "boolean": {
-                            "title": "boolean",
+                            "title": "Booléen",
                             "type": "boolean"
                         },
                         "category": {
-                            "title": "category",
+                            "title": "Catégorie",
                             "type": "string",
                             "enum": [
                                 "category1",
@@ -28,21 +28,21 @@
                             ]
                         },
                         "commentaire": {
-                            "title": "commentaire",
+                            "title": "Commentaire",
                             "type": "string"
                         },
                         "date": {
-                            "title": "date",
+                            "title": "Date",
                             "type": "string",
                             "format": "date"
                         },
                         "file": {
                             "format": "data-url",
-                            "title": "file",
+                            "title": "File",
                             "type": "string"
                         },
                         "number": {
-                            "title": "number",
+                            "title": "Nombre",
                             "type": "number",
                             "format": "decimal"
                         }
@@ -57,6 +57,7 @@
                     ],
                     "properties": {
                         "custom_field_values": {
+                            "title": "",
                             "type": "object",
                             "$ref": "#/definitions/ModelOneCustomFieldsSchema",
                             "ui:order": [
@@ -129,7 +130,7 @@
                     "type": "object",
                     "properties": {
                         "commentaire": {
-                            "title": "commentaire",
+                            "title": "Commentaire",
                             "type": "string"
                         }
                     },
@@ -143,6 +144,7 @@
                     ],
                     "properties": {
                         "custom_field_values": {
+                            "title": "",
                             "type": "object",
                             "$ref": "#/definitions/ModelTwoCustomFieldsSchema",
                             "ui:order": [
