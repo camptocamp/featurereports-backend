@@ -38,6 +38,7 @@ def test_data(dbsession, transact):
     del transact
     rm1 = ReportModel(
         name="existing_bar",
+        title="Existing bar",
         layer_id=ALLOWED_LAYER,
         created_by="toto",
         created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
@@ -46,12 +47,14 @@ def test_data(dbsession, transact):
         custom_fields=[
             ReportModelCustomField(
                 name="commentaire",
+                title="Commentaire",
                 type=FieldTypeEnum.string,
             )
         ],
     )
     rm2 = ReportModel(
         name="existing_foo",
+        title="Existing foo",
         layer_id=DENIED_LAYER,
         created_by="toto",
         created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
@@ -60,6 +63,7 @@ def test_data(dbsession, transact):
         custom_fields=[
             ReportModelCustomField(
                 name="something",
+                title="Quelquechose",
                 type=FieldTypeEnum.string,
             )
         ],

@@ -32,6 +32,7 @@ class ReportModel(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     name = Column(String, nullable=False, unique=True)
+    title = Column(String, nullable=False)
     layer_id = Column(String, nullable=False)
     created_by = Column(String, nullable=False)
     created_at = Column(
@@ -100,6 +101,7 @@ class ReportModelCustomField(Base):
     report_model_id = Column(UUID(as_uuid=True), ForeignKey(ReportModel.id))
     index = Column(Integer)
     name = Column(String, nullable=False)
+    title = Column(String, nullable=False)
     type = Column(Enum(FieldTypeEnum), nullable=False)
     enum = Column(ARRAY(String))
     required = Column(Boolean, default=False, nullable=False)

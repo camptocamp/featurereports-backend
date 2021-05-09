@@ -23,6 +23,7 @@ def test_data(dbsession, transact):
     report_models = [
         ReportModel(
             name="existing_allowed",
+            title="Existing allowed",
             layer_id=ALLOWED_LAYER,
             created_by="toto",
             created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
@@ -31,12 +32,14 @@ def test_data(dbsession, transact):
             custom_fields=[
                 ReportModelCustomField(
                     name="commentaire",
+                    title="Commentaire",
                     type=FieldTypeEnum.string,
                 )
             ],
         ),
         ReportModel(
             name="existing_denied",
+            title="Existing denied",
             layer_id=DENIED_LAYER,
             created_by="toto",
             created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
@@ -45,6 +48,7 @@ def test_data(dbsession, transact):
             custom_fields=[
                 ReportModelCustomField(
                     name="commentaire",
+                    title="Commentaire",
                     type=FieldTypeEnum.string,
                 )
             ],
@@ -99,6 +103,7 @@ class TestAdminReportModelView:
             {
                 "id": str(test_data["report_models"][0].id),
                 "name": "existing_allowed",
+                "title": "Existing allowed",
                 "layer_id": ALLOWED_LAYER,
                 "custom_fields": [
                     {
@@ -106,6 +111,7 @@ class TestAdminReportModelView:
                         "id": str(test_data["report_models"][0].custom_fields[0].id),
                         "index": 0,
                         "name": "commentaire",
+                        "title": "Commentaire",
                         "type": "string",
                         "required": False,
                     }
@@ -118,6 +124,7 @@ class TestAdminReportModelView:
             {
                 "id": str(test_data["report_models"][1].id),
                 "name": "existing_denied",
+                "title": "Existing denied",
                 "layer_id": DENIED_LAYER,
                 "custom_fields": [
                     {
@@ -125,6 +132,7 @@ class TestAdminReportModelView:
                         "id": str(test_data["report_models"][1].custom_fields[0].id),
                         "index": 0,
                         "name": "commentaire",
+                        "title": "Commentaire",
                         "type": "string",
                         "required": False,
                     }
@@ -147,10 +155,12 @@ class TestAdminReportModelView:
     def _post_payload(self, **kwargs):
         return {
             "name": "new",
+            "title": "New",
             "layer_id": ALLOWED_LAYER,
             "custom_fields": [
                 {
                     "name": "category",
+                    "title": "Catégorie",
                     "type": "string",
                     "enum": [
                         "category1",
@@ -160,6 +170,7 @@ class TestAdminReportModelView:
                 },
                 {
                     "name": "commentaire",
+                    "title": "Commentaire",
                     "type": "string",
                     "required": False,
                 },
@@ -272,6 +283,7 @@ class TestAdminReportModelView:
         assert r.json == {
             "id": str(rm.id),
             "name": "existing_allowed",
+            "title": "Existing allowed",
             "layer_id": ALLOWED_LAYER,
             "custom_fields": [
                 {
@@ -279,6 +291,7 @@ class TestAdminReportModelView:
                     "id": str(rm.custom_fields[0].id),
                     "index": 0,
                     "name": "commentaire",
+                    "title": "Commentaire",
                     "type": "string",
                     "required": False,
                 }
@@ -300,15 +313,18 @@ class TestAdminReportModelView:
         return {
             "id": str(rm.id),
             "name": "updated",
+            "title": "Updated",
             "layer_id": ALLOWED_LAYER,
             "custom_fields": [
                 {
                     "id": str(rm.custom_fields[0].id),
                     "name": "commentaire_renamed",
+                    "title": "Commentaire renamed",
                     "type": "string",
                 },
                 {
                     "name": "commentaire2",
+                    "title": "Commentaire 2",
                     "type": "string",
                 },
             ],
@@ -348,8 +364,10 @@ class TestAdminReportModelView:
         assert rm.layer_id == ALLOWED_LAYER
         assert len(rm.custom_fields) == 2
         assert rm.custom_fields[0].name == "commentaire_renamed"
+        assert rm.custom_fields[0].title == "Commentaire renamed"
         assert rm.custom_fields[0].index == 0
         assert rm.custom_fields[1].name == "commentaire2"
+        assert rm.custom_fields[1].title == "Commentaire 2"
         assert rm.custom_fields[1].index == 1
         assert rm.updated_by == "ANOTHER_USER"
         assert rm.updated_at != updated_at
