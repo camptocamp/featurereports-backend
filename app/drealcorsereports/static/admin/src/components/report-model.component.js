@@ -71,7 +71,7 @@ export default class ReportModel extends Component {
     }
   }
 
-  onChangeName(e) {
+  onNameChange(e) {
     const name = e.target.value;
 
     this.setState((prevState) => {
@@ -88,7 +88,7 @@ export default class ReportModel extends Component {
     });
   }
 
-  onChangeTitle(e) {
+  onTitleChange(e) {
     const title = e.target.value;
 
     this.setState((prevState) => {
@@ -123,7 +123,7 @@ export default class ReportModel extends Component {
     return {label: layer_id, value: layer_id};
   }
 
-  onChangeLayer(e) {
+  onLayerChange(e) {
     const layer_id = e.value;
 
     this.setState((prevState) => ({
@@ -140,7 +140,7 @@ export default class ReportModel extends Component {
 
   createName(title, length = 8) {
     // normalize title to match name regex
-    let name = title.toLowerCase().replace(/[^a-z_]/g, '') + '_';
+    let name = title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z_]/g, '') + '_';
     
     // add a randomized suffix in case two fields would have similar titles (ex : "field 1" and "field 2") 
     const chars = 'abcdefghijklmnopqrstuvwxyz_';
@@ -150,7 +150,7 @@ export default class ReportModel extends Component {
     return name;
   }
 
-  onChangeField(propertyName, value, index) {
+  onFieldChange(propertyName, value, index) {
     this.setState((prevState) => ({
       currentReportModel: {
         ...prevState.currentReportModel,
@@ -314,7 +314,6 @@ export default class ReportModel extends Component {
       });
   }
 
-  // TODO : name regex match [a-z_]
   validateReportModel() {
     let formWarnings = defaultFormWarnings;
     let valid = true;
@@ -376,7 +375,7 @@ export default class ReportModel extends Component {
                   className="form-control"
                   id="title"
                   value={currentReportModel.title}
-                  onChange={(e) => this.onChangeTitle(e)}
+                  onChange={(e) => this.onTitleChange(e)}
                 />
               </div>
               <div className="form-group">
@@ -390,7 +389,7 @@ export default class ReportModel extends Component {
                   className="form-control"
                   id="name"
                   value={currentReportModel.name}
-                  onChange={(e) => this.onChangeName(e)}
+                  onChange={(e) => this.onNameChange(e)}
                 />
               </div>
               <div className="form-group">
@@ -401,7 +400,7 @@ export default class ReportModel extends Component {
                 <Select
                   id="layer_id"
                   value={this.layerOption(currentReportModel.layer_id)}
-                  onChange={(e) => this.onChangeLayer(e)}
+                  onChange={(e) => this.onLayerChange(e)}
                   options={options}
                 />
               </div>
@@ -423,7 +422,7 @@ export default class ReportModel extends Component {
                           className="form-control mb-2"
                           value={field.title}
                           id="field_title"
-                          onChange={(e) => this.onChangeField('title', e.target.value, index)}
+                          onChange={(e) => this.onFieldChange('title', e.target.value, index)}
                         />
                         {formWarnings['fieldTitle'] && (
                           <span style={{ color: 'red' }}>
@@ -438,7 +437,7 @@ export default class ReportModel extends Component {
                           aria-label='type'
                           value={field.type}
                           id="field_type"
-                          onChange={(e) => this.onChangeField('type', e.target.value, index)}
+                          onChange={(e) => this.onFieldChange('type', e.target.value, index)}
                         >
                           <option value=""></option>
                           <option value="string">texte</option>
@@ -454,7 +453,7 @@ export default class ReportModel extends Component {
                           <TagsInput 
                             value={currentReportModel.custom_fields[index].enum} 
                             inputProps={{placeholder:'choix possibles'}}
-                            onChange={(e) => this.onChangeField('enum', e, index)}
+                            onChange={(e) => this.onFieldChange('enum', e, index)}
                           />
                         )}
                         
@@ -474,7 +473,7 @@ export default class ReportModel extends Component {
                           checked={field.required}
                           id="field_required"
                           onChange={(e) =>
-                            this.onChangeField('required', e.target.checked, index)
+                            this.onFieldChange('required', e.target.checked, index)
                           }
                         />
                       </div>
