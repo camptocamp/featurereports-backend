@@ -19,3 +19,19 @@ services:
       - ${PWD}/app/drealcorsereports/static/admin:/app
     ports:
       - 3000:3000
+
+  geoserver:
+    image: georchestra/geoserver:latest
+    depends_on:
+      - ldap
+    volumes:
+      - ./georchestra_datadir:/etc/georchestra
+      - geoserver_datadir:/mnt/geoserver_datadir
+      - ./test_data/geoserver_geodata:/mnt/geoserver_geodata
+      - geoserver_tiles:/mnt/geoserver_tiles
+      - geoserver_native_libs:/mnt/geoserver_native_libs
+    environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - XMS=256M
+      - XMX=8G
+    restart: always

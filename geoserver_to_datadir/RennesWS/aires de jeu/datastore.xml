@@ -1,0 +1,23 @@
+<dataStore>
+  <id>DataStoreInfoImpl-b456d93:1797a70f484:-7fef</id>
+  <name>aires de jeu</name>
+  <type>Directory of spatial files (shapefiles)</type>
+  <enabled>true</enabled>
+  <workspace>
+    <id>WorkspaceInfoImpl-b456d93:1797a70f484:-7ff6</id>
+  </workspace>
+  <connectionParameters>
+    <entry key="charset">ISO-8859-1</entry>
+    <entry key="filetype">shapefile</entry>
+    <entry key="create spatial index">true</entry>
+    <entry key="memory mapped buffer">false</entry>
+    <entry key="timezone">Etc/UTC</entry>
+    <entry key="enable spatial index">true</entry>
+    <entry key="namespace">RennesWS</entry>
+    <entry key="cache and reuse memory maps">true</entry>
+    <entry key="url">file:///mnt/geoserver_geodata/rennes/espub_mob gev_ajeu</entry>
+    <entry key="fstype">shape</entry>
+  </connectionParameters>
+  <__default>false</__default>
+  <dateCreated>2021-05-17 13:18:44.721 UTC</dateCreated>
+</dataStore>
