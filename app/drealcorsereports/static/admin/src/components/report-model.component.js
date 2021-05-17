@@ -13,6 +13,7 @@ import './report-model.component.css';
 const defaultReportModel = {
   id: null,
   name: '',
+  title: '',
   layer_id: '',
   custom_fields: [],
   created_at: '',
@@ -22,14 +23,15 @@ const defaultReportModel = {
 };
 
 const defaultFormWarnings = {
-  name: '',
+  title: '',
   layer: '',
   fields: '',
-  fieldName: {},
+  fieldTitle: {},
   fieldType: {},
 };
 
 const defaultCustomField = {
+  title: '',
   name: '',
   type: '',
   enum: [],
@@ -86,6 +88,23 @@ export default class ReportModel extends Component {
     });
   }
 
+  onChangeTitle(e) {
+    const title = e.target.value;
+
+    this.setState((prevState) => {
+      return {
+        currentReportModel: {
+          ...prevState.currentReportModel,
+          title: title,
+        },
+        formWarnings: {
+          ...prevState.formWarnings,
+          title: title ? '' : prevState.formWarnings.title,
+        },
+      };
+    });
+  }
+
   getLayers() {
     LayerApiService.getLayers()
       .then((response) => {
@@ -119,6 +138,18 @@ export default class ReportModel extends Component {
     }));
   }
 
+  createName(title, length = 8) {
+    // normalize title to match name regex
+    let name = title.toLowerCase().replace(/[^a-z_]/g, '') + '_';
+    
+    // add a randomized suffix in case two fields would have similar titles (ex : "field 1" and "field 2") 
+    const chars = 'abcdefghijklmnopqrstuvwxyz_';
+    for (let i = 0; i < length; i++) {
+        name += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return name;
+  }
+
   onChangeField(propertyName, value, index) {
     this.setState((prevState) => ({
       currentReportModel: {
@@ -128,8 +159,9 @@ export default class ReportModel extends Component {
             const returnField = { ...field };
             if (id === index) {
               switch (propertyName) {
-                case 'name':
-                  returnField.name = value;
+                case 'title':
+                  returnField.title = value;
+                  returnField.name = this.createName(value);
                   break;
                 case 'type':
                   returnField.type = value;
@@ -149,9 +181,9 @@ export default class ReportModel extends Component {
       },
       formWarnings: {
         ...prevState.formWarnings,
-        fieldName: Object.values(prevState.formWarnings.fieldName).map(
+        fieldName: Object.values(prevState.formWarnings.fieldTitle).map(
           (value, id) => {
-            return propertyName === 'name' && value && id === index
+            return propertyName === 'title' && value && id === index
               ? ''
               : value;
           }
@@ -227,6 +259,7 @@ export default class ReportModel extends Component {
 
   createReportModel() {
     var data = {
+      title: this.state.currentReportModel.title,
       name: this.state.currentReportModel.name,
       layer_id: this.state.currentReportModel.layer_id,
       custom_fields: this.state.currentReportModel.custom_fields,
@@ -236,6 +269,7 @@ export default class ReportModel extends Component {
       .then((response) => {
         this.setState({
           id: response.data.id,
+          title: response.data.title,
           name: response.data.name,
           layer_id: response.data.layer_id,
           custom_fields: response.data.custom_fields,
@@ -280,11 +314,20 @@ export default class ReportModel extends Component {
       });
   }
 
+  // TODO : name regex match [a-z_]
   validateReportModel() {
     let formWarnings = defaultFormWarnings;
     let valid = true;
+    if (this.state.currentReportModel.title === '') {
+      formWarnings.title = 'Veuillez indiquer un titre';
+      valid = false;
+    }
     if (this.state.currentReportModel.name === '') {
-      formWarnings.name = 'Veuillez indiquer un titre';
+      formWarnings.name = 'Veuillez indiquer un nom';
+      valid = false;
+    }
+    if (this.state.currentReportModel.name != '' && this.state.currentReportModel.name.match(/[^a-z_]/)) {
+      formWarnings.name = 'Caractères autorisés : minuscules et \'_\'.';
       valid = false;
     }
     if (this.state.currentReportModel.layer_id === '') {
@@ -296,8 +339,8 @@ export default class ReportModel extends Component {
       valid = false;
     }
     for (const f in this.state.currentReportModel.custom_fields) {
-      if (this.state.currentReportModel.custom_fields[f].name === '') {
-        formWarnings.fieldName[f] = 'obligatoire';
+      if (this.state.currentReportModel.custom_fields[f].title === '') {
+        formWarnings.fieldTitle[f] = 'obligatoire';
         valid = false;
       }
       if (this.state.currentReportModel.custom_fields[f].type === '') {
@@ -323,7 +366,21 @@ export default class ReportModel extends Component {
             <h4>Modèle de rapport</h4>
             <form>
               <div className="form-group">
-                <label htmlFor="name">Titre*</label>
+                <label htmlFor="title">Titre*</label>
+                <span style={{ color: 'red', float: 'right' }}>
+                  {formWarnings['title']}
+                </span>
+                <input
+                  required
+                  type="text"
+                  className="form-control"
+                  id="title"
+                  value={currentReportModel.title}
+                  onChange={(e) => this.onChangeTitle(e)}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="name">Nom*</label>
                 <span style={{ color: 'red', float: 'right' }}>
                   {formWarnings['name']}
                 </span>
@@ -359,18 +416,18 @@ export default class ReportModel extends Component {
                   currentReportModel.custom_fields.map((field, index) => (
                     <div key={index} className="row">
                       <div className="col-4">
-                        <label htmlFor="field_name">Libellé*</label>
+                        <label htmlFor="field_title">Libellé*</label>
                         <input
                           type="text"
                           aria-label='libelle'
                           className="form-control mb-2"
-                          value={field.name}
-                          id="field_name"
-                          onChange={(e) => this.onChangeField('name', e.target.value, index)}
+                          value={field.title}
+                          id="field_title"
+                          onChange={(e) => this.onChangeField('title', e.target.value, index)}
                         />
-                        {formWarnings['fieldName'] && (
+                        {formWarnings['fieldTitle'] && (
                           <span style={{ color: 'red' }}>
-                            {formWarnings['fieldName'][index]}
+                            {formWarnings['fieldTitle'][index]}
                           </span>
                         )}
                       </div>
