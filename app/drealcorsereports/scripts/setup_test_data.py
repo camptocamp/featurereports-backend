@@ -35,7 +35,7 @@ def main():
     loader.setup_logging()
     settings = loader.get_wsgi_app_settings(defaults=args.config_vars)
 
-    setup_geoserver_rules(settings)
+    # setup_geoserver_rules(settings)
 
     engine = get_engine(settings)
     # wait_for_db(engine)
@@ -46,6 +46,7 @@ def main():
         setup_test_data(dbsession)
 
 
+# superseeded by test_data/geoserver_to_datadir/layers.properties 
 def setup_geoserver_rules(settings):
     geoserver_url = settings["geoserver_url"]
 
@@ -65,28 +66,32 @@ def setup_geoserver_rules(settings):
 def setup_test_data(dbsession):
     report_models = [
         ReportModel(
-            name="Model1",
-            layer_id="public_layer",
+            title="Model1",
+            name="first_model",
+            layer_id="geor:public_layer",
             created_by="toto",
             created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
             updated_by="tata",
             updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
             custom_fields=[
                 ReportModelCustomField(
+                    title="commentaire",
                     name="commentaire",
                     type=FieldTypeEnum.string,
                 )
             ],
         ),
         ReportModel(
-            name="Model2",
-            layer_id="public_layer",
+            title="Model2",
+            name="second_model",
+            layer_id="geor:public_layer",
             created_by="toto",
             created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
             updated_by="tata",
             updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
             custom_fields=[
                 ReportModelCustomField(
+                    title="commentaire",
                     name="commentaire",
                     type=FieldTypeEnum.string,
                 )

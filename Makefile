@@ -40,18 +40,11 @@ help: ## Display this help message
 	@echo "Possible targets:"
 	@grep -Eh '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "    %-20s%s\n", $$1, $$2}'
 
-.PHONY: withtestdata
-withtestdata: ## Build, run, add some data and rights to geoserver and show logs
-withtestdata: up
-	make initdb
-	docker cp ./geoserver_to_datadir/RennesWS $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_datadir/workspaces/
-	docker cp ./geoserver_to_datadir/layers.properties $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_datadir/security/
-	docker-compose logs -f app
-
 .PHONY: meacoffee
 meacoffee: ## Build, run and show logs
 meacoffee: up
 	make initdb
+	make setup-test-data
 	docker-compose logs -f app
 
 .PHONY: up
@@ -79,8 +72,10 @@ initdb:
 
 .PHONY: setup-test-data
 setup-test-data: ## Setup test dataset in database
+	docker cp ./test_data/geoserver_to_datadir/RennesWS $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_datadir/workspaces/
+	docker cp ./test_data/geoserver_to_datadir/layers.properties $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_datadir/security/
 	docker-compose exec app setup_test_data c2c://drealcorsereports.ini
-
+	
 .PHONY: black
 black:
 black: ## Format Python code with black
