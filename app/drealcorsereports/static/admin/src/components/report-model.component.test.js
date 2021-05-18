@@ -4,6 +4,7 @@ import ReportModel from './report-model.component';
 
 const reportModelMock = {
   id: null,
+  title: '',
   name: '',
   layer_id: '',
   custom_fields: [],
@@ -47,7 +48,7 @@ describe('Test Report Model Component', () => {
     userEvent.type(screen.getByLabelText(/Titre/), 'Model Name');
     userEvent.type(screen.getByText(/Couche/), 'Layer Name');
     userEvent.type(screen.getByLabelText(/Libellé/), 'Field Name');
-    userEvent.selectOptions(screen.getByLabelText(/Type/), ['string']);
+    userEvent.selectOptions(screen.getByLabelText(/Type/), ['texte']);
     //workaround to wait for user events
     setTimeout(async () => {
       //confirm window alert

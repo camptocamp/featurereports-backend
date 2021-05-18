@@ -7,12 +7,14 @@ const propsReportModelsMock = [
     updated_at: '2021-02-03T10:05:28.014034+00:00',
     custom_fields: [
       {
-        name: 'TestField',
+        title: 'TestField',
+        name: 'test_field',
         type: 'string',
         required: false,
       },
     ],
-    name: 'TestModel',
+    title: 'TestModel',
+    name: 'test_model',
     updated_by: 'testuserid',
     layer_id: 'TestLayer',
     created_by: 'testuserid',
@@ -31,6 +33,7 @@ describe('Test Report Model List Component', () => {
       />
     );
     expect(screen.queryByText('TestModel')).toBeInTheDocument();
+    expect(screen.queryByText('test_model')).toBeInTheDocument();
     expect(screen.queryByText('TestLayer')).toBeInTheDocument();
     expect(screen.queryAllByText('testuserid')).toHaveLength(2);
   });

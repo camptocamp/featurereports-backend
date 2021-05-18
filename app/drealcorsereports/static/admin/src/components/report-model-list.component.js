@@ -13,8 +13,13 @@ export default class ReportModelList extends Component {
     };
     const columns = [
       {
-        dataField: 'name',
+        dataField: 'title',
         text: 'Titre',
+        sort: true,
+      },
+      {
+        dataField: 'name',
+        text: 'Nom',
         sort: true,
       },
       {

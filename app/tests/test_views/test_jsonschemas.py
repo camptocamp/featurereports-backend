@@ -22,7 +22,8 @@ def test_data(dbsession, transact):
     report_models = [
         ReportModel(
             id=UUID("{12345678-1234-5678-1234-567812345678}"),
-            name="model1",
+            name="model_one",
+            title="Model 1",
             layer_id=ALLOWED_LAYER,
             created_by="toto",
             created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
@@ -31,32 +32,38 @@ def test_data(dbsession, transact):
             custom_fields=[
                 ReportModelCustomField(
                     name="category",
+                    title="Catégorie",
                     type=FieldTypeEnum.enum,
                     enum=["category1", "category2"],
                     required=True,
                 ),
                 ReportModelCustomField(
                     name="date",
+                    title="Date",
                     type=FieldTypeEnum.date,
                     required=True,
                 ),
                 ReportModelCustomField(
                     name="number",
+                    title="Nombre",
                     type=FieldTypeEnum.number,
                     required=True,
                 ),
                 ReportModelCustomField(
                     name="boolean",
+                    title="Booléen",
                     type=FieldTypeEnum.boolean,
                     required=True,
                 ),
                 ReportModelCustomField(
                     name="file",
+                    title="File",
                     type=FieldTypeEnum.file,
                     required=False,
                 ),
                 ReportModelCustomField(
                     name="commentaire",
+                    title="Commentaire",
                     type=FieldTypeEnum.string,
                     required=False,
                 ),
@@ -64,7 +71,8 @@ def test_data(dbsession, transact):
         ),
         ReportModel(
             id=UUID("{12345678-1234-5678-1234-567812345679}"),
-            name="model2",
+            name="model_two",
+            title="Model 2",
             layer_id=ALLOWED_LAYER,
             created_by="toto",
             created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
@@ -73,6 +81,7 @@ def test_data(dbsession, transact):
             custom_fields=[
                 ReportModelCustomField(
                     name="commentaire",
+                    title="Commentaire",
                     type=FieldTypeEnum.string,
                     required=False,
                 ),

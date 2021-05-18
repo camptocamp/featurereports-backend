@@ -27,6 +27,10 @@ CUSTOM_FIELD_TYPE_MAPPING = {
 }
 
 
+def class_from_name(s):
+    return "".join(word.capitalize() or "_" for word in s.split("_"))
+
+
 def create_custom_field_field(
     custom_field: ReportModelCustomField,
 ) -> marshmallow.fields.Field:
@@ -35,7 +39,11 @@ def create_custom_field_field(
     """
     field_class = CUSTOM_FIELD_TYPE_MAPPING[custom_field.type]
 
-    kwargs = {}
+    kwargs = {
+        "metadata": {
+            "title": custom_field.title,
+        }
+    }
     if custom_field.type == FieldTypeEnum.enum:
         kwargs["enum"] = enum.Enum(
             custom_field.name.capitalize(),
@@ -43,7 +51,7 @@ def create_custom_field_field(
         )
 
     if custom_field.type == FieldTypeEnum.file:
-        kwargs["metadata"] = {"format": "data-url"}
+        kwargs["metadata"]["format"] = "data-url"
 
     field = field_class(required=custom_field.required, **kwargs)
     return field
@@ -58,7 +66,7 @@ def create_custom_fields_schema(report_model: ReportModel) -> marshmallow.Schema
             custom_field.name: create_custom_field_field(custom_field)
             for custom_field in report_model.custom_fields
         },
-        name=f"{report_model.name.capitalize()}CustomFieldsSchema",
+        name=f"{class_from_name(report_model.name)}CustomFieldsSchema",
     )
 
 
@@ -121,6 +129,7 @@ class ReportSchema(SQLAlchemyAutoSchema):
                 "custom_field_values": marshmallow.fields.Nested(
                     create_custom_fields_schema(report_model),
                     metadata={
+                        "title": "",
                         "ui:order": [
                             custom_field.name
                             for custom_field in report_model.custom_fields
@@ -128,7 +137,7 @@ class ReportSchema(SQLAlchemyAutoSchema):
                     },
                 ),
             },
-            name=f"{report_model.name.capitalize()}ReportSchema",
+            name=f"{class_from_name(report_model.name)}ReportSchema",
         )
 
 
@@ -138,6 +147,9 @@ class ReportModelFieldSchema(SQLAlchemyAutoSchema):
         load_instance = True
         include_relationships = False
 
+    name = auto_field(
+        validate=marshmallow.validate.Regexp(regex=r"[a-z_]"),
+    )
     type = EnumField(FieldTypeEnum)
 
 
@@ -147,6 +159,9 @@ class ReportModelSchema(SQLAlchemyAutoSchema):
         load_instance = True
         include_relationships = False
 
+    name = auto_field(
+        validate=marshmallow.validate.Regexp(regex=r"[a-z_]"),
+    )
     created_by = auto_field(dump_only=True)
     created_at = auto_field(dump_only=True)
     updated_by = auto_field(dump_only=True)
