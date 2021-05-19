@@ -87,6 +87,24 @@ def test_data(dbsession, transact):
                 ),
             ],
         ),
+        ReportModel(
+            id=UUID("{12345678-1234-5678-1234-567812345675}"),
+            name="model_three",
+            title="Model 3",
+            layer_id=DENIED_LAYER,
+            created_by="toto",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="tata",
+            updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
+            custom_fields=[
+                ReportModelCustomField(
+                    name="commentaire",
+                    title="Commentaire",
+                    type=FieldTypeEnum.string,
+                    required=False,
+                ),
+            ],
+        ),
     ]
     dbsession.add_all(report_models)
     dbsession.flush()
@@ -97,19 +115,30 @@ def test_data(dbsession, transact):
 
 
 @pytest.fixture(scope="class")
-def patch_is_user_admin_on_layer():
-    def is_user_admin_on_layer(user_id, layer_id):
+def patch_is_user_writer_on_layer():
+    def is_user_writer_on_layer(user_id, layer_id):
         del user_id
         return layer_id == ALLOWED_LAYER
 
     with patch(
-        "drealcorsereports.views.jsonschemas.is_user_admin_on_layer",
-        side_effect=is_user_admin_on_layer,
+        "drealcorsereports.views.jsonschemas.is_user_writer_on_layer",
+        side_effect=is_user_writer_on_layer,
     ) as rules_mock:
         yield rules_mock
 
+@pytest.fixture(scope="class")
+def patch_is_user_reader_on_layer():
+    def is_user_reader_on_layer(user_id, layer_id):
+        del user_id
+        return layer_id == ALLOWED_LAYER
 
-@pytest.mark.usefixtures("test_data", "patch_is_user_admin_on_layer")
+    with patch(
+        "drealcorsereports.views.jsonschemas.is_user_reader_on_layer",
+        side_effect=is_user_reader_on_layer,
+    ) as rules_mock:
+        yield rules_mock
+
+@pytest.mark.usefixtures("test_data", "patch_is_user_writer_on_layer", "patch_is_user_reader_on_layer")
 class TestJsonSchemasView:
     def test_get_success(self, test_app, test_data):
         r = test_app.get(
