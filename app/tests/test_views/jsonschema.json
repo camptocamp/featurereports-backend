@@ -123,6 +123,7 @@
     {
         "id": "12345678-1234-5678-1234-567812345679",
         "name": "model_two",
+        "readOnly": false,
         "layer_id": "ALLOWED_LAYER",
         "JSONSchema": {
             "$schema": "http://json-schema.org/draft-07/schema#",
