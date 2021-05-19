@@ -86,8 +86,6 @@ class ReportModel(Base):
         zope.sqlalchemy.mark_changed(dbsession)
 
 
-
-
 class FieldTypeEnum(enum.Enum):
     boolean = "boolean"
     date = "date"

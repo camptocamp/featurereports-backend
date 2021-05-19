@@ -44,7 +44,9 @@ class JsonSchemaView:
                 {
                     "id": str(report_model.id),
                     "name": report_model.name,
-                    "readOnly": True if not is_user_admin_on_layer(self.request, report_model.layer_id) else False,
+                    "readOnly": True
+                    if not is_user_admin_on_layer(self.request, report_model.layer_id)
+                    else False,
                     "layer_id": report_model.layer_id,
                     "JSONSchema": JSONSchema().dump(schema),
                     "UISchema": ReactJsonSchemaFormJSONSchema().dump_uischema(schema),
