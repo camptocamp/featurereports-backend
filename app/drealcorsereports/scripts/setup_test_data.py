@@ -10,6 +10,7 @@ from drealcorsereports.models.reports import (
     FieldTypeEnum,
     ReportModel,
     ReportModelCustomField,
+    Report,
 )
 
 
@@ -66,36 +67,292 @@ def setup_geoserver_rules(settings):
 def setup_test_data(dbsession):
     report_models = [
         ReportModel(
-            title="Model1",
-            name="first_model",
-            layer_id="geor:public_layer",
-            created_by="toto",
+            id="ba722b44-57e1-4e78-9af6-ea00c25908b1",
+            title="Rennes modele 1 aires de jeux",
+            name="rennes_ajeu1",
+            layer_id="espub_mob:gev_ajeu__22",
+            created_by="ajeu",
             created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
-            updated_by="tata",
+            updated_by="ajeu",
             updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
             custom_fields=[
                 ReportModelCustomField(
                     title="commentaire",
                     name="commentaire",
                     type=FieldTypeEnum.string,
-                )
+                    required=True,
+                ),
+                ReportModelCustomField(
+                    title="Booléen",
+                    name="booleen",
+                    type=FieldTypeEnum.boolean,
+                ),
+                ReportModelCustomField(
+                    title="Date",
+                    name="date",
+                    type=FieldTypeEnum.date,
+                ),
+                ReportModelCustomField(
+                    title="Liste déroulante",
+                    name="liste_deroulante",
+                    type=FieldTypeEnum.enum,
+                    enum=["choix1","choix2","choix3"],
+                ),
+                ReportModelCustomField(
+                    title="Photo",
+                    name="photo",
+                    type=FieldTypeEnum.file,
+                ),
+                ReportModelCustomField(
+                    title="Valeur numérique",
+                    name="valeur_numerique",
+                    type=FieldTypeEnum.number,
+                ),
             ],
         ),
         ReportModel(
-            title="Model2",
-            name="second_model",
-            layer_id="geor:public_layer",
-            created_by="toto",
+            id="ba722b44-57e1-4e78-9af6-ea00c25908b2",
+            title="Rennes modele 2 aires de jeux",
+            name="rennes_ajeu2",
+            layer_id="espub_mob:gev_ajeu__22",
+            created_by="ajeu",
             created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
-            updated_by="tata",
+            updated_by="ajeu",
             updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
             custom_fields=[
                 ReportModelCustomField(
                     title="commentaire",
                     name="commentaire",
                     type=FieldTypeEnum.string,
-                )
+                    required=True,
+                ),
+                ReportModelCustomField(
+                    title="Booléen",
+                    name="booleen",
+                    type=FieldTypeEnum.boolean,
+                ),
+                ReportModelCustomField(
+                    title="Date",
+                    name="date",
+                    type=FieldTypeEnum.date,
+                ),
+                ReportModelCustomField(
+                    title="Liste déroulante",
+                    name="liste_deroulante",
+                    type=FieldTypeEnum.enum,
+                    enum=["choix1","choix2","choix3"],
+                ),
+                ReportModelCustomField(
+                    title="Photo",
+                    name="photo",
+                    type=FieldTypeEnum.file,
+                ),
+                ReportModelCustomField(
+                    title="Valeur numérique",
+                    name="valeur_numerique",
+                    type=FieldTypeEnum.number,
+                ),
+            ],
+        ),
+        ReportModel(
+            id="ba722b44-57e1-4e78-9af6-ea00c25908b3",
+            title="Rennes modele 3 aires de jeux",
+            name="rennes_ajeu3",
+            layer_id="espub_mob:gev_ajeu__22",
+            created_by="ajeu",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="ajeu",
+            updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
+            custom_fields=[
+                ReportModelCustomField(
+                    title="commentaire",
+                    name="commentaire",
+                    type=FieldTypeEnum.string,
+                    required=True,
+                ),
+                ReportModelCustomField(
+                    title="Booléen",
+                    name="booleen",
+                    type=FieldTypeEnum.boolean,
+                ),
+                ReportModelCustomField(
+                    title="Date",
+                    name="date",
+                    type=FieldTypeEnum.date,
+                ),
+                ReportModelCustomField(
+                    title="Liste déroulante",
+                    name="liste_deroulante",
+                    type=FieldTypeEnum.enum,
+                    enum=["choix1","choix2","choix3"],
+                ),
+                ReportModelCustomField(
+                    title="Photo",
+                    name="photo",
+                    type=FieldTypeEnum.file,
+                ),
+                ReportModelCustomField(
+                    title="Valeur numérique",
+                    name="valeur_numerique",
+                    type=FieldTypeEnum.number,
+                ),
+            ],
+        ),
+        ReportModel(
+            id="ba722b44-57e1-4e78-9af6-ea00c25908b0",
+            title="Rennes modele 1 jeux",
+            name="rennes_jeu1",
+            layer_id="espub_mob:gev_jeu__23",
+            created_by="jeux",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="jeux",
+            updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
+            custom_fields=[
+                ReportModelCustomField(
+                    title="commentaire",
+                    name="commentaire",
+                    type=FieldTypeEnum.string,
+                    required=True,
+                ),
+                ReportModelCustomField(
+                    title="Booléen",
+                    name="booleen",
+                    type=FieldTypeEnum.boolean,
+                ),
+                ReportModelCustomField(
+                    title="Date",
+                    name="date",
+                    type=FieldTypeEnum.date,
+                ),
+                ReportModelCustomField(
+                    title="Liste déroulante",
+                    name="liste_deroulante",
+                    type=FieldTypeEnum.enum,
+                    enum=["choix1","choix2","choix3"],
+                ),
+                ReportModelCustomField(
+                    title="Photo",
+                    name="photo",
+                    type=FieldTypeEnum.file,
+                ),
+                ReportModelCustomField(
+                    title="Valeur numérique",
+                    name="valeur_numerique",
+                    type=FieldTypeEnum.number,
+                ),
             ],
         ),
     ]
     dbsession.add_all(report_models)
+    reports = [
+        
+        Report(
+            feature_id="gev_ajeu.60",
+            report_model_id = "ba722b44-57e1-4e78-9af6-ea00c25908b1",
+            custom_field_values = {
+                "commentaire": "un commentaire",
+                "liste_deroulante": "choix1", 
+                "valeur_numerique": 3, 
+                "booleen": "true", 
+                "date": "2021-05-17", 
+                "photo": "data:image/png;name=Screenshot_2021-05-18_17-34-36.png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAASCAIAAAA2bnI+AAAAA3NCSVQICAjb4U/gAAAAG0lEQVQ4jWP8//8/A1mAiTxtozpHdY7qHNQ6AXf6AyFhO5NSAAAAAElFTkSuQmCC"
+
+            },
+            created_by = "toto",
+            created_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by = "toto",
+            updated_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+
+        ),
+        Report(
+            feature_id="gev_ajeu.60",
+            report_model_id = "ba722b44-57e1-4e78-9af6-ea00c25908b1",
+            custom_field_values = {
+                "commentaire": "un commentaire",
+                "liste_deroulante": "choix1", 
+                "valeur_numerique": 3, 
+                "booleen": "true", 
+                "date": "2021-05-17", 
+                "photo": "data:image/png;name=Screenshot_2021-05-18_17-34-36.png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAASCAIAAAA2bnI+AAAAA3NCSVQICAjb4U/gAAAAG0lEQVQ4jWP8//8/A1mAiTxtozpHdY7qHNQ6AXf6AyFhO5NSAAAAAElFTkSuQmCC"
+
+            },
+            created_by = "toto",
+            created_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by = "toto",
+            updated_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+
+        ),
+        Report(
+            feature_id="gev_ajeu.60",
+            report_model_id = "ba722b44-57e1-4e78-9af6-ea00c25908b2",
+            custom_field_values = {
+                "commentaire": "un commentaire",
+                "liste_deroulante": "choix1", 
+                "valeur_numerique": 3, 
+                "booleen": "true", 
+                "date": "2021-05-17", 
+                "photo": "data:image/png;name=Screenshot_2021-05-18_17-34-36.png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAASCAIAAAA2bnI+AAAAA3NCSVQICAjb4U/gAAAAG0lEQVQ4jWP8//8/A1mAiTxtozpHdY7qHNQ6AXf6AyFhO5NSAAAAAElFTkSuQmCC"
+
+            },
+            created_by = "toto",
+            created_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by = "toto",
+            updated_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+
+        ),
+        Report(
+            feature_id="gev_jeu.20185",
+            report_model_id = "ba722b44-57e1-4e78-9af6-ea00c25908b0",
+            custom_field_values = {
+                "commentaire": "un commentaire",
+                "liste_deroulante": "choix1", 
+                "valeur_numerique": 3, 
+                "booleen": "true", 
+                "date": "2021-05-17", 
+                "photo": "data:image/png;name=Screenshot_2021-05-18_17-34-36.png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAASCAIAAAA2bnI+AAAAA3NCSVQICAjb4U/gAAAAG0lEQVQ4jWP8//8/A1mAiTxtozpHdY7qHNQ6AXf6AyFhO5NSAAAAAElFTkSuQmCC"
+
+            },
+            created_by = "toto",
+            created_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by = "toto",
+            updated_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+
+        ),
+        Report(
+            feature_id="gev_jeu.20550",
+            report_model_id = "ba722b44-57e1-4e78-9af6-ea00c25908b0",
+            custom_field_values = {
+                "commentaire": "un commentaire",
+                "liste_deroulante": "choix1", 
+                "valeur_numerique": 3, 
+                "booleen": "true", 
+                "date": "2021-05-17", 
+                "photo": "data:image/png;name=Screenshot_2021-05-18_17-34-36.png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAASCAIAAAA2bnI+AAAAA3NCSVQICAjb4U/gAAAAG0lEQVQ4jWP8//8/A1mAiTxtozpHdY7qHNQ6AXf6AyFhO5NSAAAAAElFTkSuQmCC"
+
+            },
+            created_by = "toto",
+            created_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by = "toto",
+            updated_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+
+        ),
+        Report(
+            feature_id="gev_jeu.20187",
+            report_model_id = "ba722b44-57e1-4e78-9af6-ea00c25908b0",
+            custom_field_values = {
+                "commentaire": "un commentaire",
+                "liste_deroulante": "choix1", 
+                "valeur_numerique": 3, 
+                "booleen": "true", 
+                "date": "2021-05-17", 
+                "photo": "data:image/png;name=Screenshot_2021-05-18_17-34-36.png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAASCAIAAAA2bnI+AAAAA3NCSVQICAjb4U/gAAAAG0lEQVQ4jWP8//8/A1mAiTxtozpHdY7qHNQ6AXf6AyFhO5NSAAAAAElFTkSuQmCC"
+
+            },
+            created_by = "toto",
+            created_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by = "toto",
+            updated_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+
+        ),
+    ]
+    dbsession.add_all(reports)
