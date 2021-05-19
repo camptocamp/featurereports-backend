@@ -3,6 +3,7 @@
         "id": "12345678-1234-5678-1234-567812345678",
         "name": "model_one",
         "layer_id": "ALLOWED_LAYER",
+        "readOnly": false,
         "JSONSchema": {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "definitions": {
