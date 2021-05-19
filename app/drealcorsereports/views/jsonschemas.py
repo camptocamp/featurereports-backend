@@ -6,7 +6,7 @@ from pyramid.security import Allow, Everyone
 
 from drealcorsereports.models.reports import ReportModel
 from drealcorsereports.schemas.reports import ReportSchema
-from drealcorsereports.security import is_user_reader_on_layer, is_user_admin_on_layer
+from drealcorsereports.security import is_user_admin_on_layer
 
 
 @resource(
@@ -44,9 +44,9 @@ class JsonSchemaView:
                 {
                     "id": str(report_model.id),
                     "name": report_model.name,
-                    "readOnly": True
-                    if not is_user_admin_on_layer(self.request, report_model.layer_id)
-                    else False,
+                    "readOnly": not is_user_admin_on_layer(
+                        self.request, report_model.layer_id
+                    ),
                     "layer_id": report_model.layer_id,
                     "JSONSchema": JSONSchema().dump(schema),
                     "UISchema": ReactJsonSchemaFormJSONSchema().dump_uischema(schema),
