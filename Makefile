@@ -75,7 +75,7 @@ setup-test-data: ## Setup test dataset in database
 	docker cp ./test_data/geoserver_to_datadir/RennesWS $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_datadir/workspaces/
 	docker cp ./test_data/geoserver_to_datadir/layers.properties $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_datadir/security/
 	docker-compose exec app setup_test_data c2c://drealcorsereports.ini
-	
+
 .PHONY: black
 black:
 black: ## Format Python code with black
