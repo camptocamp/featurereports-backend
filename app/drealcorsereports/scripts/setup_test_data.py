@@ -47,7 +47,7 @@ def main():
         setup_test_data(dbsession)
 
 
-# superseeded by test_data/geoserver_to_datadir/layers.properties 
+# superseeded by test_data/geoserver_to_datadir/layers.properties
 def setup_geoserver_rules(settings):
     geoserver_url = settings["geoserver_url"]
 
@@ -96,7 +96,7 @@ def setup_test_data(dbsession):
                     title="Liste déroulante",
                     name="liste_deroulante",
                     type=FieldTypeEnum.enum,
-                    enum=["choix1","choix2","choix3"],
+                    enum=["choix1", "choix2", "choix3"],
                 ),
                 ReportModelCustomField(
                     title="Photo",
@@ -140,7 +140,7 @@ def setup_test_data(dbsession):
                     title="Liste déroulante",
                     name="liste_deroulante",
                     type=FieldTypeEnum.enum,
-                    enum=["choix1","choix2","choix3"],
+                    enum=["choix1", "choix2", "choix3"],
                 ),
                 ReportModelCustomField(
                     title="Photo",
@@ -184,7 +184,7 @@ def setup_test_data(dbsession):
                     title="Liste déroulante",
                     name="liste_deroulante",
                     type=FieldTypeEnum.enum,
-                    enum=["choix1","choix2","choix3"],
+                    enum=["choix1", "choix2", "choix3"],
                 ),
                 ReportModelCustomField(
                     title="Photo",
@@ -228,7 +228,7 @@ def setup_test_data(dbsession):
                     title="Liste déroulante",
                     name="liste_deroulante",
                     type=FieldTypeEnum.enum,
-                    enum=["choix1","choix2","choix3"],
+                    enum=["choix1", "choix2", "choix3"],
                 ),
                 ReportModelCustomField(
                     title="Photo",
@@ -245,114 +245,95 @@ def setup_test_data(dbsession):
     ]
     dbsession.add_all(report_models)
     reports = [
-        
         Report(
             feature_id="gev_ajeu.60",
-            report_model_id = "ba722b44-57e1-4e78-9af6-ea00c25908b1",
-            custom_field_values = {
+            report_model_id="ba722b44-57e1-4e78-9af6-ea00c25908b1",
+            custom_field_values={
                 "commentaire": "un commentaire",
-                "liste_deroulante": "choix1", 
-                "valeur_numerique": 3, 
-                "booleen": "true", 
-                "date": "2021-05-17", 
-                "photo": "data:image/png;name=Screenshot_2021-05-18_17-34-36.png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAASCAIAAAA2bnI+AAAAA3NCSVQICAjb4U/gAAAAG0lEQVQ4jWP8//8/A1mAiTxtozpHdY7qHNQ6AXf6AyFhO5NSAAAAAElFTkSuQmCC"
-
+                "liste_deroulante": "choix1",
+                "valeur_numerique": 3,
+                "booleen": "true",
+                "date": "2021-05-17",
             },
-            created_by = "toto",
-            created_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
-            updated_by = "toto",
-            updated_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
-
+            created_by="toto",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="toto",
+            updated_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
         ),
         Report(
             feature_id="gev_ajeu.60",
-            report_model_id = "ba722b44-57e1-4e78-9af6-ea00c25908b1",
-            custom_field_values = {
+            report_model_id="ba722b44-57e1-4e78-9af6-ea00c25908b1",
+            custom_field_values={
                 "commentaire": "un commentaire",
-                "liste_deroulante": "choix1", 
-                "valeur_numerique": 3, 
-                "booleen": "true", 
-                "date": "2021-05-17", 
-                "photo": "data:image/png;name=Screenshot_2021-05-18_17-34-36.png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAASCAIAAAA2bnI+AAAAA3NCSVQICAjb4U/gAAAAG0lEQVQ4jWP8//8/A1mAiTxtozpHdY7qHNQ6AXf6AyFhO5NSAAAAAElFTkSuQmCC"
-
+                "liste_deroulante": "choix1",
+                "valeur_numerique": 3,
+                "booleen": "true",
+                "date": "2021-05-17",
             },
-            created_by = "toto",
-            created_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
-            updated_by = "toto",
-            updated_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
-
+            created_by="toto",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="toto",
+            updated_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
         ),
         Report(
             feature_id="gev_ajeu.60",
-            report_model_id = "ba722b44-57e1-4e78-9af6-ea00c25908b2",
-            custom_field_values = {
+            report_model_id="ba722b44-57e1-4e78-9af6-ea00c25908b2",
+            custom_field_values={
                 "commentaire": "un commentaire",
-                "liste_deroulante": "choix1", 
-                "valeur_numerique": 3, 
-                "booleen": "true", 
-                "date": "2021-05-17", 
-                "photo": "data:image/png;name=Screenshot_2021-05-18_17-34-36.png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAASCAIAAAA2bnI+AAAAA3NCSVQICAjb4U/gAAAAG0lEQVQ4jWP8//8/A1mAiTxtozpHdY7qHNQ6AXf6AyFhO5NSAAAAAElFTkSuQmCC"
-
+                "liste_deroulante": "choix1",
+                "valeur_numerique": 3,
+                "booleen": "true",
+                "date": "2021-05-17",
             },
-            created_by = "toto",
-            created_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
-            updated_by = "toto",
-            updated_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
-
+            created_by="toto",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="toto",
+            updated_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
         ),
         Report(
             feature_id="gev_jeu.20185",
-            report_model_id = "ba722b44-57e1-4e78-9af6-ea00c25908b0",
-            custom_field_values = {
+            report_model_id="ba722b44-57e1-4e78-9af6-ea00c25908b0",
+            custom_field_values={
                 "commentaire": "un commentaire",
-                "liste_deroulante": "choix1", 
-                "valeur_numerique": 3, 
-                "booleen": "true", 
-                "date": "2021-05-17", 
-                "photo": "data:image/png;name=Screenshot_2021-05-18_17-34-36.png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAASCAIAAAA2bnI+AAAAA3NCSVQICAjb4U/gAAAAG0lEQVQ4jWP8//8/A1mAiTxtozpHdY7qHNQ6AXf6AyFhO5NSAAAAAElFTkSuQmCC"
-
+                "liste_deroulante": "choix1",
+                "valeur_numerique": 3,
+                "booleen": "true",
+                "date": "2021-05-17",
             },
-            created_by = "toto",
-            created_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
-            updated_by = "toto",
-            updated_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
-
+            created_by="toto",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="toto",
+            updated_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
         ),
         Report(
             feature_id="gev_jeu.20550",
-            report_model_id = "ba722b44-57e1-4e78-9af6-ea00c25908b0",
-            custom_field_values = {
+            report_model_id="ba722b44-57e1-4e78-9af6-ea00c25908b0",
+            custom_field_values={
                 "commentaire": "un commentaire",
-                "liste_deroulante": "choix1", 
-                "valeur_numerique": 3, 
-                "booleen": "true", 
-                "date": "2021-05-17", 
-                "photo": "data:image/png;name=Screenshot_2021-05-18_17-34-36.png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAASCAIAAAA2bnI+AAAAA3NCSVQICAjb4U/gAAAAG0lEQVQ4jWP8//8/A1mAiTxtozpHdY7qHNQ6AXf6AyFhO5NSAAAAAElFTkSuQmCC"
-
+                "liste_deroulante": "choix1",
+                "valeur_numerique": 3,
+                "booleen": "true",
+                "date": "2021-05-17",
             },
-            created_by = "toto",
-            created_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
-            updated_by = "toto",
-            updated_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
-
+            created_by="toto",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="toto",
+            updated_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
         ),
         Report(
             feature_id="gev_jeu.20187",
-            report_model_id = "ba722b44-57e1-4e78-9af6-ea00c25908b0",
-            custom_field_values = {
+            report_model_id="ba722b44-57e1-4e78-9af6-ea00c25908b0",
+            custom_field_values={
                 "commentaire": "un commentaire",
-                "liste_deroulante": "choix1", 
-                "valeur_numerique": 3, 
-                "booleen": "true", 
-                "date": "2021-05-17", 
-                "photo": "data:image/png;name=Screenshot_2021-05-18_17-34-36.png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAASCAIAAAA2bnI+AAAAA3NCSVQICAjb4U/gAAAAG0lEQVQ4jWP8//8/A1mAiTxtozpHdY7qHNQ6AXf6AyFhO5NSAAAAAElFTkSuQmCC"
-
+                "liste_deroulante": "choix1",
+                "valeur_numerique": 3,
+                "booleen": "true",
+                "date": "2021-05-17",
             },
-            created_by = "toto",
-            created_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
-            updated_by = "toto",
-            updated_at = datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
-
+            created_by="toto",
+            created_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
+            updated_by="toto",
+            updated_at=datetime(2021, 1, 22, 13, 33, tzinfo=timezone.utc),
         ),
     ]
     dbsession.add_all(reports)
