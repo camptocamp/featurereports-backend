@@ -21,6 +21,7 @@ services:
       - POSTGRES_USER=drealcorse
       - POSTGRES_PASSWORD=drealcorse
       - POSTGRES_DB=drealcorse
+
   app:
     image: ${DOCKER_BASE}-app:${DOCKER_TAG}
     user: www-data

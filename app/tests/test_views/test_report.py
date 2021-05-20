@@ -399,7 +399,11 @@ class TestReportView:
     def test_delete(self, test_app, test_data, dbsession):
         test_app.delete(
             f"/reports/{test_data['reports'][0].id}",
-            headers={"sec-roles": "ROLE_REPORTS_ADMIN"},
+            headers={
+                "Accept": "application/json",
+                "sec-username": "bobby",
+                "sec-roles": "ROLE_USER",
+            },
             status=204,
         )
         assert (

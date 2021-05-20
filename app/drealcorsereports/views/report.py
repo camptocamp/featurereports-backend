@@ -59,7 +59,7 @@ class ReportView:
         For a specific user, we check geoserver rules.
         """
         acl = [
-            (Allow, "ROLE_REPORTS_ADMIN", ("list", "add", "view", "delete")),
+            (Allow, "ROLE_REPORTS_ADMIN", ("list", "add", "view", "edit", "delete")),
         ]
 
         # In case of list we get layer_id from request params
@@ -79,7 +79,11 @@ class ReportView:
                 acl.append((Allow, self.request.authenticated_userid, "view"))
             if is_user_writer_on_layer(self.request, layer_id):
                 acl.append(
-                    (Allow, self.request.authenticated_userid, ("edit", "delete"))
+                    (
+                        Allow,
+                        self.request.authenticated_userid,
+                        ("view", "edit", "delete"),
+                    )
                 )
 
         return acl
