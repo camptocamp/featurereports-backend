@@ -1,0 +1,17 @@
+<layer>
+  <name>gev_jeu__23</name>
+  <id>LayerInfoImpl--551e0ff4:1798900d502:-7fee</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--551e0ff4:1798900d502:-7fec</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--551e0ff4:1798900d502:-7fef</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2021-05-20 09:04:41.358 UTC</dateCreated>
+  <dateModified>2021-05-20 09:06:43.29 UTC</dateModified>
+</layer>

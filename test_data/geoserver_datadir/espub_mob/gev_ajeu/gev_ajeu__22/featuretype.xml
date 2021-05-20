@@ -1,11 +1,11 @@
 <featureType>
-  <id>FeatureTypeInfoImpl-b456d93:1797a70f484:-7fee</id>
+  <id>FeatureTypeInfoImpl--551e0ff4:1798900d502:-7ff2</id>
   <name>gev_ajeu__22</name>
-  <nativeName>gev_ajeu__22</nativeName>
+  <nativeName>gev_ajeu</nativeName>
   <namespace>
-    <id>NamespaceInfoImpl-b456d93:1797a70f484:-7ff5</id>
+    <id>NamespaceInfoImpl--551e0ff4:1798900d502:-7ff5</id>
   </namespace>
-  <title>gev_ajeu__22</title>
+  <title>gev_ajeu</title>
   <keywords>
     <string>features</string>
     <string>gev_ajeu</string>
@@ -50,8 +50,11 @@
   </latLonBoundingBox>
   <projectionPolicy>FORCE_DECLARED</projectionPolicy>
   <enabled>true</enabled>
+  <metadata>
+    <entry key="cachingEnabled">false</entry>
+  </metadata>
   <store class="dataStore">
-    <id>DataStoreInfoImpl-b456d93:1797a70f484:-7fef</id>
+    <id>DataStoreInfoImpl--551e0ff4:1798900d502:-7ff3</id>
   </store>
   <serviceConfiguration>false</serviceConfiguration>
   <simpleConversionEnabled>false</simpleConversionEnabled>

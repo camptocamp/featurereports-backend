@@ -19,7 +19,3 @@ services:
       - ${PWD}/app/drealcorsereports/static/admin:/app
     ports:
       - 3000:3000
-
-  geoserver:
-    volumes:
-      - ./test_data/geoserver_geodata:/mnt/geoserver_geodata

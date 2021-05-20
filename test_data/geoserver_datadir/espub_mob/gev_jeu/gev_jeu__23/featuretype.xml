@@ -1,11 +1,11 @@
 <featureType>
-  <id>FeatureTypeInfoImpl-b456d93:1797a70f484:-7ff2</id>
+  <id>FeatureTypeInfoImpl--551e0ff4:1798900d502:-7fef</id>
   <name>gev_jeu__23</name>
-  <nativeName>gev_jeu__23</nativeName>
+  <nativeName>gev_jeu</nativeName>
   <namespace>
-    <id>NamespaceInfoImpl-b456d93:1797a70f484:-7ff5</id>
+    <id>NamespaceInfoImpl--551e0ff4:1798900d502:-7ff5</id>
   </namespace>
-  <title>gev_jeu__23</title>
+  <title>gev_jeu</title>
   <keywords>
     <string>features</string>
     <string>gev_jeu</string>
@@ -50,8 +50,11 @@
   </latLonBoundingBox>
   <projectionPolicy>FORCE_DECLARED</projectionPolicy>
   <enabled>true</enabled>
+  <metadata>
+    <entry key="cachingEnabled">false</entry>
+  </metadata>
   <store class="dataStore">
-    <id>DataStoreInfoImpl-b456d93:1797a70f484:-7ff3</id>
+    <id>DataStoreInfoImpl--551e0ff4:1798900d502:-7ff0</id>
   </store>
   <serviceConfiguration>false</serviceConfiguration>
   <simpleConversionEnabled>false</simpleConversionEnabled>
