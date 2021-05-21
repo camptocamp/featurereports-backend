@@ -11,7 +11,7 @@ from cornice.resource import resource, view
 from cornice.validators import marshmallow_body_validator
 from pyramid.exceptions import HTTPNotFound
 from pyramid.request import Request
-from pyramid.security import Allow
+from pyramid.security import Allow, Authenticated
 
 from drealcorsereports.models.reports import ReportModel
 from drealcorsereports.schemas.reports import ReportModelSchema
@@ -45,18 +45,25 @@ class AdminReportModelView:
             self.report_models_id = None
 
     def __acl__(self):
+        """
+        User with role ROLE_REPORTS_ADMIN have the right to do anything.
+        For a specific user, we check geoserver rules.
+        """
         acl = [
-            (Allow, "ROLE_REPORTS_ADMIN", ("list", "add", "view")),
+            (Allow, "ROLE_REPORTS_ADMIN", ("list", "add", "view", "edit", "delete")),
             (Allow, "ROLE_SUPERUSER", ("list", "add", "view", "edit", "delete")),
+            (Allow, Authenticated, ("list", "add")),
+            # We give all authenticated users the add permission but returns validation error if needed
         ]
-        if (
-            self.report_models_id
-            and "ROLE_REPORTS_ADMIN" in self.request.effective_principals
-        ):
+        if self.report_models_id:
             if is_user_admin_on_layer(self.request, self.get_object().layer_id):
                 acl.extend(
                     [
-                        (Allow, self.request.authenticated_userid, ("edit", "delete")),
+                        (
+                            Allow,
+                            self.request.authenticated_userid,
+                            ("view", "edit", "delete"),
+                        ),
                     ]
                 )
         return acl

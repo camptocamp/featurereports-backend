@@ -95,19 +95,27 @@ def check_user_right(
     return False
 
 
-def is_user_admin_on_layer(request: Request, layer_id: str) -> bool:
-    """
-    Return True if user is admin on considered layer
-    """
-    return check_user_right(request, layer_id, RuleAccess.ADMIN)
-
-
 def is_user_reader_on_layer(request: Request, layer_id: str) -> bool:
+    """
+    Return True if user can read data from considered layer
+    """
     return check_user_right(request, layer_id, RuleAccess.READ)
 
 
 def is_user_writer_on_layer(request: Request, layer_id: str) -> bool:
-    return check_user_right(request, layer_id, RuleAccess.WRITE)
+    """
+    Return True if user can write data to considered layer
+    """
+    return check_user_right(request, layer_id, RuleAccess.WRITE) or check_user_right(
+        request, layer_id, RuleAccess.ADMIN
+    )
+
+
+def is_user_admin_on_layer(request: Request, layer_id: str) -> bool:
+    """
+    Return True if user can access and modify configuration of considered layer
+    """
+    return check_user_right(request, layer_id, RuleAccess.ADMIN)
 
 
 @implementer(IAuthenticationPolicy)

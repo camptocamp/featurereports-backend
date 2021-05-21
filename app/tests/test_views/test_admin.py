@@ -80,16 +80,18 @@ def patch_is_user_admin_on_layer():
 
 @pytest.mark.usefixtures("transact", "patch_is_user_admin_on_layer")
 class TestAdminReportModelView:
-    def _auth_headers(self, username=USER_ADMIN, roles=[ROLE_REPORTS_ADMIN]):
+    def _auth_headers(self, username=USER_ADMIN, roles=[]):
         return {
             "sec-username": username,
             "sec-roles": ";".join(roles),
         }
 
     def test_collection_get_forbidden(self, test_app):
+        """
+        User need to be authenticated to GET /report_models.
+        """
         test_app.get(
             "/report_models",
-            headers=self._auth_headers(roles=[]),
             status=403,
         )
 
@@ -179,10 +181,12 @@ class TestAdminReportModelView:
         }
 
     def test_collection_post_forbidden(self, test_app):
+        """
+        User need to be authenticated to POST on /report_models.
+        """
         test_app.post_json(
             "/report_models",
             self._post_payload(),
-            headers=self._auth_headers(roles=[]),
             status=403,
         )
 
@@ -315,10 +319,13 @@ class TestAdminReportModelView:
         }
 
     def test_get_forbidden(self, test_app, test_data):
-        rm = test_data["report_models"][0]
+        """
+        User need to be admin on layer to get report_model.
+        """
+        rm = test_data["report_models"][1]
         test_app.get(
             f"/report_models/{rm.id}",
-            headers=self._auth_headers(roles=[]),
+            headers=self._auth_headers(),
             status=403,
         )
 
@@ -381,16 +388,9 @@ class TestAdminReportModelView:
         }
 
     def test_put_forbidden(self, test_app, test_data):
-        # No admin role
-        rm = test_data["report_models"][0]
-        test_app.put_json(
-            f"/report_models/{rm.id}",
-            self._put_payload(rm),
-            headers=self._auth_headers(roles=[]),
-            status=403,
-        )
-
-        # Not admin on actual layer
+        """
+        User need to be admin on layer to PUT on report_model.
+        """
         rm = test_data["report_models"][1]
         test_app.put_json(
             f"/report_models/{rm.id}",
@@ -449,15 +449,9 @@ class TestAdminReportModelView:
         )
 
     def test_delete_forbidden(self, test_app, test_data):
-        # No admin role
-        rm = test_data["report_models"][0]
-        test_app.delete(
-            f"/report_models/{rm.id}",
-            headers=self._auth_headers(roles=[]),
-            status=403,
-        )
-
-        # Not admin on actual layer
+        """
+        User need to be admin on layer to DELETE report_model.
+        """
         rm = test_data["report_models"][1]
         test_app.delete(
             f"/report_models/{rm.id}",
