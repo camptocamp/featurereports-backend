@@ -1,4 +1,5 @@
 from cornice.resource import resource, view
+from marshmallow import fields
 from marshmallow_jsonschema import JSONSchema
 from marshmallow_jsonschema.extensions import ReactJsonSchemaFormJSONSchema
 from pyramid.request import Request
@@ -6,7 +7,16 @@ from pyramid.security import Allow, Everyone
 
 from drealcorsereports.models.reports import ReportModel
 from drealcorsereports.schemas.reports import ReportSchema
-from drealcorsereports.security import is_user_reader_on_layer
+from drealcorsereports.security import is_user_writer_on_layer, is_user_reader_on_layer
+
+
+class ReportJSONSchema(JSONSchema):
+
+    read_only = fields.Method(data_key="readOnly", serialize="get_read_only")
+
+    def get_read_only(self, obj):
+        del obj
+        return self.context.get("readOnly", False)
 
 
 @resource(
@@ -31,7 +41,6 @@ class JsonSchemaView:
 
         report_models = self.request.dbsession.query(ReportModel)
         for report_model in report_models:
-
             if not is_user_reader_on_layer(self.request, report_model.layer_id):
                 continue
 
@@ -41,15 +50,24 @@ class JsonSchemaView:
                     "created_by",
                     "updated_by",
                     "updated_at",
-                ]
+                ],
             )
+
+            read_only = not is_user_writer_on_layer(
+                self.request,
+                report_model.layer_id,
+            )
+
+            json_schema = ReportJSONSchema()
+            json_schema.context["readOnly"] = read_only
 
             schemas.append(
                 {
                     "id": str(report_model.id),
                     "name": report_model.name,
                     "layer_id": report_model.layer_id,
-                    "JSONSchema": JSONSchema().dump(schema),
+                    "readOnly": read_only,
+                    "JSONSchema": json_schema.dump(schema),
                     "UISchema": ReactJsonSchemaFormJSONSchema().dump_uischema(schema),
                 }
             )

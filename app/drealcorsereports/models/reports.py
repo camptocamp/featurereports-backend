@@ -79,6 +79,12 @@ class ReportModel(Base):
         # ¯\_(ツ)_/¯
         zope.sqlalchemy.mark_changed(dbsession)
 
+    def drop_tjs_view(self, dbsession):
+        dbsession.execute(text(f"DROP VIEW {self.tjs_view_name()}"))
+        # mark the session as dirty, if not transaction manager will rollback the transaction.
+        # ¯\_(ツ)_/¯
+        zope.sqlalchemy.mark_changed(dbsession)
+
 
 class FieldTypeEnum(enum.Enum):
     boolean = "boolean"

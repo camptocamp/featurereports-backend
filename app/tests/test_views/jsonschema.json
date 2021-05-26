@@ -2,7 +2,8 @@
     {
         "id": "12345678-1234-5678-1234-567812345678",
         "name": "model_one",
-        "layer_id": "ALLOWED_LAYER",
+        "layer_id": "READWRITE_LAYER",
+        "readOnly": false,
         "JSONSchema": {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "definitions": {
@@ -47,6 +48,7 @@
                             "format": "decimal"
                         }
                     },
+                    "readOnly": false,
                     "additionalProperties": false
                 },
                 "ModelOneReportSchema": {
@@ -86,6 +88,7 @@
                             "ui:widget": "hidden"
                         }
                     },
+                    "readOnly": false,
                     "additionalProperties": false
                 }
             },
@@ -122,7 +125,8 @@
     {
         "id": "12345678-1234-5678-1234-567812345679",
         "name": "model_two",
-        "layer_id": "ALLOWED_LAYER",
+        "layer_id": "READONLY_LAYER",
+        "readOnly": true,
         "JSONSchema": {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "definitions": {
@@ -134,6 +138,7 @@
                             "type": "string"
                         }
                     },
+                    "readOnly": false,
                     "additionalProperties": false
                 },
                 "ModelTwoReportSchema": {
@@ -168,6 +173,7 @@
                             "ui:widget": "hidden"
                         }
                     },
+                    "readOnly": true,
                     "additionalProperties": false
                 }
             },
