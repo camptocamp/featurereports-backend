@@ -53,17 +53,20 @@ class JsonSchemaView:
                 ],
             )
 
-            json_schema = ReportJSONSchema()
-            json_schema.context["readOnly"] = not is_user_writer_on_layer(
+            read_only = not is_user_writer_on_layer(
                 self.request,
                 report_model.layer_id,
             )
+
+            json_schema = ReportJSONSchema()
+            json_schema.context["readOnly"] = read_only
 
             schemas.append(
                 {
                     "id": str(report_model.id),
                     "name": report_model.name,
                     "layer_id": report_model.layer_id,
+                    "readOnly": read_only,
                     "JSONSchema": json_schema.dump(schema),
                     "UISchema": ReactJsonSchemaFormJSONSchema().dump_uischema(schema),
                 }

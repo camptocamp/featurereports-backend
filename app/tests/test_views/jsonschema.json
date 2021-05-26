@@ -3,6 +3,7 @@
         "id": "12345678-1234-5678-1234-567812345678",
         "name": "model_one",
         "layer_id": "READWRITE_LAYER",
+        "readOnly": false,
         "JSONSchema": {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "definitions": {
@@ -125,6 +126,7 @@
         "id": "12345678-1234-5678-1234-567812345679",
         "name": "model_two",
         "layer_id": "READONLY_LAYER",
+        "readOnly": true,
         "JSONSchema": {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "definitions": {
