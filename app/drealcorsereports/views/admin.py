@@ -85,6 +85,7 @@ class AdminReportModelView:
         report_model.updated_by = self.request.authenticated_userid
         self.request.dbsession.add(report_model)
         self.request.dbsession.flush()
+        report_model.create_tjs_view()
         self.request.response.status_code = 201
         return ReportModelSchema().dump(report_model)
 
@@ -107,27 +108,16 @@ class AdminReportModelView:
         report_model = self.request.validated
         report_model.updated_by = self.request.authenticated_userid
         report_model.updated_at = datetime.now(timezone.utc)
+        self.request.dbsession.flush()
+        report_model.update_tjs_view()
         return ReportModelSchema().dump(report_model)
 
     @view(permission="delete")
     def delete(self) -> None:
-        self.request.dbsession.delete(self.get_object())
+        report_model = self.get_object()
+        self.request.dbsession.delete(report_model)
+        report_model.drop_tjs_view()
         self.request.response.status_code = 204
-
-
-tjs_view = Service(
-    name="tjs_views",
-    path="/report_models/{id}/tjs_view",
-    renderer="json",
-    factory=AdminReportModelView,
-)
-
-
-@tjs_view.post(permission="edit")
-def post_tjs_view(request: Request) -> None:
-    report_model = request.context.get_object()
-    report_model.create_tjs_view(request.dbsession)
-    return {"view": report_model.tjs_view_name()}
 
 
 list_layers = Service(
