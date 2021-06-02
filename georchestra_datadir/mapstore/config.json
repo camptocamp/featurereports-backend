@@ -29,7 +29,7 @@
         "visibility": true,
         "opacity": 1.0,
         "title": "Rennes - aires de jeu",
-        "name": "espub_mob:gev_ajeu__22",
+        "name": "espub_mob:gev_ajeu",
         "format": "image/png"
       },
       {
@@ -38,7 +38,7 @@
         "visibility": true,
         "opacity": 1.0,
         "title": "Rennes - jeux",
-        "name": "espub_mob:gev_jeu__23",
+        "name": "espub_mob:gev_jeu",
         "format": "image/png"
       },
       {
