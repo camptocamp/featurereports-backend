@@ -55,7 +55,7 @@ export default class ReportModelList extends Component {
       },
       {
         dataField: 'updated_at',
-        text: 'Mise à jour le',
+        text: 'Mis à jour le',
         sort: true,
         formatter: (cell, row) => {
           return formatDate(cell);
@@ -63,7 +63,7 @@ export default class ReportModelList extends Component {
       },
       {
         dataField: 'updated_by',
-        text: 'Mise à jour par',
+        text: 'Mis à jour par',
         sort: true,
       }
     ];
