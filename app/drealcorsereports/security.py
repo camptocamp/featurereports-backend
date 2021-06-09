@@ -99,7 +99,9 @@ def is_user_reader_on_layer(request: Request, layer_id: str) -> bool:
     """
     Return True if user can read data from considered layer
     """
-    return check_user_right(request, layer_id, RuleAccess.READ)
+    return check_user_right(request, layer_id, RuleAccess.READ) or check_user_right(
+        request, layer_id, RuleAccess.ADMIN
+    )
 
 
 def is_user_writer_on_layer(request: Request, layer_id: str) -> bool:
