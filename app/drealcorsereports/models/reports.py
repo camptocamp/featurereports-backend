@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from functools import partial
 from uuid import uuid4
 
-import zope
+from sqlalchemy import event, inspect
 from sqlalchemy import (
     ARRAY,
     Boolean,
@@ -52,11 +52,17 @@ class ReportModel(Base):
         collection_class=ordering_list("index"),
     )
 
-    def tjs_view_name(self):
+    def tjs_view_name(self, name=None):
+        """
+        Return TJS view name from report model name.
+        """
         schema_name = ReportModel.__table_args__["schema"]
-        return f"{schema_name}.v_tjs_view_{self.name}"
+        return f"{schema_name}.v_tjs_view_{name or self.name}"
 
-    def create_tjs_view(self, dbsession):
+    def create_tjs_view(self, connection=None, name=None):
+        """
+        Create TJS view for the current ReportModel.
+        """
         schema_name = Report.__table_args__["schema"]
         table_name = Report.__tablename__
         view_columns = ",\n".join(
@@ -65,9 +71,11 @@ class ReportModel(Base):
                 for f in self.custom_fields
             ]
         )
-        dbsession.execute(
+        if connection is None:
+            connection = inspect(self).session.connection()
+        connection.execute(
             text(
-                f"""CREATE OR REPLACE VIEW {self.tjs_view_name()} AS
+                f"""CREATE OR REPLACE VIEW {self.tjs_view_name(name)} AS
     SELECT
         feature_id,
 {view_columns}
@@ -75,15 +83,36 @@ class ReportModel(Base):
 """
             )
         )
-        # mark the session as dirty, if not transaction manager will rollback the transaction.
-        # ¯\_(ツ)_/¯
-        zope.sqlalchemy.mark_changed(dbsession)
 
-    def drop_tjs_view(self, dbsession):
-        dbsession.execute(text(f"DROP VIEW {self.tjs_view_name()}"))
-        # mark the session as dirty, if not transaction manager will rollback the transaction.
-        # ¯\_(ツ)_/¯
-        zope.sqlalchemy.mark_changed(dbsession)
+    def drop_tjs_view(self, connection=None, name=None):
+        """
+        Drop TJS view for the current report model.
+        """
+        if connection is None:
+            connection = inspect(self).session.connection()
+        connection.execute(text(f"DROP VIEW {self.tjs_view_name(name)}"))
+
+    def update_tjs_view(self):
+        """
+        Refresh TJS view for the current ReportModel.
+        """
+        connection = inspect(self).session.connection()
+        self.drop_tjs_view(connection)
+        self.create_tjs_view(connection)
+
+
+@event.listens_for(ReportModel, "after_update")
+def update_tjs_view(mapper, connection, target):
+    """
+    In case of update on report model name,
+    we need to recreate the TJS view before the history is cleared by flush.
+    """
+    del mapper
+    history = inspect(target).attrs.name.history
+    for previous_name in history.deleted:
+        target.drop_tjs_view(connection, previous_name)
+    for previous_name in history.added:
+        target.create_tjs_view(connection, previous_name)
 
 
 class FieldTypeEnum(enum.Enum):

@@ -3,6 +3,8 @@ from uuid import uuid4
 from unittest.mock import patch
 
 import pytest
+from sqlalchemy import text
+
 from drealcorsereports.models.reports import (
     FieldTypeEnum,
     ReportModel,
@@ -85,6 +87,22 @@ class TestAdminReportModelView:
             "sec-username": username,
             "sec-roles": ";".join(roles),
         }
+
+    def _view_exists(self, view_name, dbsession):
+        table_schema, table_name = view_name.split(".")
+        return (
+            dbsession.connection()
+            .execute(
+                text(
+                    f"SELECT count(*)"
+                    f" FROM information_schema.views"
+                    f" WHERE table_schema = '{table_schema}'"
+                    f" AND table_name = '{table_name}';"
+                )
+            )
+            .scalar()
+            == 1
+        )
 
     def test_collection_get_forbidden(self, test_app):
         """
@@ -223,6 +241,14 @@ class TestAdminReportModelView:
         assert report_model.updated_by == USER_ADMIN
         assert isinstance(report_model.updated_at, datetime)
         assert report_model.updated_at.tzinfo is not None
+
+        # Check TJS view
+        assert self._view_exists(report_model.tjs_view_name(), dbsession)
+        result = dbsession.execute(
+            text(f"SELECT * FROM {report_model.tjs_view_name()}")
+        )
+        assert result.keys() == ["feature_id", "category", "commentaire"]
+        result.close()
 
     def test_collection_post_name_invalid(self, test_app, dbsession):
         r = test_app.post_json(
@@ -399,8 +425,16 @@ class TestAdminReportModelView:
             status=403,
         )
 
-    def test_put_success(self, test_app, test_data):
+    def test_put_success(self, test_app, test_data, dbsession):
         rm = test_data["report_models"][0]
+
+        rm.create_tjs_view()
+        assert self._view_exists(rm.tjs_view_name(), dbsession)
+        result = dbsession.execute(text(f"SELECT * FROM {rm.tjs_view_name()}"))
+        assert result.keys() == ["feature_id", "commentaire"]
+        result.close()
+        old_view_name = rm.tjs_view_name()
+
         updated_at = rm.updated_at
         r = test_app.put_json(
             f"/report_models/{rm.id}",
@@ -420,6 +454,12 @@ class TestAdminReportModelView:
         assert rm.custom_fields[1].index == 1
         assert rm.updated_by == "ANOTHER_USER"
         assert rm.updated_at != updated_at
+
+        assert not self._view_exists(old_view_name, dbsession)
+        assert self._view_exists(rm.tjs_view_name(), dbsession)
+        result = dbsession.execute(text(f"SELECT * FROM {rm.tjs_view_name()}"))
+        assert result.keys() == ["feature_id", "commentaire_renamed", "commentaire2"]
+        result.close()
 
     def test_put_not_layer_admin(self, test_app, test_data):
         rm = test_data["report_models"][0]
@@ -461,6 +501,10 @@ class TestAdminReportModelView:
 
     def test_delete_success(self, test_app, dbsession, test_data):
         rm = test_data["report_models"][0]
+
+        rm.create_tjs_view()
+        assert self._view_exists(rm.tjs_view_name(), dbsession)
+
         test_app.delete(
             f"/report_models/{rm.id}",
             headers=self._auth_headers(),
@@ -469,6 +513,8 @@ class TestAdminReportModelView:
         dbsession.flush()
         assert dbsession.query(ReportModel).get(rm.id) is None
 
+        assert not self._view_exists(rm.tjs_view_name(), dbsession)
+
     def test_delete_not_found(self, test_app):
         test_app.delete(
             f"/report_models/{uuid4()}",
@@ -476,24 +522,11 @@ class TestAdminReportModelView:
             status=404,
         )
 
-    def test_post_tjs_view_forbidden(self, test_app, dbsession, test_data):
-        rm = test_data["report_models"][1]
-        test_app.post(
-            f"/report_models/{rm.id}/tjs_view",
-            {},
-            headers=self._auth_headers(),
-            status=403,
-        )
-
-    def test_post_tjs_view_success(self, test_app, dbsession, test_data):
+    def test_tjs_view(self, dbsession, test_data):
         rm = test_data["report_models"][0]
-        r = test_app.post(
-            f"/report_models/{rm.id}/tjs_view",
-            {},
-            headers=self._auth_headers(),
-            status=200,
-        )
-        assert r.json == {"view": "reports.v_tjs_view_existing_allowed"}
+
+        rm.create_tjs_view()
+        assert self._view_exists(rm.tjs_view_name(), dbsession)
 
         from drealcorsereports.models.reports import Report
 
@@ -518,9 +551,8 @@ class TestAdminReportModelView:
         dbsession.add_all([r1, r2])
         dbsession.flush()
 
-        from sqlalchemy import text
-
         result = dbsession.execute(text(f"SELECT * FROM {rm.tjs_view_name()}"))
+        assert result.keys() == ["feature_id", "commentaire"]
         assert [row for row in result] == [
             (
                 r1.feature_id,
