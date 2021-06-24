@@ -65,6 +65,7 @@ class JsonSchemaView:
                 {
                     "id": str(report_model.id),
                     "name": report_model.name,
+                    "title": report_model.title,
                     "layer_id": report_model.layer_id,
                     "readOnly": read_only,
                     "JSONSchema": json_schema.dump(schema),

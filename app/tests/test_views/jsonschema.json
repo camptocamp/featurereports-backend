@@ -2,6 +2,7 @@
     {
         "id": "12345678-1234-5678-1234-567812345678",
         "name": "model_one",
+        "title": "Model 1",
         "layer_id": "READWRITE_LAYER",
         "readOnly": false,
         "JSONSchema": {
@@ -125,6 +126,7 @@
     {
         "id": "12345678-1234-5678-1234-567812345679",
         "name": "model_two",
+        "title": "Model 2",
         "layer_id": "READONLY_LAYER",
         "readOnly": true,
         "JSONSchema": {
