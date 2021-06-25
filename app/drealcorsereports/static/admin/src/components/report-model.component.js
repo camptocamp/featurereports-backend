@@ -26,6 +26,7 @@ const defaultFormWarnings = {
   title: '',
   layer: '',
   fields: '',
+  name: '',
   fieldTitle: {},
   fieldType: {},
 };
@@ -47,6 +48,7 @@ export default class ReportModel extends Component {
       layers: [],
       formWarnings: defaultFormWarnings,
       errorMessage: '',
+      isNew: true
     };
 
     this.source = axios.CancelToken.source();
@@ -90,12 +92,14 @@ export default class ReportModel extends Component {
 
   onTitleChange(e) {
     const title = e.target.value;
+    const name = this.state.isNew ? this.createName(title) : this.state.currentReportModel.name;
 
     this.setState((prevState) => {
       return {
         currentReportModel: {
           ...prevState.currentReportModel,
           title: title,
+          name: name
         },
         formWarnings: {
           ...prevState.formWarnings,
@@ -138,11 +142,15 @@ export default class ReportModel extends Component {
     }));
   }
 
-  createName(title, length = 8) {
+  createName(title) {
     // normalize title to match name regex
-    let name = title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z_]/g, '') + '_';
+    return title.normalize("NFD").replace(/ /g, "_").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z_0-9]/g, '');
+  }
+
+  createNameWithSuffix(title, length = 8) {
+    let name = this.createName(title)  + '_';
     
-    // add a randomized suffix in case two fields would have similar titles (ex : "field 1" and "field 2") 
+    // add a randomized suffix in case two fields would have similar titles (ex : "Field" and "field") 
     const chars = 'abcdefghijklmnopqrstuvwxyz_';
     for (let i = 0; i < length; i++) {
         name += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -161,7 +169,9 @@ export default class ReportModel extends Component {
               switch (propertyName) {
                 case 'title':
                   returnField.title = value;
-                  returnField.name = this.createName(value);
+                  if (this.state.isNew) {
+                    returnField.name = this.createName(value);
+                  }
                   break;
                 case 'type':
                   returnField.type = value;
@@ -235,10 +245,11 @@ export default class ReportModel extends Component {
 
   getReportModel(id) {
     ReportModelApiService.get(id, this.source.token)
-      .then((response) => {
-        this.setState({
+      .then((response) => {    
+        this.setState((prevState) => ({
           currentReportModel: response.data,
-        });
+          isNew: false
+        }));
       })
       .catch((e) => {
         this.setState({
@@ -325,8 +336,8 @@ export default class ReportModel extends Component {
       formWarnings.name = 'Veuillez indiquer un nom';
       valid = false;
     }
-    if (this.state.currentReportModel.name != '' && this.state.currentReportModel.name.match(/[^a-z_]/)) {
-      formWarnings.name = 'Caractères autorisés : minuscules et \'_\'.';
+    if (this.state.currentReportModel.name != '' && this.state.currentReportModel.name.match(/[^a-z_0-9]/)) {
+      formWarnings.name = 'Caractères autorisés : minuscules, chiffres et \'_\'.';
       valid = false;
     }
     if (this.state.currentReportModel.layer_id === '') {
