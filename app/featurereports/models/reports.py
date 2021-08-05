@@ -21,7 +21,7 @@ from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 
-from drealcorsereports.models.meta import Base
+from featurereports.models.meta import Base
 
 SCHEMA = "reports"
 

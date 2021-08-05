@@ -5,9 +5,9 @@ from marshmallow_jsonschema.extensions import ReactJsonSchemaFormJSONSchema
 from pyramid.request import Request
 from pyramid.security import Allow, Everyone
 
-from drealcorsereports.models.reports import ReportModel
-from drealcorsereports.schemas.reports import ReportSchema
-from drealcorsereports.security import is_user_writer_on_layer, is_user_reader_on_layer
+from featurereports.models.reports import ReportModel
+from featurereports.schemas.reports import ReportSchema
+from featurereports.security import is_user_writer_on_layer, is_user_reader_on_layer
 
 
 class ReportJSONSchema(JSONSchema):

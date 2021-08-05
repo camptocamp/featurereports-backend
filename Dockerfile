@@ -3,13 +3,13 @@
 ########################
 FROM node:12-slim as front-server
 
-COPY app/drealcorsereports/static/admin/package-lock.json app/drealcorsereports/static/admin/package.json /app/
+COPY app/featurereports/static/admin/package-lock.json app/featurereports/static/admin/package.json /app/
 WORKDIR /app
 RUN npm install
 ENV PATH="$PATH:/app/node_modules/.bin"
 # Save /app/node_modules from being masked by another volume
 VOLUME /app/node_modules
-COPY app/drealcorsereports/static/admin/ /app/
+COPY app/featurereports/static/admin/ /app/
 EXPOSE 3000
 CMD npm start
 
@@ -48,7 +48,7 @@ WORKDIR /app
 COPY app /app/
 COPY Makefile .
 RUN pip3 install --no-deps -e .
-COPY --from=front-builder /app/build /opt/drealcorsereports/static/admin/build
+COPY --from=front-builder /app/build /opt/featurereports/static/admin/build
 
 CMD make test && make front-test
 
@@ -62,7 +62,7 @@ LABEL maintainer Camptocamp "info@camptocamp.com"
 WORKDIR /app
 COPY --from=tools /app/ /app/
 RUN pip install --no-deps -e .
-COPY --from=front-builder /app/build /opt/drealcorsereports/static/admin/build
+COPY --from=front-builder /app/build /opt/featurereports/static/admin/build
 ENV PROXY_PREFIX=
 EXPOSE 8080
 CMD alembic upgrade head && pserve c2c://${INI_FILE}

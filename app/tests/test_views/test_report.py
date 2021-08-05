@@ -4,7 +4,7 @@ from uuid import uuid4
 from freezegun import freeze_time
 
 import pytest
-from drealcorsereports.models.reports import (
+from featurereports.models.reports import (
     ReportModel,
     ReportModelCustomField,
     FieldTypeEnum,
@@ -23,7 +23,7 @@ def patch_check_user_right():
         return layer_id == ALLOWED_LAYER
 
     with patch(
-        "drealcorsereports.security.check_user_right",
+        "featurereports.security.check_user_right",
         side_effect=check_user_right,
     ) as right_mock:
         yield right_mock

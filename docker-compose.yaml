@@ -13,7 +13,7 @@ services:
   front-server:
     image: ${DOCKER_BASE}-front-server:${DOCKER_TAG}
     volumes:
-      - ${PWD}/app/drealcorsereports/static/admin:/app
+      - ${PWD}/app/featurereports/static/admin:/app
     ports:
       - 3000:3000
 
@@ -25,9 +25,9 @@ services:
     image: ${DOCKER_BASE}-db:latest
     restart: unless-stopped
     environment:
-      - POSTGRES_USER=drealcorse
-      - POSTGRES_PASSWORD=drealcorse
-      - POSTGRES_DB=drealcorse
+      - POSTGRES_USER=featurereports
+      - POSTGRES_PASSWORD=featurereports
+      - POSTGRES_DB=featurereports
 
   app:
     image: ${DOCKER_BASE}-app:${DOCKER_TAG}
@@ -53,9 +53,9 @@ services:
     image: ${DOCKER_BASE}-db:latest
     restart: unless-stopped
     environment:
-      - POSTGRES_USER=drealcorse
-      - POSTGRES_PASSWORD=drealcorse
-      - POSTGRES_DB=drealcorse_tests
+      - POSTGRES_USER=featurereports
+      - POSTGRES_PASSWORD=featurereports
+      - POSTGRES_DB=featurereports_tests
 
   app-tools:
     image: ${DOCKER_BASE}-app-tools:${DOCKER_TAG}
@@ -64,7 +64,7 @@ services:
     depends_on:
       - db_tests
     volumes:
-      - ${PWD}/app/drealcorsereports:/app/drealcorsereports
+      - ${PWD}/app/featurereports:/app/featurereports
       - ${PWD}/app/tests:/app/tests
     environment:
       - PGHOST=db_tests
@@ -72,7 +72,7 @@ services:
       - PGPORT
       - PGUSER
       - PGPASSWORD
-      - PGDATABASE=drealcorse_tests
+      - PGDATABASE=featurereports_tests
       - GEOSERVER_URL
       - INI_FILE
     command: 'tail -f /dev/null'

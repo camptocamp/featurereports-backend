@@ -10,12 +10,12 @@ from sqlalchemy.exc import DBAPIError
 from webtest import TestApp
 from wsgiref.simple_server import make_server
 
-from drealcorsereports.models import get_engine, get_session_factory, get_tm_session
+from featurereports.models import get_engine, get_session_factory, get_tm_session
 
 
 @pytest.fixture(scope="session")
 def app_env():
-    with bootstrap("c2c://drealcorsereports.ini") as env:
+    with bootstrap("c2c://featurereports.ini") as env:
         yield env
 
 
@@ -37,7 +37,7 @@ def dbsession(settings):
     Can be useful for dev purpose
     engine.execute("DROP SCHEMA IF EXISTS reports CASCADE;")
     engine.execute("CREATE SCHEMA reports;")
-    from drealcorsereports.models.reports import Base
+    from featurereports.models.reports import Base
 
     Base.metadata.create_all(engine)
     """

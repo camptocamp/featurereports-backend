@@ -8,8 +8,8 @@ Create a development instance
 
 .. code-block:: bash
 
-    git clone git@github.com:camptocamp/drealcorse-reports.git
-    cd drealcorse-reports
+    git clone git@github.com:camptocamp/feature-reports.git
+    cd feature-reports
     make meacoffee
 
 Admin interface should be available at:
@@ -59,7 +59,7 @@ Generate a new alembic migration:
 .. code-block:: bash
 
     docker-compose run --rm --user `id -u` \
-      -v "${PWD}/app/drealcorsereports:/app/drealcorsereports" \
+      -v "${PWD}/app/featurereports:/app/featurereports" \
       app \
       alembic -c /app/alembic.ini revision --autogenerate -m 'Description'
 
@@ -94,11 +94,11 @@ Run tests:
 
     make front-test
 
-Sources can be found in `app/drealcorsereports/static/admin <app/drealcorsereports/static/admin>`_
+Sources can be found in `app/featurereports/static/admin <app/featurereports/static/admin>`_
 
 This project was bootstrapped with `Create React App <https://github.com/facebook/create-react-app>`_
 
-The React CLI allows to indicate the apps origin and a dev proxy to the API via the `package.json <app/drealcorsereports/static/admin/package.json>`_
+The React CLI allows to indicate the apps origin and a dev proxy to the API via the `package.json <app/featurereports/static/admin/package.json>`_
 
 .. code-block:: json
 

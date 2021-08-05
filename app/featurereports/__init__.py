@@ -9,11 +9,11 @@ def main(global_config, **settings):
 
     config = Configurator(settings=settings)
 
-    config.include("drealcorsereports.models.includeme")
-    config.include("drealcorsereports.security")
+    config.include("featurereports.models.includeme")
+    config.include("featurereports.security")
     config.include("cornice")
-    config.add_static_view("admin", "/opt/drealcorsereports/static/admin/build")
+    config.add_static_view("admin", "/opt/featurereports/static/admin/build")
 
-    config.scan("drealcorsereports.views")
+    config.scan("featurereports.views")
 
     return config.make_wsgi_app()

@@ -83,7 +83,7 @@ class App extends Component {
     return (
       <div>
         <nav className="navbar navbar-expand navbar-dark bg-dark">
-          <div className="navbar-brand">drealcorse-reports</div>
+          <div className="navbar-brand">feature-reports</div>
         </nav>
         <div className="container mt-3">
           {currentReportModel ? (
