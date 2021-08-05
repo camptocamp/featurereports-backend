@@ -49,8 +49,6 @@ COPY . /app/
 RUN pip3 install --no-deps -e .
 COPY --from=front-builder /app/build /opt/drealcorsereports/static/admin/build
 
-CMD ["make"]
-
 
 #################
 # Runtime image #
