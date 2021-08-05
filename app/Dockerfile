@@ -3,13 +3,13 @@
 ########################
 FROM node:12-slim as front-server
 
-COPY drealcorsereports/static/admin/package-lock.json drealcorsereports/static/admin/package.json /app/
+COPY featurereports/static/admin/package-lock.json featurereports/static/admin/package.json /app/
 WORKDIR /app
 RUN npm install
 ENV PATH="$PATH:/app/node_modules/.bin"
 # Save /app/node_modules from being masked by another volume
 VOLUME /app/node_modules
-COPY drealcorsereports/static/admin/ /app/
+COPY featurereports/static/admin/ /app/
 EXPOSE 3000
 CMD npm start
 
@@ -47,7 +47,7 @@ RUN pip3 install --disable-pip-version-check --no-cache-dir -r /tmp/requirements
 WORKDIR /app
 COPY . /app/
 RUN pip3 install --no-deps -e .
-COPY --from=front-builder /app/build /opt/drealcorsereports/static/admin/build
+COPY --from=front-builder /app/build /opt/featurereports/static/admin/build
 
 CMD ["make"]
 
@@ -61,7 +61,7 @@ LABEL maintainer Camptocamp "info@camptocamp.com"
 WORKDIR /app
 COPY --from=tools /app/ /app/
 RUN pip install --no-deps -e .
-COPY --from=front-builder /app/build /opt/drealcorsereports/static/admin/build
+COPY --from=front-builder /app/build /opt/featurereports/static/admin/build
 ENV PROXY_PREFIX=
 EXPOSE 8080
 CMD pserve c2c://${INI_FILE}

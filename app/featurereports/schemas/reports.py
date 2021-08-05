@@ -5,13 +5,13 @@ import marshmallow_sqlalchemy
 from marshmallow_enum import EnumField
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
 
-from drealcorsereports.models.reports import (
+from featurereports.models.reports import (
     FieldTypeEnum,
     Report,
     ReportModel,
     ReportModelCustomField,
 )
-from drealcorsereports.security import (
+from featurereports.security import (
     is_user_admin_on_layer,
     is_user_writer_on_layer,
 )

@@ -13,9 +13,9 @@ from pyramid.exceptions import HTTPNotFound
 from pyramid.request import Request
 from pyramid.security import Allow, Authenticated
 
-from drealcorsereports.models.reports import ReportModel
-from drealcorsereports.schemas.reports import ReportModelSchema
-from drealcorsereports.security import (
+from featurereports.models.reports import ReportModel
+from featurereports.schemas.reports import ReportModelSchema
+from featurereports.security import (
     is_user_admin_on_layer,
     get_geoserver_layers_acl,
     Rule,
