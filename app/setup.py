@@ -9,7 +9,7 @@ with open(os.path.join(here, "requirements.txt")) as f:
     REQUIRES = f.read()
 
 setup(
-    name="drealcorsereports",
+    name="featurereports",
     version=0.1,
     description="DREAL Corse Reports",
     long_description=README,
@@ -29,17 +29,17 @@ setup(
     install_requires=REQUIRES,
     entry_points="""\
         [console_scripts]
-            setup_test_data = drealcorsereports.scripts.setup_test_data:main
+            setup_test_data = featurereports.scripts.setup_test_data:main
         [paste.app_factory]
-            main=drealcorsereports:main
+            main=featurereports:main
         [plaster.loader_factory]
-            c2c = drealcorsereports.loader:Loader
-            c2c+ini = drealcorsereports.loader:Loader
-            c2c+egg = drealcorsereports.loader:Loader
+            c2c = featurereports.loader:Loader
+            c2c+ini = featurereports.loader:Loader
+            c2c+egg = featurereports.loader:Loader
         [plaster.wsgi_loader_factory]
-            c2c = drealcorsereports.loader:Loader
-            c2c+ini = drealcorsereports.loader:Loader
-            c2c+egg = drealcorsereports.loader:Loader
+            c2c = featurereports.loader:Loader
+            c2c+ini = featurereports.loader:Loader
+            c2c+egg = featurereports.loader:Loader
       """,
     paster_plugins=["pyramid"],
 )

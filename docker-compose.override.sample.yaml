@@ -9,13 +9,13 @@ services:
   app:
     image: ${DOCKER_BASE}-tools:${DOCKER_TAG}
     volumes:
-      - ${PWD}/app/drealcorsereports:/app/drealcorsereports
+      - ${PWD}/app/featurereports:/app/featurereports
       - ${PWD}/app/tests:/app/tests
-    command: pserve --reload c2c://drealcorsereports.ini
+    command: pserve --reload c2c://featurereports.ini
 
   front-server:
     image: ${DOCKER_BASE}-front-server:${DOCKER_TAG}
     volumes:
-      - ${PWD}/app/drealcorsereports/static/admin:/app
+      - ${PWD}/app/featurereports/static/admin:/app
     ports:
       - 3000:3000
