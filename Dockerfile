@@ -50,7 +50,7 @@ COPY Makefile .
 RUN pip3 install --no-deps -e .
 COPY --from=front-builder /app/build /opt/drealcorsereports/static/admin/build
 
-CMD make test
+CMD make test && make front-test
 
 
 #################
@@ -65,4 +65,4 @@ RUN pip install --no-deps -e .
 COPY --from=front-builder /app/build /opt/drealcorsereports/static/admin/build
 ENV PROXY_PREFIX=
 EXPOSE 8080
-CMD pserve c2c://${INI_FILE}
+CMD alembic upgrade head && pserve c2c://${INI_FILE}
