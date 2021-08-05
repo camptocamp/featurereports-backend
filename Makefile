@@ -163,15 +163,15 @@ docker-build-db:
 
 .PHONY: docker-build-front-server
 docker-build-front-server:
-	docker build --target=front-server -t ${DOCKER_BASE}-front-server:${DOCKER_TAG} app
+	docker build --target=front-server -t ${DOCKER_BASE}-front-server:${DOCKER_TAG} .
 
 .PHONY: docker-build-app-tools
 docker-build-app-tools:
-	docker build --target=tools -t ${DOCKER_BASE}-app-tools:${DOCKER_TAG} app
+	docker build --target=tools -t ${DOCKER_BASE}-app-tools:${DOCKER_TAG} .
 
 .PHONY: docker-build-app
 docker-build-app:
-	docker build --target=app -t ${DOCKER_BASE}-app:${DOCKER_TAG} app
+	docker build --target=app -t ${DOCKER_BASE}-app:${DOCKER_TAG} .
 
 .PHONY: docker-push
 docker-push: ## Push docker images on docker hub

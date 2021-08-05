@@ -10,6 +10,13 @@ volumes:
   geoserver_native_libs:
 
 services:
+  front-server:
+    image: ${DOCKER_BASE}-front-server:${DOCKER_TAG}
+    volumes:
+      - ${PWD}/app/drealcorsereports/static/admin:/app
+    ports:
+      - 3000:3000
+
   database:
     image: georchestra/database
     restart: unless-stopped
@@ -157,7 +164,7 @@ services:
     restart: always
 
   mapstore:
-    image: camptocamp/mapstore2-georchestra:1.0
+    image: camptocamp/mapstore2-georchestra:1.1
     depends_on:
       - database
     volumes:
