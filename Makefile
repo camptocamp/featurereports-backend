@@ -58,10 +58,10 @@ up: build
 .PHONY: build
 build: ## Build runtime files and docker images
 build: \
+		docker-build-app \
 		docker-build-db \
 		docker-build-front-server \
 		docker-build-tools \
-		docker-build-app \
 		docker-compose-env
 
 .PHONY: docker-compose-env
