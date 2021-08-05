@@ -4,8 +4,8 @@
 DEVELOPMENT = TRUE
 export DEVELOPMENT
 
-DOCKER_BASE ?= camptocamp/feature-reports
-DOCKER_TAG ?= latest
+DOCKER_BASE ?= camptocamp/featurereports
+DOCKER_TAG ?= 1.0
 DOCKER_PORT ?= 8080
 export DOCKER_BASE
 export DOCKER_TAG
@@ -58,8 +58,8 @@ build: ## Build runtime files and docker images
 build: \
 		docker-build-db \
 		docker-build-front-server \
-		docker-build-app-tools \
-		docker-build-app \
+		docker-build-backend-tools \
+		docker-build-backend \
 		docker-compose-env
 
 .PHONY: docker-compose-env
@@ -122,7 +122,7 @@ cleanall:
 	docker rmi \
 		${DOCKER_BASE}-postgresql:${DOCKER_TAG} \
 		${DOCKER_BASE}-build:${DOCKER_TAG} \
-		${DOCKER_BASE}-app:${DOCKER_TAG} || true
+		${DOCKER_BASE}-backend:${DOCKER_TAG} || true
 
 # Development tools
 
@@ -165,21 +165,21 @@ docker-build-db:
 docker-build-front-server:
 	docker build --target=front-server -t ${DOCKER_BASE}-front-server:${DOCKER_TAG} .
 
-.PHONY: docker-build-app-tools
-docker-build-app-tools:
-	docker build --target=tools -t ${DOCKER_BASE}-app-tools:${DOCKER_TAG} .
+.PHONY: docker-build-backend-tools
+docker-build-backend-tools:
+	docker build --target=tools -t ${DOCKER_BASE}-backend-tools:${DOCKER_TAG} .
 
-.PHONY: docker-build-app
-docker-build-app:
-	docker build --target=app -t ${DOCKER_BASE}-app:${DOCKER_TAG} .
+.PHONY: docker-build-backend
+docker-build-backend:
+	docker build --target=app -t ${DOCKER_BASE}-backend:${DOCKER_TAG} .
 
 .PHONY: docker-push
 docker-push: ## Push docker images on docker hub
-	docker push ${DOCKER_BASE}-app:${DOCKER_TAG}
+	docker push ${DOCKER_BASE}-backend:${DOCKER_TAG}
 
 .PHONY: docker-pull
 docker-pull: ## Pull docker images from docker hub
-	docker pull ${DOCKER_BASE}-app:${DOCKER_TAG}
+	docker pull ${DOCKER_BASE}-backend:${DOCKER_TAG}
 
 # make local valid certs
 # mkcert need to be init first !! (must done once only)

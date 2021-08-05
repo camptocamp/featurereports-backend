@@ -30,7 +30,7 @@ services:
       - POSTGRES_DB=featurereports
 
   app:
-    image: ${DOCKER_BASE}-app:${DOCKER_TAG}
+    image: ${DOCKER_BASE}-backend:${DOCKER_TAG}
     user: www-data
     restart: unless-stopped
     depends_on:
@@ -58,7 +58,7 @@ services:
       - POSTGRES_DB=featurereports_tests
 
   app-tools:
-    image: ${DOCKER_BASE}-app-tools:${DOCKER_TAG}
+    image: ${DOCKER_BASE}-backend-tools:${DOCKER_TAG}
     user: www-data
     restart: unless-stopped
     depends_on:
