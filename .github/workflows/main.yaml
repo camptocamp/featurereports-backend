@@ -15,7 +15,7 @@ jobs:
       - name: Build
         run: make build
       - name: Backend packages
-        run: docker run camptocamp/featurereports-backend-tools:latest pip freeze
+        run: docker run camptocamp/featurereports-backend-tools:1.0 pip freeze
       - name: Frontend lint
         run: docker run -e CI=TRUE camptocamp/featurereports-backend-front-server:latest npm run check
       - name: Backend lint
