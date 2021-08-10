@@ -17,7 +17,7 @@ services:
       - ${PWD}/database/docker-entrypoint-initdb.d/900-mapstore.sql:/docker-entrypoint-initdb.d/900-mapstore.sql
 
   db:
-    image: ${DOCKER_BASE}-db:latest
+    image: ${DOCKER_BASE}-db:${DOCKER_TAG}
     restart: unless-stopped
     environment:
       - POSTGRES_USER=featurereports
@@ -45,7 +45,7 @@ services:
       - ${DOCKER_PORT}:8080
 
   db_tests:
-    image: ${DOCKER_BASE}-db:latest
+    image: ${DOCKER_BASE}-db:${DOCKER_TAG}
     restart: unless-stopped
     environment:
       - POSTGRES_USER=featurereports
