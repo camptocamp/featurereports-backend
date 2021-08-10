@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 from sqlalchemy import text
 
-from drealcorsereports.models.reports import (
+from featurereports.models.reports import (
     FieldTypeEnum,
     ReportModel,
     ReportModelCustomField,
@@ -71,10 +71,10 @@ def patch_is_user_admin_on_layer():
         return layer_id == ALLOWED_LAYER
 
     with patch(
-        "drealcorsereports.views.admin.is_user_admin_on_layer",
+        "featurereports.views.admin.is_user_admin_on_layer",
         side_effect=is_user_admin_on_layer,
     ) as view_mock, patch(
-        "drealcorsereports.schemas.reports.is_user_admin_on_layer",
+        "featurereports.schemas.reports.is_user_admin_on_layer",
         side_effect=is_user_admin_on_layer,
     ) as schema_mock:
         yield view_mock, schema_mock
@@ -528,7 +528,7 @@ class TestAdminReportModelView:
         rm.create_tjs_view()
         assert self._view_exists(rm.tjs_view_name(), dbsession)
 
-        from drealcorsereports.models.reports import Report
+        from featurereports.models.reports import Report
 
         r1 = Report(
             feature_id=str(uuid4()),

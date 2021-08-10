@@ -5,8 +5,8 @@ from datetime import datetime, timezone
 import requests
 from pyramid.scripts.common import get_config_loader
 
-from drealcorsereports.models import get_engine, get_session_factory
-from drealcorsereports.models.reports import (
+from featurereports.models import get_engine, get_session_factory
+from featurereports.models.reports import (
     FieldTypeEnum,
     ReportModel,
     ReportModelCustomField,
@@ -18,7 +18,7 @@ def main():
     parser = argparse.ArgumentParser(description="Setup test dataset")
     parser.add_argument(
         "config_uri",
-        default="c2c://drealcorsereports.ini",
+        default="c2c://featurereports.ini",
         help="The URI to the configuration file",
     )
     parser.add_argument(

@@ -6,7 +6,7 @@ from pyramid import testing
 from pyramid.security import Everyone, Authenticated
 import responses
 
-from drealcorsereports.security import (
+from featurereports.security import (
     HeaderAuthentication,
     is_user_admin_on_layer,
     geoserver_rules,

@@ -15,13 +15,13 @@ jobs:
       - name: Build
         run: make build
       - name: Backend packages
-        run: docker run camptocamp/drealcorse-reports-app-tools:latest pip freeze
+        run: docker run camptocamp/featurereports-backend-tools:1.0 pip freeze
       - name: Frontend lint
-        run: docker run -e CI=TRUE camptocamp/drealcorse-reports-front-server:latest npm run check
+        run: docker run -e CI=TRUE camptocamp/featurereports-front-server:1.0 npm run check
       - name: Backend lint
         run: make check
       - name: Frontend tests
-        run: docker run -e CI=TRUE camptocamp/drealcorse-reports-front-server:latest npm run test
+        run: docker run -e CI=TRUE camptocamp/featurereports-front-server:1.0 npm run test
       - name: Backend tests
         run: make test
       - name: Docker compose logs

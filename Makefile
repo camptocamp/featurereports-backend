@@ -4,8 +4,8 @@
 DEVELOPMENT = TRUE
 export DEVELOPMENT
 
-DOCKER_BASE ?= camptocamp/drealcorse-reports
-DOCKER_TAG ?= latest
+DOCKER_BASE ?= camptocamp/featurereports
+DOCKER_TAG ?= 1.0
 DOCKER_PORT ?= 8080
 export DOCKER_BASE
 export DOCKER_TAG
@@ -14,9 +14,9 @@ export DOCKER_PORT
 PGHOST ?= db
 PGHOST_SLAVE ?= db
 PGPORT ?= 5432
-PGDATABASE ?= drealcorse
-PGUSER ?= drealcorse
-PGPASSWORD ?= drealcorse
+PGDATABASE ?= featurereports
+PGUSER ?= featurereports
+PGPASSWORD ?= featurereports
 GEOSERVER_URL ?= http://geoserver:8080/geoserver
 export PGHOST
 export PGHOST_SLAVE
@@ -58,8 +58,8 @@ build: ## Build runtime files and docker images
 build: \
 		docker-build-db \
 		docker-build-front-server \
-		docker-build-app-tools \
-		docker-build-app \
+		docker-build-backend-tools \
+		docker-build-backend \
 		docker-compose-env
 
 .PHONY: docker-compose-env
@@ -76,7 +76,7 @@ setup-test-data: ## Setup test dataset in database
 	docker cp ./test_data/geoserver_datadir/espub_mob $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_datadir/workspaces/
 	docker cp ./test_data/geoserver_datadir/layers.properties $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_datadir/security/
 	docker cp ./test_data/geoserver_geodata/rennes $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_geodata/
-	docker-compose exec app setup_test_data c2c://drealcorsereports.ini
+	docker-compose exec app setup_test_data c2c://featurereports.ini
 
 .PHONY: black
 black:
@@ -122,7 +122,7 @@ cleanall:
 	docker rmi \
 		${DOCKER_BASE}-postgresql:${DOCKER_TAG} \
 		${DOCKER_BASE}-build:${DOCKER_TAG} \
-		${DOCKER_BASE}-app:${DOCKER_TAG} || true
+		${DOCKER_BASE}-backend:${DOCKER_TAG} || true
 
 # Development tools
 
@@ -136,20 +136,20 @@ bash:
 psql: ## Launch psql in db container
 psql:
 	docker-compose up -d db
-	docker-compose exec db psql -U drealcorse -d drealcorse
+	docker-compose exec db psql -U featurereports -d featurereports
 
 .PHONY: pshell
 pshell: ## Launch pshell in app container
 pshell:
-	docker-compose run --rm app pshell c2c://drealcorsereports.ini
+	docker-compose run --rm app pshell c2c://featurereports.ini
 
 .PHONY: regenerate-first-migration
 regenerate-first-migration: ## Regenerate first alembic migration
-	rm -rf app/drealcorsereports/alembic/versions/*.py
-	docker-compose exec db psql -U drealcorse -d drealcorse -c "DROP SCHEMA reports CASCADE;"
-	docker-compose exec db psql -U drealcorse -d drealcorse -c "CREATE SCHEMA reports;"
+	rm -rf app/featurereports/alembic/versions/*.py
+	docker-compose exec db psql -U featurereports -d featurereports -c "DROP SCHEMA reports CASCADE;"
+	docker-compose exec db psql -U featurereports -d featurereports -c "CREATE SCHEMA reports;"
 	docker-compose run --rm --user `id -u` \
-		-v "${PWD}/app/drealcorsereports:/app/drealcorsereports" \
+		-v "${PWD}/app/featurereports:/app/featurereports" \
 		app \
 		alembic -c /app/alembic.ini revision --rev-id "066134a29f29" --autogenerate -m 'First revision'
 	make black
@@ -163,23 +163,23 @@ docker-build-db:
 
 .PHONY: docker-build-front-server
 docker-build-front-server:
-	docker build --target=front-server -t ${DOCKER_BASE}-front-server:${DOCKER_TAG} app
+	docker build --target=front-server -t ${DOCKER_BASE}-front-server:${DOCKER_TAG} .
 
-.PHONY: docker-build-app-tools
-docker-build-app-tools:
-	docker build --target=tools -t ${DOCKER_BASE}-app-tools:${DOCKER_TAG} app
+.PHONY: docker-build-backend-tools
+docker-build-backend-tools:
+	docker build --target=tools -t ${DOCKER_BASE}-backend-tools:${DOCKER_TAG} .
 
-.PHONY: docker-build-app
-docker-build-app:
-	docker build --target=app -t ${DOCKER_BASE}-app:${DOCKER_TAG} app
+.PHONY: docker-build-backend
+docker-build-backend:
+	docker build --target=app -t ${DOCKER_BASE}-backend:${DOCKER_TAG} .
 
 .PHONY: docker-push
 docker-push: ## Push docker images on docker hub
-	docker push ${DOCKER_BASE}-app:${DOCKER_TAG}
+	docker push ${DOCKER_BASE}-backend:${DOCKER_TAG}
 
 .PHONY: docker-pull
 docker-pull: ## Pull docker images from docker hub
-	docker pull ${DOCKER_BASE}-app:${DOCKER_TAG}
+	docker pull ${DOCKER_BASE}-backend:${DOCKER_TAG}
 
 # make local valid certs
 # mkcert need to be init first !! (must done once only)

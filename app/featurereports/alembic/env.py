@@ -6,7 +6,7 @@ from sqlalchemy import pool, text
 
 from alembic import context
 
-from drealcorsereports.scripts import wait_for_db
+from featurereports.scripts import wait_for_db
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -30,7 +30,7 @@ def get_config():
     conf.update({"version_table_schema": conf.get("schema", "reports")})
 
     # for 'autogenerate' support
-    from drealcorsereports import models  # noqa
+    from featurereports import models  # noqa
 
     conf["target_metadata"] = models.meta.Base.metadata
 

@@ -8,8 +8,8 @@ Create a development instance
 
 .. code-block:: bash
 
-    git clone git@github.com:camptocamp/drealcorse-reports.git
-    cd drealcorse-reports
+    git clone git@github.com:camptocamp/feature-reports.git
+    cd feature-reports
     make meacoffee
 
 Admin interface should be available at:
@@ -30,7 +30,7 @@ To access the interface behind the georchestra proxy
     127.0.1.1 georchestra.mydomain.org
 
 * launch the compo : `make meacoffee`
-* access the interface at https://georchestra.mydomain.org/mapstore-reports/admin/?login
+* access the interface at https://georchestra.mydomain.org/featurereports/admin/?login
 * login with:
    - identifiant: testadmin
    - password: testadmin
@@ -59,7 +59,7 @@ Generate a new alembic migration:
 .. code-block:: bash
 
     docker-compose run --rm --user `id -u` \
-      -v "${PWD}/app/drealcorsereports:/app/drealcorsereports" \
+      -v "${PWD}/app/featurereports:/app/featurereports" \
       app \
       alembic -c /app/alembic.ini revision --autogenerate -m 'Description'
 
@@ -94,11 +94,11 @@ Run tests:
 
     make front-test
 
-Sources can be found in `app/drealcorsereports/static/admin <app/drealcorsereports/static/admin>`_
+Sources can be found in `app/featurereports/static/admin <app/featurereports/static/admin>`_
 
 This project was bootstrapped with `Create React App <https://github.com/facebook/create-react-app>`_
 
-The React CLI allows to indicate the apps origin and a dev proxy to the API via the `package.json <app/drealcorsereports/static/admin/package.json>`_
+The React CLI allows to indicate the apps origin and a dev proxy to the API via the `package.json <app/featurereports/static/admin/package.json>`_
 
 .. code-block:: json
 
@@ -121,7 +121,7 @@ Developement:
 
 The MapStore extension is developed on the fork: https://github.com/camptocamp/featurereports-mapstoreextension
 It is developped using our MapStore2 fork as submodule, so to deploy it properly you need to have our custom camptocamp/mapstore2-georchestra image (who also references that fork) in your docker compo. 
-(image is built from https://github.com/camptocamp/mapstore2-georchestra/tree/report-extension-mapstore-changeMapInfoUtils).
+(image is built from https://github.com/camptocamp/mapstore2-georchestra).
 
 There is a debug mode available with: `http://localhost:8081/?debug=true`.
 

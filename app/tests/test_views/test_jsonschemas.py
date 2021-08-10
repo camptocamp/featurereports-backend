@@ -5,7 +5,7 @@ from unittest.mock import patch
 from uuid import UUID
 
 import pytest
-from drealcorsereports.models.reports import (
+from featurereports.models.reports import (
     FieldTypeEnum,
     ReportModel,
     ReportModelCustomField,
@@ -122,7 +122,7 @@ def patch_is_user_writer_on_layer():
         return layer_id == READWRITE_LAYER
 
     with patch(
-        "drealcorsereports.views.jsonschemas.is_user_writer_on_layer",
+        "featurereports.views.jsonschemas.is_user_writer_on_layer",
         side_effect=is_user_writer_on_layer,
     ) as rules_mock:
         yield rules_mock
@@ -135,7 +135,7 @@ def patch_is_user_reader_on_layer():
         return layer_id in (READWRITE_LAYER, READONLY_LAYER)
 
     with patch(
-        "drealcorsereports.views.jsonschemas.is_user_reader_on_layer",
+        "featurereports.views.jsonschemas.is_user_reader_on_layer",
         side_effect=is_user_reader_on_layer,
     ) as rules_mock:
         yield rules_mock

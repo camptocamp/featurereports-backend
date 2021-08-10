@@ -7,9 +7,9 @@ from pyramid.exceptions import HTTPNotFound
 from pyramid.request import Request
 from pyramid.security import Allow, Everyone
 
-from drealcorsereports.models.reports import Report, ReportModel
-from drealcorsereports.schemas.reports import ReportSchema
-from drealcorsereports.security import (
+from featurereports.models.reports import Report, ReportModel
+from featurereports.schemas.reports import ReportSchema
+from featurereports.security import (
     is_user_reader_on_layer,
     is_user_writer_on_layer,
 )
