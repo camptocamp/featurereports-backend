@@ -30,7 +30,7 @@ To access the interface behind the georchestra proxy
     127.0.1.1 georchestra.mydomain.org
 
 * launch the compo : `make meacoffee`
-* access the interface at https://georchestra.mydomain.org/mapstore-reports/admin/?login
+* access the interface at https://georchestra.mydomain.org/featurereports/admin/?login
 * login with:
    - identifiant: testadmin
    - password: testadmin
@@ -121,7 +121,7 @@ Developement:
 
 The MapStore extension is developed on the fork: https://github.com/camptocamp/MapStoreExtension/tree/report-extension
 It is developped using our MapStore2 fork as submodule, so to deploy it properly you need to have our custom camptocamp/mapstore2-georchestra image (who also references that fork) in your docker compo. 
-(image is built from https://github.com/camptocamp/mapstore2-georchestra/tree/report-extension-mapstore-changeMapInfoUtils).
+(image is built from https://github.com/camptocamp/mapstore2-georchestra).
 
 There is a debug mode available with: `http://localhost:8081/?debug=true`.
 
