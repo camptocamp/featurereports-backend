@@ -28,6 +28,6 @@
   <intercept-url pattern="/console/emailProxy" access="ROLE_EMAILPROXY" />
   <intercept-url pattern="/testPage" access="IS_AUTHENTICATED_FULLY" />
   <intercept-url pattern=".*/ogcproxy/.*" access="ROLE_NO_ONE" />
-  <intercept-url pattern="/mapstore-reports/admin/" access="IS_AUTHENTICATED_FULLY" />
+  <intercept-url pattern="/featurereports/admin/" access="IS_AUTHENTICATED_FULLY" />
   <intercept-url pattern=".*" access="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR,ROLE_SUPERUSER,ROLE_ORGADMIN" />
 </http>
