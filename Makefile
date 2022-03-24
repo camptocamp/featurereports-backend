@@ -18,6 +18,7 @@ PGDATABASE ?= drealcorse
 PGUSER ?= drealcorse
 PGPASSWORD ?= drealcorse
 GEOSERVER_URL ?= http://geoserver:8080/geoserver
+GEORCHESTRA_VERSION ?= 20.0.5
 export PGHOST
 export PGHOST_SLAVE
 export PGPORT
@@ -25,6 +26,7 @@ export PGDATABASE
 export PGUSER
 export PGPASSWORD
 export GEOSERVER_URL
+export GEORCHESTRA_VERSION
 
 PROXY_PREFIX ?=
 export PROXY_PREFIX
