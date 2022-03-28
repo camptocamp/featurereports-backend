@@ -74,7 +74,6 @@ initdb:
 
 .PHONY: setup-test-data
 setup-test-data: ## Setup test dataset in database
-	docker cp ./test_data/georchestra_datadir/mapstore/config.json $(shell docker ps | grep geoserver | cut -d" " -f1):/etc/georchestra/mapstore/
 	docker cp ./test_data/geoserver_datadir/espub_mob $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_datadir/workspaces/
 	docker cp ./test_data/geoserver_datadir/layers.properties $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_datadir/security/
 	docker cp ./test_data/geoserver_geodata/rennes $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_geodata/
