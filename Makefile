@@ -78,11 +78,6 @@ setup-test-data: ## Setup test dataset in database
 	docker cp ./test_data/geoserver_datadir/layers.properties $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_datadir/security/
 	docker cp ./test_data/geoserver_geodata/rennes $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_geodata/
 	docker-compose exec app setup_test_data c2c://drealcorsereports.ini
-	{
-		echo "CREATE SCHEMA mapstore;";
-		echo "SET search_path=mapstore;";
-		curl "https://raw.githubusercontent.com/geosolutions-it/geostore/master/doc/sql/002_create_schema_postgres.sql";
-	} | docker-compose exec -T database psql -U georchestra -d georchestra
 
 .PHONY: black
 black:

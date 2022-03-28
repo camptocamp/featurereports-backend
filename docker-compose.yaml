@@ -13,6 +13,8 @@ services:
   database:
     image: georchestra/database:${GEORCHESTRA_VERSION}
     restart: unless-stopped
+    volumes:
+      - ${PWD}/database/docker-entrypoint-initdb.d/900-mapstore.sql:/docker-entrypoint-initdb.d/900-mapstore.sql
 
   db:
     image: ${DOCKER_BASE}-db:latest
