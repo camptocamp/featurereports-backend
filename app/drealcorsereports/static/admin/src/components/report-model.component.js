@@ -169,7 +169,7 @@ export default class ReportModel extends Component {
               switch (propertyName) {
                 case 'title':
                   returnField.title = value;
-                  if (this.state.isNew) {
+                  if (!returnField.id) {
                     returnField.name = this.createName(value);
                   }
                   break;
