@@ -7,7 +7,7 @@ version: '3'
 services:
 
   app:
-    image: ${DOCKER_BASE}-app-tools:${DOCKER_TAG}
+    image: ${DOCKER_BASE}-tools:${DOCKER_TAG}
     volumes:
       - ${PWD}/app/drealcorsereports:/app/drealcorsereports
       - ${PWD}/app/tests:/app/tests

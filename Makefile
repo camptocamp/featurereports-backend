@@ -4,7 +4,7 @@
 DEVELOPMENT = TRUE
 export DEVELOPMENT
 
-DOCKER_BASE ?= camptocamp/drealcorse-reports
+DOCKER_BASE ?= camptocamp/featurereports-backend
 DOCKER_TAG ?= latest
 DOCKER_PORT ?= 8080
 export DOCKER_BASE
@@ -60,7 +60,7 @@ build: ## Build runtime files and docker images
 build: \
 		docker-build-db \
 		docker-build-front-server \
-		docker-build-app-tools \
+		docker-build-tools \
 		docker-build-app \
 		docker-compose-env
 
@@ -82,26 +82,26 @@ setup-test-data: ## Setup test dataset in database
 .PHONY: black
 black:
 black: ## Format Python code with black
-	docker-compose up -d app-tools
-	docker-compose exec -T --user=$(shell id -u) app-tools black /app/
+	docker-compose up -d tools
+	docker-compose exec -T --user=$(shell id -u) tools black /app/
 
 .PHONY: check
 check: ## Check the code with black and prospector
 check:
-	docker-compose up -d app-tools
-	docker-compose exec -T --user=$(shell id -u) app-tools black --check /app/
-	docker-compose exec -T --user=$(shell id -u) app-tools prospector /app/
+	docker-compose up -d tools
+	docker-compose exec -T --user=$(shell id -u) tools black --check /app/
+	docker-compose exec -T --user=$(shell id -u) tools prospector /app/
 
 .PHONY: test
 test: ## Run tests
 test:
-	docker-compose up -d db_tests app-tools
-	docker-compose exec -T --user=$(shell id -u) app-tools pytest -vv --color=yes /app/tests
+	docker-compose up -d db_tests tools
+	docker-compose exec -T --user=$(shell id -u) tools pytest -vv --color=yes /app/tests
 
 .PHONY: docs
 docs: ## Build documentation
-	docker-compose up -d app-tools
-	docker-compose exec -T --user=$(shell id -u) app-tools make -C docs html
+	docker-compose up -d tools
+	docker-compose exec -T --user=$(shell id -u) tools make -C docs html
 
 .PHONY: front-test
 front-test: ## Run front tests
@@ -121,9 +121,11 @@ cleanall:
 	docker-compose down -v --remove-orphans
 	rm -f .env
 	docker rmi \
-		${DOCKER_BASE}-postgresql:${DOCKER_TAG} \
-		${DOCKER_BASE}-build:${DOCKER_TAG} \
-		${DOCKER_BASE}-app:${DOCKER_TAG} || true
+		${DOCKER_BASE}:${DOCKER_TAG} \
+		${DOCKER_BASE}-db:${DOCKER_TAG} \
+		${DOCKER_BASE}-front-server:${DOCKER_TAG} \
+		${DOCKER_BASE}-tools:${DOCKER_TAG} \
+		|| true
 
 # Development tools
 
@@ -167,20 +169,20 @@ docker-build-front-server:
 	docker build --target=front-server -t ${DOCKER_BASE}-front-server:${DOCKER_TAG} app
 
 .PHONY: docker-build-app-tools
-docker-build-app-tools:
-	docker build --target=tools -t ${DOCKER_BASE}-app-tools:${DOCKER_TAG} app
+docker-build-tools:
+	docker build --target=tools -t ${DOCKER_BASE}-tools:${DOCKER_TAG} app
 
 .PHONY: docker-build-app
 docker-build-app:
-	docker build --target=app -t ${DOCKER_BASE}-app:${DOCKER_TAG} app
+	docker build --target=app -t ${DOCKER_BASE}:${DOCKER_TAG} app
 
 .PHONY: docker-push
 docker-push: ## Push docker images on docker hub
-	docker push ${DOCKER_BASE}-app:${DOCKER_TAG}
+	docker push ${DOCKER_BASE}:${DOCKER_TAG}
 
 .PHONY: docker-pull
 docker-pull: ## Pull docker images from docker hub
-	docker pull ${DOCKER_BASE}-app:${DOCKER_TAG}
+	docker pull ${DOCKER_BASE}:${DOCKER_TAG}
 
 # make local valid certs
 # mkcert need to be init first !! (must done once only)
