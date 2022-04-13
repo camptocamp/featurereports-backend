@@ -25,7 +25,7 @@ services:
       - POSTGRES_DB=drealcorse
 
   app:
-    image: ${DOCKER_BASE}-app:${DOCKER_TAG}
+    image: ${DOCKER_BASE}:${DOCKER_TAG}
     user: www-data
     restart: unless-stopped
     depends_on:
@@ -52,8 +52,8 @@ services:
       - POSTGRES_PASSWORD=drealcorse
       - POSTGRES_DB=drealcorse_tests
 
-  app-tools:
-    image: ${DOCKER_BASE}-app-tools:${DOCKER_TAG}
+  tools:
+    image: ${DOCKER_BASE}-tools:${DOCKER_TAG}
     user: www-data
     restart: unless-stopped
     depends_on:
