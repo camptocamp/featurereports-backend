@@ -90,7 +90,7 @@ class ReportModel(Base):
         """
         if connection is None:
             connection = inspect(self).session.connection()
-        connection.execute(text(f"DROP VIEW {self.tjs_view_name(name)}"))
+        connection.execute(text(f"DROP VIEW IF EXISTS {self.tjs_view_name(name)}"))
 
     def update_tjs_view(self):
         """
