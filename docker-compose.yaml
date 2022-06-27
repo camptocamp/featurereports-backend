@@ -10,13 +10,14 @@ volumes:
   geoserver_native_libs:
 
 services:
-  database:
+
+  database:  # Database for georchestra containers
     image: georchestra/database:${GEORCHESTRA_VERSION}
     restart: unless-stopped
     volumes:
       - ${PWD}/database/docker-entrypoint-initdb.d/900-mapstore.sql:/docker-entrypoint-initdb.d/900-mapstore.sql
 
-  db:
+  db:  # Database for app (featurereports-backend)
     image: ${DOCKER_BASE}-db:latest
     restart: unless-stopped
     environment:

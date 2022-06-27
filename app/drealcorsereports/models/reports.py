@@ -65,19 +65,22 @@ class ReportModel(Base):
         """
         schema_name = Report.__table_args__["schema"]
         table_name = Report.__tablename__
+        feature_id_pattern = r".*\.(.*)"
         view_columns = ",\n".join(
             [
                 f"        custom_field_values->>'{f.name}' as {f.name}"
                 for f in self.custom_fields
             ]
         )
+
         if connection is None:
             connection = inspect(self).session.connection()
+
         connection.execute(
             text(
                 f"""CREATE OR REPLACE VIEW {self.tjs_view_name(name)} AS
     SELECT
-        feature_id,
+        substring(feature_id from '{feature_id_pattern}') AS feature_id,
 {view_columns}
     FROM {schema_name}.{table_name};
 """
