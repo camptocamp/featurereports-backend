@@ -8,8 +8,8 @@ Create a development instance
 
 .. code-block:: bash
 
-    git clone git@github.com:camptocamp/drealcorse-reports.git
-    cd drealcorse-reports
+    git clone git@github.com:camptocamp/featurereports-backend.git
+    cd featurereports-backend
     make meacoffee
 
 Admin interface should be available at:
