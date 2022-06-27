@@ -530,8 +530,9 @@ class TestAdminReportModelView:
 
         from drealcorsereports.models.reports import Report
 
+        feature1_id = str(uuid4())
         r1 = Report(
-            feature_id=str(uuid4()),
+            feature_id=f"layername.{feature1_id}",
             report_model=test_data["report_models"][0],
             custom_field_values={"commentaire": "foo"},
             created_by="foo",
@@ -539,8 +540,9 @@ class TestAdminReportModelView:
             updated_by="foo",
             updated_at=datetime(2021, 1, 22, 13, 34, tzinfo=timezone.utc),
         )
+        feature2_id = str(uuid4())
         r2 = Report(
-            feature_id=str(uuid4()),
+            feature_id=f"layername.{feature2_id}",
             report_model=test_data["report_models"][0],
             custom_field_values={"commentaire": "bar"},
             created_by="bar",
@@ -553,13 +555,14 @@ class TestAdminReportModelView:
 
         result = dbsession.execute(text(f"SELECT * FROM {rm.tjs_view_name()}"))
         assert result.keys() == ["feature_id", "commentaire"]
+
         assert [row for row in result] == [
             (
-                r1.feature_id,
+                feature1_id,
                 "foo",
             ),
             (
-                r2.feature_id,
+                feature2_id,
                 "bar",
             ),
         ]
