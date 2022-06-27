@@ -8,8 +8,8 @@ Create a development instance
 
 .. code-block:: bash
 
-    git clone git@github.com:camptocamp/drealcorse-reports.git
-    cd drealcorse-reports
+    git clone git@github.com:camptocamp/featurereports-backend.git
+    cd featurereports-backend
     make meacoffee
 
 Admin interface should be available at:
@@ -30,7 +30,7 @@ To access the interface behind the georchestra proxy
     127.0.1.1 georchestra.mydomain.org
 
 * launch the compo : `make meacoffee`
-* access the interface at https://georchestra.mydomain.org/mapstore-reports/admin/?login
+* access the interface at https://georchestra.mydomain.org/featurereports/admin/?login
 * login with:
    - identifiant: testadmin
    - password: testadmin

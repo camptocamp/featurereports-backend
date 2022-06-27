@@ -11,8 +11,10 @@ volumes:
 
 services:
   database:
-    image: georchestra/database
+    image: georchestra/database:${GEORCHESTRA_VERSION}
     restart: unless-stopped
+    volumes:
+      - ${PWD}/database/docker-entrypoint-initdb.d/900-mapstore.sql:/docker-entrypoint-initdb.d/900-mapstore.sql
 
   db:
     image: ${DOCKER_BASE}-db:latest
@@ -23,7 +25,7 @@ services:
       - POSTGRES_DB=drealcorse
 
   app:
-    image: ${DOCKER_BASE}-app:${DOCKER_TAG}
+    image: ${DOCKER_BASE}:${DOCKER_TAG}
     user: www-data
     restart: unless-stopped
     depends_on:
@@ -50,8 +52,8 @@ services:
       - POSTGRES_PASSWORD=drealcorse
       - POSTGRES_DB=drealcorse_tests
 
-  app-tools:
-    image: ${DOCKER_BASE}-app-tools:${DOCKER_TAG}
+  tools:
+    image: ${DOCKER_BASE}-tools:${DOCKER_TAG}
     user: www-data
     restart: unless-stopped
     depends_on:
@@ -83,6 +85,8 @@ services:
   ldap:
     build:
       context: georchestra_resources/ldap
+      args:
+        - GEORCHESTRA_VERSION=${GEORCHESTRA_VERSION}
     environment:
         - SLAPD_ORGANISATION=georchestra
         - SLAPD_DOMAIN=georchestra.org
@@ -97,7 +101,7 @@ services:
       - "389:389"
 
   proxy:
-    image: georchestra/security-proxy:latest
+    image: georchestra/security-proxy:${GEORCHESTRA_VERSION}
     depends_on:
       - ldap
       - database
@@ -115,7 +119,7 @@ services:
       - "traefik.frontend.passHostHeader=true"
 
   cas:
-    image: georchestra/cas:latest
+    image: georchestra/cas:${GEORCHESTRA_VERSION}
     depends_on:
       - ldap
     volumes:
@@ -131,7 +135,7 @@ services:
       - "traefik.frontend.rule=Host:georchestra.mydomain.org;PathPrefix:/cas"
 
   header:
-    image: georchestra/header:latest
+    image: georchestra/header:${GEORCHESTRA_VERSION}
     volumes:
       - ./georchestra_datadir:/etc/georchestra
     environment:
@@ -141,7 +145,7 @@ services:
     restart: always
 
   geoserver:
-    image: georchestra/geoserver:latest
+    image: georchestra/geoserver:${GEORCHESTRA_VERSION}
     depends_on:
       - ldap
     volumes:
@@ -157,16 +161,17 @@ services:
     restart: always
 
   mapstore:
-    image: camptocamp/mapstore2-georchestra:1.0
+    image: camptocamp/mapstore2-georchestra:1.2
     depends_on:
       - database
     volumes:
       - ./georchestra_datadir:/etc/georchestra
     environment:
-      - JAVA_OPTS=-Xms512m -Xmx512m -XX:MaxPermSize=128m -Dgeorchestra.datadir=/etc/georchestra -DPRINT_BASE_URL=pdf
+      - JAVA_OPTS=-Xms512m -Xmx1G -Dgeorchestra.datadir=/etc/georchestra
+    restart: always
 
   console:
-    image: georchestra/console:latest
+    image: georchestra/console:${GEORCHESTRA_VERSION}
     depends_on:
       - database
     volumes:
