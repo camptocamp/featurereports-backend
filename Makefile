@@ -77,6 +77,8 @@ setup-test-data: ## Setup test dataset in database
 	docker cp ./test_data/geoserver_datadir/espub_mob $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_datadir/workspaces/
 	docker cp ./test_data/geoserver_datadir/layers.properties $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_datadir/security/
 	docker cp ./test_data/geoserver_geodata/rennes $(shell docker ps | grep geoserver | cut -d" " -f1):/mnt/geoserver_geodata/
+	docker exec --user root $(shell docker ps | grep geoserver | cut -d" " -f1) chown -R 999:999 /mnt/geoserver_datadir/
+	docker exec --user root $(shell docker ps | grep geoserver | cut -d" " -f1) chown -R 999:999 /mnt/geoserver_geodata/
 	docker-compose exec app setup_test_data c2c://drealcorsereports.ini
 
 .PHONY: black
