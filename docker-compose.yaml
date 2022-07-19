@@ -162,7 +162,7 @@ services:
     restart: always
 
   mapstore:
-    image: camptocamp/mapstore2-georchestra:1.2
+    image: camptocamp/mapstore2-georchestra:2022.01.01-custom
     depends_on:
       - database
     volumes:
