@@ -1,0 +1,30 @@
+{
+  "locale": "fr-FR",
+  "messages": {
+      "geomImport": {
+          "title": "Import de géométries",
+          "dropZone": {
+            "heading": "<p> <h4> Déposez vos fichiers vectoriels ici </h4> <small> ou </small> </p>",
+            "selectFiles": "Sélectionnez un fichier...",
+            "infoSupported": "<p><small>Fichiers vectoriels pris en charge : fichier de formes (doivent être contenus dans des archives zip) ou GPX</small></p>",
+            "note": "<p><small><i><strong> note </strong>: Si vous êtes déjà en cours d'importations de géométries, celles-ci seront écrasées.</i></small></p>"
+          },
+          "errors": {
+              "fileNotSupported": "Fichier non pris en charge",
+              "unknownError": "il y a eu une erreur inconnue lors de l'importation",
+              "projectionNotSupported": "La projection du/des fichier(s) que vous essayez d'importer n'est pas prise en charge"
+          },
+          "dialog": {
+            "title": "Import de données vectorielles"
+          },
+          "footer": {
+            "cancel": "Annuler",
+            "validate": "Terminer"
+          },
+          "success": {
+            "clickToTerminate": "Cliquer sur 'Terminer' pour importer vos données",
+            "autorizeGeom": "Autoriser le service à fermer les lignes."
+          }
+      }
+  }
+}

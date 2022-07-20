@@ -40,7 +40,7 @@ security:
     matcher: !dnsMatch
       host: georchestra.mydomain.org
     username: geoserver_privileged_user
-    password: gerlsSnFd6SmM
+    password: kaejeik4Sheing5f
     preemptive: true
 
 #===========================================================================

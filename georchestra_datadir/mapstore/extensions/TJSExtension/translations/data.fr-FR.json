@@ -1,0 +1,30 @@
+{
+  "locale": "fr-FR",
+  "messages": {
+    "tjsManager": {
+      "title": "Jointure TJS disponible",
+      "placeholder": "Sélectionner une couche",
+      "tjsSelection": "Sélectionner un dataset depuis la liste",
+      "resetTjs": "Réinitialiser le tjs",
+      "parentSelected": "Couche à joindre sélectionnée",
+      "datasetSelection": "Ajouter en tant que couche principale",
+      "dataJoin": "Joindre des données",
+      "titleModal": "Jointure TJS",
+      "datasetsList": "Liste des datasets",
+      "sldList": "Liste des styles",
+      "joinDataExecution": "Exécuter la jointure",
+      "filterColumnList": "Liste des attributs",
+      "filterColumnSelection": "Sélectionner un attribut",
+      "sldSelection": "Sélectionner un style",
+      "datasetsSelection": "Sélectionner un dataset",
+      "filterValueList": "Liste des valeurs",
+      "filterEnabled": "Filtrer les données",
+      "filterValueSelection": "Sélectionner une valeur",
+      "supportedTJS": "Jointure TJS disponible",
+      "dataattributesNotFound": "Aucun attributs trouvés pour ce dataset !",
+      "sldNotFound": "Aucun styles trouvés pour ce layer !",
+    "sldIsLoading": "Chargement des styles en cours...",
+      "datasetsNotFound": "Aucun datasets trouvés pour ce layer !"
+    }
+  }
+}

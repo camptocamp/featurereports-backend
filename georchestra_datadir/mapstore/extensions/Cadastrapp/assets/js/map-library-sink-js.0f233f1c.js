@@ -1,0 +1,1 @@
+(self.webpackChunkMapStoreExtension=self.webpackChunkMapStoreExtension||[]).push([[442],{17227:(n,e,t)=>{"use strict";t.r(e),t.d(e,{default:()=>a});var u=t(67076).createSink;const a=function(){return{Map:u((function(){})),Layer:u((function(){})),Feature:u((function(){}))}}}}]);
