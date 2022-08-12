@@ -1,0 +1,22 @@
+{
+  "ReportExtension": {
+    "bundle": "ReportExtension/index.js",
+    "translations": "ReportExtension/translations"
+  },
+  "GeonetworkExtension": {
+    "bundle": "GeonetworkExtension/index.js",
+    "translations": "GeonetworkExtension/translations"
+  },
+  "TJSExtension": {
+    "bundle": "TJSExtension/index.js",
+    "translations": "TJSExtension/translations"
+  },
+  "GeomImportExtension": {
+    "bundle": "GeomImportExtension/index.js",
+    "translations": "GeomImportExtension/translations"
+  },
+    "Cadastrapp": {
+    "bundle": "Cadastrapp/index.js",
+    "translations": "Cadastrapp/translations"
+  }
+}

@@ -1,0 +1,80 @@
+[
+  {
+    "op": "add",
+    "path": "/plugins/-",
+    "value": {
+      "name": "ReportExtension",
+      "dependencies": [
+        "Toolbar"
+      ],
+      "extension": false
+    }
+  },
+  {
+    "op": "add",
+    "path": "/plugins/-",
+    "value": {
+      "name": "GeonetworkExtension",
+      "glyph": "user",
+      "title": "GeoNetwork",
+      "description": "Connectivite des fiches geonetwork aux couches associees.\n Gestion des droits utilisateurs sur les couches par filtre d'organisme.",
+      "cfg": {
+        "translateAttributes": true,
+        "multiChoicesEditor": true,
+        "colOrganisme": "organisme",
+        "organismeFilter": true,
+        "millesimeLayers": true
+      },
+      "extension": true
+    }
+  },
+  {
+    "op": "add",
+    "path": "/plugins/-",
+    "value": {
+      "name": "TJSExtension",
+      "glyph": "user",
+      "title": "TJS",
+      "description": "Integration du plugin TJS pour joindre des donnees",
+      "cfg": {},
+      "dependencies": [
+        "Toolbar"
+      ],
+      "extension": true
+    }
+  },
+  {
+    "op": "add",
+    "path": "/plugins/-",
+    "value": {
+      "name": "GeomImportExtension",
+      "glyph": "file",
+      "title": "Import de géométries",
+      "description": "Intégration du plugin GeomImport (shapefile, GPX)",
+      "cfg": {},
+      "extension": true
+    }
+  },
+  {
+    "op": "add",
+    "path": "/plugins/-",
+    "value": {
+      "name": "Cadastrapp",
+      "glyph": "th",
+      "docUrl": "https://github.com/georchestra/mapstore2-cadastrapp#plugin-configuration",
+      "defaultConfig": {
+        "openOnLoad": false,
+        "helpUrl": "https://docs.georchestra.org/cadastrapp/latest/guide_utilisateur/",
+        "foncier": true,
+        "popup": {
+          "minZoom": 14,
+          "timeToShow": 1000
+        }
+      },
+      "dependencies": [
+        "BurgerMenu"
+      ],
+      "extension": true
+    }
+  }
+]

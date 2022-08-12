@@ -1,0 +1,81 @@
+    {
+    "locale": "it-IT",
+    "messages": {
+        "cadastrapp": {
+            "title": "Cadastrapp",
+            "demande": "Modulo sulla fiducia dei proprietari terrieri",
+            "dateValiditeEDIGEO": "Versione planimetria catastale",
+            "dateValiditeMajic": "Versione dati terreno",
+            "toolbar": {
+                "zoomTo": "Zoom sull'estensione dei risultati",
+                "help": "Aiuto"
+            },
+            "popup": {
+                "parcelle": "Parcelle",
+                "town": "Città",
+                "year": "Anno",
+                "county": "Dipartimento",
+                "direction": "Direzione",
+                "towninsee": "Codice INSEE",
+                "prefix": "Prefisso",
+                "section": "Sezione",
+                "plot": "Numero",
+                "address": "Indirizzo",
+                "dgfip": "DGFiP",
+                "gis": "GIS",
+                "owner": "Proprietario",
+                "landUnit": "Unità di terra",
+                "municipalAccount": "Conto comune",
+                "nodata": "Nessun dato da visualizzare",
+                "noaccess": "Accesso non autorizzato ai dati del terreno",
+                "error": "Impossibile recuperare le informazioni sul fumetto"
+            },
+            "fields": {
+                "section": "Sezione",
+                "plotNumber": "Numero di trama"
+            },
+            "requestForm": {
+                "title": "Richiesta sulla fiducia dei proprietari terrieri",
+                "askBy": "Richiedi chiedi a",
+                "counter": "Counter",
+                "email": "E-mail",
+                "requestType": "Richiedi tipo utente",
+                "requestObj": "Oggetto richiesta",
+                "responseBy": "Dai un documento di",
+                "cni" : "CNI",
+                "lastName": "Cognome",
+                "firstName": "Nome di battesimo",
+                "roadNumber": "Numero di strada",
+                "zipCode": "Codice postale",
+                "town": "Città, Comune",
+                "mail": "Mail",
+                "cancel": "Richiesta cancellata",
+                "print": "Richiesta di stampa",
+                "genDocuments": "Genera documenti",
+                "addMore": "Fare clic per aggiungere altre richieste",
+                "accountId": "ID account municipale",
+                "plotId": "ID trama",
+                "commune": "Comune",
+                "owner": "Proprietario",
+                "ownerBirthName": "Nome di nascita del proprietario",
+                "ownerId": "ID proprietario",
+                "plot": "Tracciare",
+                "coOwner": "Comproprietari",
+                "lotCoOwners": "Comproprietari di lotti",
+                "limit": "Limite massimo di richieste raggiunto",
+                "propertyStatement": "Dichiarazione di proprietà",
+                "parcelSlip": "Distinta del pacco",
+                "printError": "Impossibile stampare i dati del modulo di richiesta",
+                "availableReqError": "Impossibile recuperare le richieste disponibili"
+            },
+            "uniteFonciere": "Unità di terra",
+            "menu": {
+                "tooltips": {
+                    "foncier": "Clicca su una parcella per visualizzare l'unità di terra",
+                    "imprimer": "Stampa"
+                },
+                "preference": "Preferenze"
+            }
+        }
+    }
+}
